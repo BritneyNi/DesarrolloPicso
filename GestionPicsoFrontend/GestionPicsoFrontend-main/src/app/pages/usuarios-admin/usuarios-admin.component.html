@@ -1,0 +1,163 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="usuarios-admin">
+  <h2 id="title">Administración de Usuarios</h2>
+
+ <div class="search-agregar-container">
+  <div class="search-container">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchQuery" (ngModelChange)="filtrarPorTexto()" class="search-input">
+  </div>
+
+  <button (click)="mostrarFormularioUsuario()" class="btn-agregar">
+    <i class='bx bx-user-plus'></i> Agregar Usuario
+  </button>
+</div>
+
+  <div class="filtros-usuarios">
+  <button 
+    class="btn-filtro activo" 
+    [class.selected]="estadoFiltro === 'Activo'" 
+    (click)="filtrarUsuarios('Activo')">
+    Activos
+  </button>
+  <button 
+    class="btn-filtro inactivo" 
+    [class.selected]="estadoFiltro === 'Inactivo'" 
+    (click)="filtrarUsuarios('Inactivo')">
+    Inactivos
+  </button>
+  <button 
+    class="btn-filtro todos" 
+    [class.selected]="estadoFiltro === 'Todos'" 
+    (click)="filtrarUsuarios('Todos')">
+    Todos
+  </button>
+</div>  
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Estado</th>
+          <th>Nombre Completo</th>
+          <th>Rol</th>
+          <th>Cédula</th>
+          <th>Cargo</th>
+          <th>Obra</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuariosFiltrados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{usuario.estado}}</td>
+          <td>{{ usuario.nombreCompleto }}</td>
+          <td>{{ usuario.rol }}</td>
+          <td>{{ usuario.cedula }}</td>
+          <td>{{ usuario.cargo }}</td>
+          <td>{{ usuario.obra?.nombreObra || '---' }}</td>
+          <td class="container-row">
+            <button (click)="mostrarFormularioUsuario(usuario)" class="btn-editar"><i class='bx bxs-edit'></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="mostrarFormulario" class="modal" (click)="cerrarFormulario()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="btn-cerrar" type="button" (click)="cerrarFormulario()">✕</button>
+
+      <h3>{{ esEdicion ? 'Editar Usuario' : 'Agregar Usuario' }}</h3>
+
+       <!-- ⚠️ Mensaje de error general -->
+    <div *ngIf="mensajeErrorGeneral" class="mensaje-error-general">
+      {{ mensajeErrorGeneral }}
+    </div>
+
+<label>Cédula:</label>
+<input
+  [(ngModel)]="usuarioActual.cedula"
+  type="text"
+  required
+  maxlength="15"
+  (keypress)="validarCedula($event)"
+  (paste)="bloquearPegado($event)"
+  title="Máx. 5 letras, solo un ':' permitido"
+/>
+<small *ngIf="mensajeCedula" class="mensaje-error">{{ mensajeCedula }}</small>
+     <label>Nombre Completo:</label>
+<input
+  [(ngModel)]="usuarioActual.nombreCompleto"
+  type="text"
+  required
+  (keypress)="validarNombre($event)"
+  (paste)="bloquearPegado($event)"
+  title="Solo letras, máximo 3 espacios, sin números ni símbolos"
+/>
+<small *ngIf="mensajeNombre" class="mensaje-error">{{ mensajeNombre }}</small>
+
+<label>Cargo:</label>
+<input
+  [(ngModel)]="usuarioActual.cargo"
+  type="text"
+  required
+  (keypress)="validarCargo($event)"
+  (paste)="bloquearPegado($event)"
+  title="Solo letras y máximo 3 espacios"
+/>
+<small *ngIf="mensajeCargo" class="mensaje-error">{{ mensajeCargo }}</small>
+
+
+      <div *ngIf="usuarioActual.rol === 'responsable'">
+        <label>Tipo de Responsabilidad:</label>
+        <select [(ngModel)]="usuarioActual.tipoResponsabilidad">
+          <option value="Principal">Responsable Principal</option>
+          <option value="Secundario">Responsable Secundario</option>
+        </select>
+      </div>
+
+      <label>Estado:</label>
+      <select [(ngModel)]="usuarioActual.estado" required>
+        <option value="Activo">Activo</option>
+        <option value="Inactivo">Inactivo</option>
+      </select>
+
+      <label>Rol:</label>
+      <select [(ngModel)]="usuarioActual.rol" required>
+        <option value="admin">Admin</option>
+        <option value="responsable">Responsable</option>
+        <option value="cliente">Cliente</option>
+        <option value="contabilidad">Contabilidad</option>
+        <option value="rrhh">RRHH</option>
+        <option value="sst">SST</option>
+        <option value="almacenista">Almacenista</option>
+      </select>
+
+      <label>Obra:</label>
+      <select
+        [(ngModel)]="usuarioActual.obraId"
+        [disabled]="usuarioActual.rol !== 'responsable'">
+        <option [ngValue]="null">-- Seleccione una obra --</option>
+        <option *ngFor="let obra of obras" [ngValue]="obra.id">{{ obra.nombreObra }}</option>
+      </select>
+
+      <label>Contraseña:</label>
+<input
+  [(ngModel)]="usuarioActual.contrasena"
+  type="password"
+  required
+  minlength="8"
+  (input)="validarPassword()"
+  (paste)="bloquearPegado($event)"
+  title="Mínimo 8 caracteres, una mayúscula y un número o símbolo"
+/>
+<small *ngIf="mensajePassword" class="mensaje-error">{{ mensajePassword }}</small>
+<small *ngIf="esEdicion">Si no deseas cambiar la contraseña, deja este campo vacío.</small>
+
+    <button (click)="guardarUsuario()" class="btn-guardar"><i class='bx bx-save' style='color:#ffffff'></i></button>
+    <button (click)="cerrarFormulario()" class="btn-cancelar"><i class='bx bx-x-circle' style='color:#ffffff'></i></button>
+  </div>
+</div>

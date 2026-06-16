@@ -1,0 +1,515 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="container mt-3">
+
+  <h2>Registro de ATS</h2>
+
+ <div class="mb-3 boton-centrado">
+  <button class="btn btn-success" (click)="alternarFormularioAts()">
+    {{ mostrarFormulario ? 'Ocultar Formulario' : '➕ Nuevo ATS' }}
+  </button>
+</div>
+
+
+  <div class="text-center">
+  <input type="text" placeholder="Buscar..." [(ngModel)]="busquedaRapida"
+    (input)="filtrarAts()" class="mb-2 buscador-centrado">
+</div>
+
+
+  <!-- FORMULARIO PRINCIPAL PARA ATS -->
+<form *ngIf="mostrarFormulario"
+      [formGroup]="atsHijoForm"
+      (ngSubmit)="guardarAtsPrincipal()"
+      class="form-card">
+
+      <button
+  type="button"
+  class="btn-cerrar-flotante"
+  (click)="alternarFormularioAts()"
+  title="Cerrar formulario">
+  ✖
+</button>
+
+
+  <h3 class="text-center mb-3">Formulario de Registro (ATS)</h3>
+
+  <!-- ===================== -->
+  <!-- 📄 DATOS GENERALES -->
+  <!-- ===================== -->
+  <div class="section-card">
+    <h4>📄 Datos generales</h4>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fecha de registro</label>
+        <input type="date" class="form-control" formControlName="fechaRegistro">
+      </div>
+
+      <div class="form-group">
+        <label>Actividad</label>
+        <input type="text" class="form-control" formControlName="descripcionAts" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== -->
+  <!-- ⚠️ PELIGROS Y RIESGOS -->
+  <!-- ===================== -->
+  <div class="section-card">
+    <h4>⚠️ Identificación de peligros y riesgos</h4>
+
+    <div class="checkbox-grid">
+
+      <div class="peligro-card" *ngFor="let p of peligrosListado">
+
+        <!-- PELIGRO -->
+        <label class="checkbox-item">
+          <input
+            type="checkbox"
+            [value]="p"
+            (change)="onPeligroToggle($event)"
+            [checked]="atsHijoForm.value.peligros?.includes(p)"
+          />
+          <span>{{ p }}</span>
+        </label>
+
+        <!-- RIESGOS -->
+        <div class="riesgos-subgrid"
+             *ngIf="riesgosPorPeligroSeleccionado[p]?.length">
+          <label class="riesgo-item"
+                 *ngFor="let r of riesgosPorPeligroSeleccionado[p]">
+            <input
+              type="checkbox"
+              [value]="r"
+              (change)="onRiesgoToggle($event)"
+              [checked]="atsHijoForm.value.riesgo?.includes(r)"
+            />
+            <span>{{ r }}</span>
+          </label>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================== -->
+  <!-- 🛡 CONTROLES -->
+  <!-- ===================== -->
+  <div class="section-card">
+    <h4>🛡 Controles y acciones</h4>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>¿Qué puede suceder?</label>
+        <input type="text" class="form-control" formControlName="controles" />
+      </div>
+
+      <div class="form-group">
+        <label>¿Qué debo hacer?</label>
+        <input type="text" class="form-control" formControlName="queHacer" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== -->
+  <!-- 👤 RESPONSABLE -->
+<div class="section-card">
+  <h4>👤 Responsables</h4>
+
+  <!-- REALIZADO POR -->
+  <div class="form-group position-relative">
+    <label>Permiso realizado por:</label>
+
+    <input
+      type="text"
+      class="form-control"
+      [value]="realizadoPorNombreSeleccionado"
+      (input)="onInputRealizadoPor($event)"
+      (focus)="onFocusRealizadoPor()"
+      placeholder="Buscar ..."
+    >
+
+    <ul
+      *ngIf="realizadoPorFiltrados.length > 0 && realizadoPorNombreSeleccionado.length > 0"
+      class="list-group position-absolute w-100"
+      style="z-index: 1000; max-height: 200px; overflow-y: auto;"
+    >
+      <li
+        *ngFor="let emp of realizadoPorFiltrados"
+        class="list-group-item list-group-item-action"
+        (click)="seleccionarRealizadoPor(emp)"
+      >
+        {{ emp.nombreCompleto }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- RESPONSABLE -->
+  <div class="form-group position-relative">
+    <label>Responsable en obra:</label>
+
+    <input
+      type="text"
+      class="form-control"
+      [value]="responsableNombreSeleccionado"
+      (input)="onInputResponsable($event)"
+      (focus)="onFocusResponsable()"
+      placeholder="Buscar responsable..."
+    >
+
+    <ul
+      *ngIf="responsablesFiltrados.length > 0 && responsableNombreSeleccionado.length > 0"
+      class="list-group position-absolute w-100"
+      style="z-index: 1000; max-height: 200px; overflow-y: auto;"
+    >
+      <li
+        *ngFor="let emp of responsablesFiltrados"
+        class="list-group-item list-group-item-action"
+        (click)="seleccionarResponsable(emp)"
+      >
+        {{ emp.nombreCompleto }}
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+
+  <!-- ===================== -->
+  <!-- ✍️ FIRMA -->
+  <!-- ===================== -->
+  <div class="section-card firma-container">
+    <h4>✍️ Firma del responsable</h4>
+
+    <canvas #canvas></canvas>
+
+    <button type="button"
+            class="btn btn-secondary mt-2"
+            (click)="limpiarFirma()">
+      Limpiar firma
+    </button>
+  </div>
+
+  <!-- ===================== -->
+  <!-- 💾 GUARDAR -->
+  <!-- ===================== -->
+  <div class="text-center mt-4">
+    <button class="btn btn-primary" type="submit">
+      Guardar ATS
+    </button>
+  </div>
+
+
+</form>
+
+
+  <hr />
+
+  <!-- TABLA PRINCIPAL DE ATS -->
+  <h4>Listado ATS</h4>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Fecha registro</th>
+          <th>Actividad</th>
+          <th>Peligros</th>
+          <th>Riesgos</th>
+          <th>¿Qué puede suceder?</th>
+          <th>¿Qué debo hacer?</th>
+          <th>Realizado por</th>
+          <th>Responsable</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+<ng-container *ngFor="let ats of (busquedaRapida ? listaAtsFiltrada : listaAtsPrincipales)">
+
+          <tr>
+            <td>{{ ats.id }}</td>
+            <td *ngIf="!ats.editable">{{ ats.fechaRegistro | date: 'yyyy-MM-dd'}}</td>
+            <td *ngIf="ats.editable">
+              <input type="date" [(ngModel)]="ats.fechaRegistro" class="form-control">
+            </td>
+
+            <td *ngIf="!ats.editable">{{ ats.descripcion }}</td>
+            <td *ngIf="ats.editable">
+              <input [(ngModel)]="ats.descripcion" class="form-control" />
+            </td>
+
+            <td *ngIf="!ats.editable">{{ ats.peligros }}</td>
+            <td *ngIf="ats.editable">
+  <div class="checkbox-grid">
+
+    <div *ngFor="let p of peligrosListado" class="peligro-card">
+
+      <label>
+        <input
+          type="checkbox"
+          [checked]="ats.peligrosArray?.includes(p)"
+          (change)="onPeligroToggleEdicion($event, ats, p)"
+        />
+        {{ p }}
+      </label>
+
+      <!-- RIESGOS DE ESE PELIGRO -->
+      <div *ngIf="ats.riesgosPorPeligro?.[p]?.length" class="riesgos-subgrid">
+        <label *ngFor="let r of ats.riesgosPorPeligro[p]">
+          <input
+            type="checkbox"
+            [checked]="ats.riesgosArray?.includes(r)"
+            (change)="onRiesgoToggleEdicion($event, ats, r)"
+          />
+          {{ r }}
+        </label>
+      </div>
+
+    </div>
+
+  </div>
+</td>
+
+
+            <td *ngIf="!ats.editable">{{ ats.riesgo }}</td>
+            
+            <td *ngIf="!ats.editable">{{ ats.queSucede }}</td>
+            <td *ngIf="ats.editable">
+              <input [(ngModel)]="ats.queSucede" class="form-control" />
+            </td>
+
+            <td *ngIf="!ats.editable">{{ ats.queHacer }}</td>
+            <td *ngIf="ats.editable">
+              <input [(ngModel)]="ats.queHacer" class="form-control" />
+            </td>
+
+            <td *ngIf="!ats.editable">{{ ats.responsableAts }}</td>
+            <td *ngIf="ats.editable">
+              <input class="form-control" [(ngModel)]="ats.responsableAts">
+            </td>
+
+            <td *ngIf="!ats.editable">{{ ats.responsable }}</td>
+            <td *ngIf="ats.editable">
+              <input class="form-control" [(ngModel)]="ats.responsable">
+            </td>
+
+            <td>
+              <button (click)="ats.mostrarSubtabla = !ats.mostrarSubtabla">
+                {{ ats.mostrarSubtabla ? 'Ocultar Empleados' : 'Empleado' }}
+              </button>
+              <button (click)="exportarPdfMasivo(ats)">📄 PDF Masivo</button>
+              <button type="button" (click)="eliminarAts(ats)">Eliminar</button>
+              <button *ngIf="!ats.editable" (click)="editarAts(ats)">Editar</button>
+              <button *ngIf="ats.editable" (click)="guardarEdicionAts(ats)">Guardar</button>
+              <button *ngIf="ats.editable" (click)="cancelarAts(ats)">Cancelar</button>
+            </td>
+          </tr>
+
+          <!-- SUBTABLA DE ACTIVIDADES -->
+          <tr *ngIf="ats.mostrarSubtabla">
+            <td colspan="9" class="subtabla-container">
+              <div class="table-responsive">
+                <table class="table table-bordered table-sm mb-0">
+                  <thead>
+                    <tr>
+                      <th>Empleado</th>
+                      <th>Cedula</th>
+                      <th>Cargo</th>
+                      <th>Proyecto</th>
+                      <th>Trabajo a Realizar</th>
+                      <th>Equipos a Utilizar</th>
+                      <th>Equipo de emergencia</th>
+                      <th>Fecha Inicio</th>
+                      <th>Fecha Fin</th>
+                      <th>Tipo de Permiso</th>
+                      <th>Observaciones</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr *ngFor="let act of ats.atsList">
+                      <td>{{ act.empleado?.nombreCompleto }}</td>
+                      <td>{{ act.empleado?.cedula }}</td>
+                      <td>{{ act.empleado?.cargo }}</td>
+
+                      <td>
+                        <span *ngIf="!act.editando">{{ act.empresaContratista }}</span>
+                        <input *ngIf="act.editando" [(ngModel)]="act.empresaContratista"
+                          class="form-control form-control-sm">
+                      </td>
+
+                      <td>
+                        <span *ngIf="!act.editando">{{ act.trabajoARealizar }}</span>
+                        <input *ngIf="act.editando" [(ngModel)]="act.trabajoARealizar"
+                          class="form-control form-control-sm">
+                      </td>
+
+                      <td>
+                        <span *ngIf="!act.editando">{{ act.equiposAUtilizar }}</span>
+                        <input *ngIf="act.editando" [(ngModel)]="act.equiposAUtilizar"
+                          class="form-control form-control-sm">
+                      </td>
+
+                      <td>
+                        <span *ngIf="!act.editando">{{ act.equiposEmergencia}}</span>
+                        <input *ngIf="act.editando" [(ngModel)]="act.equiposEmergencia"
+                          class="form-control form-control-sm">
+                      </td>
+
+                      <td>
+                        <span *ngIf="!act.editando">{{ act.fecha | date:'yyyy-MM-dd' }}</span>
+                        <input *ngIf="act.editando" [(ngModel)]="act.fecha" type="date"
+                          class="form-control form-control-sm">
+                      </td>
+
+                      <td>
+                        <span *ngIf="!act.editando">{{ act.fechaFin | date:'yyyy-MM-dd' }}</span>
+                        <input *ngIf="act.editando" [(ngModel)]="act.fechaFin" type="date"
+                          class="form-control form-control-sm">
+                      </td>
+
+                      <td>
+  <span *ngIf="!act.editando">{{ act.tipoPermiso }}</span>
+
+  <div *ngIf="act.editando">
+    <div *ngFor="let permiso of ['Caliente', 'Alturas', 'Energias Peligrosas']; let i = index" class="form-check form-check-inline">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        [id]="'edit-permiso-' + act.id + '-' + i"
+        [value]="permiso"
+        [checked]=" permisoEnArray(act.tipoPermiso, permiso) "
+        (change)="onEditCheckboxChange($event, act)">
+      <label class="form-check-label" [for]="'edit-permiso-' + act.id + '-' + i">
+        {{ permiso }}
+      </label>
+    </div>
+  </div>
+</td>
+
+
+                      <td>
+                        <span *ngIf="!act.editando">{{ act.observacion}}</span>
+                        <input *ngIf="act.editando" [(ngModel)]="act.observacion"
+                          class="form-control form-control-sm">
+                      </td>
+
+                      <td>
+                        <button class="btn btn-sm btn-info" (click)="exportarPdfIndividual(ats, act)">📄 PDF Individual</button>
+                        <button *ngIf="!act.editando" class="btn btn-sm btn-warning" (click)="act.editando = true">✏️ Editar</button>
+                        <span *ngIf="act.editando">
+                          <button class="btn btn-sm btn-success" (click)="guardarCambiosActividad(act)">💾 Guardar</button>
+                          <button class="btn btn-sm btn-secondary" (click)="cancelarEdicion(act)">❌ Cancelar</button>
+                        </span>
+
+                        <button class="btn btn-sm btn-danger" (click)="eliminarActividad(act, ats)">🗑️ Eliminar</button>
+                      </td>
+                    </tr>
+
+                    <!-- FORMULARIO NUEVA ACTIVIDAD -->
+                    <tr *ngIf="ats.mostrarFormularioActividad">
+                      <td colspan="11">
+                        <form [formGroup]="atsForm" class="subactividad-form" [class.active]="ats.mostrarFormularioActividad">
+                          <h1>Añadir empleado</h1>
+                          <div class="form-row">
+                            <div class="form-group position-relative">
+                              <label>Empleado:</label>
+                              <input type="text" class="form-control" [value]="empleadoNombreSeleccionado"
+                                (input)="onInputEmpleado($event)" (focus)="onFocusEmpleado()" placeholder="Buscar empleado...">
+                              <ul *ngIf="empleadosFiltrados.length > 0 && empleadoNombreSeleccionado.length > 0"
+                                class="list-group position-absolute w-100" style="z-index: 1000; max-height: 200px; overflow-y: auto;">
+                                <li *ngFor="let emp of empleadosFiltrados" class="list-group-item list-group-item-action"
+                                  (click)="seleccionarEmpleado(emp)">
+                                  {{ emp.nombreCompleto }}
+                                </li>
+                              </ul>
+                            </div>
+
+                            <div class="form-group">
+                              <label>Proyecto:</label>
+                              <input type="text" formControlName="empresaContratista" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                              <label>Trabajo a Realizar:</label>
+                              <input type="text" formControlName="trabajoARealizar" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                              <label>Equipos a Utilizar:</label>
+                              <input type="text" formControlName="equiposAUtilizar" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                              <label>Equipos de emergencia:</label>
+                              <input type="text" formControlName="equiposEmergencia" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                              <label>Fecha Inicio:</label>
+                              <input type="date" formControlName="fecha" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                              <label>Fecha Fin:</label>
+                              <input type="date" formControlName="fechaFin" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                              <label>Tipo de Permiso:</label>
+                              <div *ngFor="let permiso of ['Caliente', 'Alturas', 'Energias Peligrosas']; let i = index">
+                                <div class="form-check">
+                                  <input 
+                                    type="checkbox" 
+                                    class="form-check-input" 
+                                    [id]="'permiso-' + i" 
+                                    [value]="permiso"
+                                    (change)="onCheckboxChange($event)">
+                                  <label class="form-check-label" [for]="'permiso-' + i">{{ permiso }}</label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                              <label>Observaciones:</label>
+                              <input type="text" formControlName="observacion" class="form-control">
+                            </div>
+
+                          <div class="form-group mt-3 firma-empleado-container">
+                            <label>Firma del empleado:</label>
+                            <canvas #canvasEmpleado></canvas>
+                            <button type="button" class="btn btn-secondary btn-sm mt-1" (click)="limpiarFirmaEmpleado(ats)">Limpiar Firma</button>
+                            <button type="button" class="btn btn-primary" (click)="guardarActividad(ats)">Guardar</button>
+                          </div>
+                        </form>
+                      </td>
+                    </tr>
+
+                    <!-- BOTÓN NUEVO EMPLEADO -->
+                    <tr>
+                      <td colspan="11">
+                        <button class="btn btn-success" (click)="toggleFormularioActividad(ats)">
+                          {{ ats.mostrarFormularioActividad ? 'Ocultar Formulario' : '➕ Nuevo Empleado' }}
+                        </button>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
+
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+</div>

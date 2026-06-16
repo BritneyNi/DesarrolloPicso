@@ -1,0 +1,182 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="solicitudes-admin container mt-4">
+  <h2 id="title">Gestión de Solicitudes</h2>
+
+  <div *ngIf="esResponsable && !esAdmin" class="formulario-solicitud">
+    <h4>Nueva Solicitud</h4>
+    <form (ngSubmit)="crearSolicitud()" #formSolicitud="ngForm">
+
+       <div class="form-group" id="solicitante">
+          <label class="form-label">Obra destino</label>
+          <ng-container *ngIf="esAdmin; else obraTxt">
+            <select class="form-select" [(ngModel)]="nueva.obra" name="obra" required>
+              <option value="" disabled>Seleccione obra...</option>
+              <option *ngFor="let o of obras" [value]="o.nombreObra">
+                {{ o.nombreObra }}
+              </option>
+            </select>
+          </ng-container>
+          <ng-template #obraTxt>
+            <input type="text" class="form-control" [value]="nueva.obra" readonly />
+          </ng-template>
+        </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Herramienta</label>
+      </div>
+      <div class="form-row">
+                 <select class="form-select" id="select" [(ngModel)]="itemTemp.inventarioId" name="tempInventarioId" required>
+            <option [value]="0" disabled>Seleccione herramienta...</option>
+            <option *ngFor="let it of inventario" [value]="it.id">
+              Codigo: {{ it.codigo }} - {{ it.herramienta }} - Disponibles: {{ it.cantidad }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" id="cantidad">
+          <label class="form-label">Cantidad</label>
+          <input type="number"
+                 class="form-control"
+                 min="1"
+                 [(ngModel)]="itemTemp.cantidad"
+                 name="tempCantidad"
+                 required />
+        </div>
+       <div class="form-row">
+          <div class="form-group">
+            <button type="button" class="btn btn-secondary" (click)="agregarItem()">
+              Agregar
+            </button>
+          </div>
+        </div>
+       </div>
+
+      <div *ngIf="nueva.items.length > 0" class="table-responsive mb-3">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Herramienta</th>
+              <th>Cantidad</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of nueva.items; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ getHerramienta(item.inventarioId, true) }}</td>
+              <td>{{ item.cantidad }}</td>
+              <td>
+                <button type="button" class="btn btn-danger btn-sm" (click)="eliminarItem(i)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <label class="form-label">Comentario</label>
+          <textarea class="form-control" rows="3" name="observaciones" [(ngModel)]="nueva.observaciones"></textarea>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <button type="submit" class="btn-guardar" [disabled]="formSolicitud.invalid || !nueva.items.length">Solicitar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="esAdmin " class="filtro-estado">
+    <label for="filtroEstado" class="form-label">Ver:</label>
+    <select id="filtroEstado" class="form-select w-auto d-inline-block ms-2" name="filtroEstado"
+            [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltro()">
+      <option [ngValue]="''">Todas</option>
+      <option [ngValue]="EstadoSolicitud.Pendiente">Pendientes</option>
+      <option [ngValue]="EstadoSolicitud.Aprobada">Aprobadas</option>
+      <option [ngValue]="EstadoSolicitud.Rechazada">Rechazadas</option>
+      <option [ngValue]="EstadoSolicitud.Comprado">Compradas</option>
+    </select>
+  </div>
+  <div *ngIf="filtradas.length > 0; else sinDatos" class="table-responsive mt-3" id="tablaSolicitudes">
+    <table class="table align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Herramienta / cantidad</th>
+          <th>Obra</th>
+          <th>Solicitante</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of filtradas; let i = index"
+            [ngClass]="{'row-aprobada': s.estado === EstadoSolicitud.Aprobada, 'row-rechazada': s.estado === EstadoSolicitud.Rechazada}">
+          <td>{{ i + 1 }}</td>
+          <td>
+
+<table class="table table-sm mb-0">
+
+<tr *ngFor="let item of s.items">
+
+<td>
+{{ getHerramienta(item.inventarioId, true) }}
+</td>
+
+<td>
+{{ item.cantidad }}
+</td>
+
+<td>
+{{ item.estado }}
+</td>
+
+<td *ngIf="esAdmin">
+
+<button
+class="btn-aprobar"
+[disabled]="item.estado !== EstadoSolicitud.Pendiente"
+(click)="cambiarEstadoItem(item, EstadoSolicitud.Aprobada)">
+Aprobar
+</button>
+
+<button
+class="btn-rechazar"
+[disabled]="item.estado !== EstadoSolicitud.Pendiente"
+(click)="cambiarEstadoItem(item, EstadoSolicitud.Rechazada)">
+Rechazar
+</button>
+
+<button
+class="btn-comprado"
+[disabled]="item.estado !== EstadoSolicitud.Pendiente"
+(click)="cambiarEstadoItem(item, EstadoSolicitud.Comprado)">
+Comprar
+</button>
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+          <td>{{ s.obra }}</td>
+          <td>{{ s.solicitante }}</td>
+          <td>{{ s.fechaSolicitud | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #sinDatos>
+    <div class="alert alert-info text-center mt-3">No hay solicitudes para mostrar.</div>
+  </ng-template>
+</div>

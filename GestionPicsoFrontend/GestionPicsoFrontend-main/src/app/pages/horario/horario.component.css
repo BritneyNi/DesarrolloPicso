@@ -1,0 +1,380 @@
+/* ══════════════════════════════════════════════════════════════════
+   HORARIO — Registro directo ADMIN / SST
+   ══════════════════════════════════════════════════════════════════ */
+
+.h-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+}
+
+/* ─── Encabezado ──────────────────────────────────────────────── */
+.h-header {
+  margin-bottom: 24px;
+}
+
+.h-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.h-titulo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.h-rol-badge {
+  background: #1e3a5f;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.h-subtitulo {
+  color: #555;
+  font-size: 0.9rem;
+  margin: 6px 0 0;
+}
+
+/* ─── Panel global ────────────────────────────────────────────── */
+.h-panel-global {
+  background: #f8f9ff;
+  border: 1px solid #d0d8f0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.h-panel-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 16px;
+}
+
+.h-panel-controles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.h-control-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 200px;
+}
+
+.h-panel-masivo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #d0d8f0;
+}
+
+.h-btn-masivo {
+  font-size: 0.85rem;
+  padding: 10px 18px;
+}
+
+/* ─── Inputs y labels genéricos ───────────────────────────────── */
+.h-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.h-input {
+  border: 1px solid #ccd;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.h-input:focus {
+  border-color: #4a6fa5;
+}
+
+.h-input-sm {
+  padding: 5px 7px;
+  font-size: 0.82rem;
+}
+
+/* ─── Botones ─────────────────────────────────────────────────── */
+.h-btn {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 8px 14px;
+  transition: background-color 0.2s, opacity 0.2s;
+  white-space: nowrap;
+}
+
+.h-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.h-btn-ingreso {
+  background: #1a7a3c;
+  color: #fff;
+}
+.h-btn-ingreso:hover:not(:disabled) { background: #145c2d; }
+
+.h-btn-salida {
+  background: #c0392b;
+  color: #fff;
+}
+.h-btn-salida:hover:not(:disabled) { background: #922b21; }
+
+.h-btn-secundario {
+  background: #4a6fa5;
+  color: #fff;
+}
+.h-btn-secundario:hover { background: #35528a; }
+
+.h-btn-sm {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+}
+
+/* ─── Buscador + estadísticas ─────────────────────────────────── */
+.h-buscador-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.h-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.h-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 1rem;
+}
+
+.h-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 32px 9px 32px;
+  border: 1px solid #ccd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.h-search-input:focus { border-color: #4a6fa5; }
+
+.h-search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.h-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.h-stat {
+  font-size: 0.82rem;
+  background: #eef0f8;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #444;
+  font-weight: 600;
+}
+.h-stat.verde { background: #eafaf1; color: #1a7a3c; }
+.h-stat.rojo  { background: #fdedec; color: #c0392b; }
+
+/* ─── Spinner ─────────────────────────────────────────────────── */
+.h-cargando {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 40px;
+  justify-content: center;
+  color: #555;
+}
+
+.h-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #dde;
+  border-top-color: #4a6fa5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Feedback ────────────────────────────────────────────────── */
+.h-feedback {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 3px;
+  font-weight: 600;
+}
+.h-feedback.ok  { color: #1a7a3c; }
+.h-feedback.err { color: #c0392b; }
+
+/* ─── Tabla escritorio ────────────────────────────────────────── */
+.h-table-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #dde;
+}
+
+.h-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.h-table thead th {
+  background: #1e3a5f;
+  color: #fff;
+  padding: 10px 8px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.h-table tbody tr:nth-child(odd)  { background: #fff; }
+.h-table tbody tr:nth-child(even) { background: #f5f7ff; }
+.h-table tbody tr:hover           { background: #eef2ff; }
+
+.h-table td {
+  padding: 8px 8px;
+  vertical-align: middle;
+  border-bottom: 1px solid #eee;
+}
+
+.h-nombre { font-weight: 600; min-width: 160px; }
+.h-cedula { color: #666; font-size: 0.8rem; }
+
+/* Sección ingreso / salida */
+.th-ingreso { background: #145c2d !important; }
+.th-salida  { background: #922b21 !important; }
+
+.td-ingreso { background: rgba(26, 122, 60, 0.04) !important; }
+.td-salida  { background: rgba(192, 57, 43, 0.04) !important; }
+
+.td-accion { min-width: 110px; }
+
+.h-empty {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+  font-style: italic;
+}
+
+/* ─── Cards móvil ─────────────────────────────────────────────── */
+.h-cards-wrap { display: none; }
+
+.h-card {
+  border: 1px solid #dde;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.h-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: #f8f9ff;
+  user-select: none;
+}
+
+.h-card-nombre { font-weight: 700; font-size: 0.95rem; margin: 0 0 2px; }
+.h-card-sub    { font-size: 0.78rem; color: #666; margin: 0 0 2px; }
+.h-card-cedula { font-size: 0.75rem; color: #999; margin: 0; }
+.h-card-toggle { font-size: 0.8rem; color: #888; flex-shrink: 0; }
+
+.h-card-body { padding: 16px; border-top: 1px solid #eee; }
+
+.h-card-seccion {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+}
+.h-card-seccion.ingreso { background: #eafaf1; }
+.h-card-seccion.salida  { background: #fdedec; }
+
+.h-card-seccion-label {
+  font-weight: 700;
+  font-size: 0.82rem;
+  margin: 0 0 8px;
+}
+
+.h-card-inputs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.h-card-inputs .h-input {
+  flex: 1;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .h-table-wrap { display: none; }
+  .h-cards-wrap { display: block; }
+
+  .h-titulo { font-size: 1.4rem; }
+
+  .h-panel-controles { flex-direction: column; }
+  .h-control-grupo   { min-width: unset; }
+
+  .h-buscador-row { flex-direction: column; align-items: stretch; }
+
+  .h-stats { justify-content: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .h-wrapper { padding: 16px 10px 100px; }
+  .h-titulo  { font-size: 1.2rem; }
+  .h-panel-masivo { flex-direction: column; }
+  .h-btn-masivo   { width: 100%; }
+  .h-card-inputs  { flex-direction: column; }
+}

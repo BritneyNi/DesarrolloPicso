@@ -1,0 +1,212 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="h-wrapper">
+
+  <!-- ENCABEZADO -->
+  <div class="h-header">
+    <div class="h-header-left">
+      <h1 class="h-titulo">Registro Directo de Horarios</h1>
+      <span class="h-rol-badge">{{ rol }}</span>
+    </div>
+    <p class="h-subtitulo">
+      Registra ingresos y salidas sin restricciones de semana ni obra.
+    </p>
+  </div>
+
+  <!-- PANEL DE FECHA/HORA GLOBAL -->
+  <div class="h-panel-global">
+    <h2 class="h-panel-titulo">⚡ Aplicar a todos los visibles</h2>
+    <div class="h-panel-controles">
+
+      <div class="h-control-grupo">
+        <label class="h-label">📅 Fecha global</label>
+        <input type="date" [(ngModel)]="fechaGlobal" class="h-input" />
+        <button class="h-btn h-btn-secundario" (click)="aplicarFechaGlobal()">
+          Aplicar fecha
+        </button>
+      </div>
+
+      <div class="h-control-grupo">
+        <label class="h-label">🟢 Hora ingreso global</label>
+        <input type="time" [(ngModel)]="horaIngresoGlobal" class="h-input" />
+        <button class="h-btn h-btn-ingreso" (click)="aplicarHoraIngresoGlobal()">
+          Aplicar hora ingreso
+        </button>
+      </div>
+
+      <div class="h-control-grupo">
+        <label class="h-label">🔴 Hora salida global</label>
+        <input type="time" [(ngModel)]="horaSalidaGlobal" class="h-input" />
+        <button class="h-btn h-btn-salida" (click)="aplicarHoraSalidaGlobal()">
+          Aplicar hora salida
+        </button>
+      </div>
+
+    </div>
+
+    <div class="h-panel-masivo">
+      <button class="h-btn h-btn-ingreso h-btn-masivo"
+              (click)="guardarTodosIngresosVisibles()"
+              title="Guarda el ingreso de todos los empleados con hora cargada">
+        💾 Guardar todos los ingresos
+      </button>
+      <button class="h-btn h-btn-salida h-btn-masivo"
+              (click)="guardarTodasSalidasVisibles()"
+              title="Guarda la salida de todos los empleados con hora cargada">
+        💾 Guardar todas las salidas
+      </button>
+    </div>
+  </div>
+
+  <!-- BUSCADOR + ESTADÍSTICAS -->
+  <div class="h-buscador-row">
+    <div class="h-search-wrap">
+      <i class="bx bx-search h-search-icon"></i>
+      <input
+        type="text"
+        placeholder="Buscar por nombre, cédula, cargo, obra..."
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="filtrar()"
+        class="h-search-input"
+      />
+      <span *ngIf="searchQuery" class="h-search-clear" (click)="limpiarBusqueda()">✕</span>
+    </div>
+
+    <div class="h-stats">
+      <span class="h-stat">👥 {{ totalFiltrados }} empleados</span>
+      <span class="h-stat verde">🟢 {{ totalConIngreso }} con ingreso</span>
+      <span class="h-stat rojo">🔴 {{ totalConSalida }} con salida</span>
+    </div>
+  </div>
+
+  <!-- CARGANDO -->
+  <div *ngIf="cargando" class="h-cargando">
+    <div class="h-spinner"></div>
+    <span>Cargando empleados...</span>
+  </div>
+
+  <!-- TABLA ESCRITORIO -->
+  <div class="h-table-wrap" *ngIf="!cargando">
+    <table class="h-table">
+      <thead>
+        <tr>
+          <th>Empleado</th>
+          <th>Cédula</th>
+          <th>Cargo</th>
+          <th>Obra</th>
+          <th class="th-seccion th-ingreso">🟢 Fecha Ingreso</th>
+          <th class="th-seccion th-ingreso">Hora Ingreso</th>
+          <th class="th-seccion th-ingreso">Acción</th>
+          <th class="th-seccion th-salida">🔴 Fecha Salida</th>
+          <th class="th-seccion th-salida">Hora Salida</th>
+          <th class="th-seccion th-salida">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let reg of registrosFiltrados">
+          <tr class="h-fila">
+            <td class="h-nombre">{{ reg.empleado.nombreCompleto }}</td>
+            <td class="h-cedula">{{ reg.empleado.cedula }}</td>
+            <td>{{ reg.empleado.cargo }}</td>
+            <td>{{ reg.empleado.obra }}</td>
+
+            <!-- INGRESO -->
+            <td class="td-ingreso">
+              <input type="date" [(ngModel)]="reg.fechaIngreso" class="h-input h-input-sm" />
+            </td>
+            <td class="td-ingreso">
+              <input type="time" [(ngModel)]="reg.horaIngreso" class="h-input h-input-sm" />
+            </td>
+            <td class="td-ingreso td-accion">
+              <button class="h-btn h-btn-ingreso h-btn-sm"
+                      (click)="guardarIngreso(reg)"
+                      [disabled]="reg.guardandoIngreso">
+                {{ reg.guardandoIngreso ? '...' : 'Guardar' }}
+              </button>
+              <span class="h-feedback ok" *ngIf="reg.mensajeIngreso">{{ reg.mensajeIngreso }}</span>
+              <span class="h-feedback err" *ngIf="reg.errorIngreso">{{ reg.errorIngreso }}</span>
+            </td>
+
+            <!-- SALIDA -->
+            <td class="td-salida">
+              <input type="date" [(ngModel)]="reg.fechaSalida" class="h-input h-input-sm" />
+            </td>
+            <td class="td-salida">
+              <input type="time" [(ngModel)]="reg.horaSalida" class="h-input h-input-sm" />
+            </td>
+            <td class="td-salida td-accion">
+              <button class="h-btn h-btn-salida h-btn-sm"
+                      (click)="guardarSalida(reg)"
+                      [disabled]="reg.guardandoSalida">
+                {{ reg.guardandoSalida ? '...' : 'Guardar' }}
+              </button>
+              <span class="h-feedback ok" *ngIf="reg.mensajeSalida">{{ reg.mensajeSalida }}</span>
+              <span class="h-feedback err" *ngIf="reg.errorSalida">{{ reg.errorSalida }}</span>
+            </td>
+          </tr>
+        </ng-container>
+
+        <tr *ngIf="registrosFiltrados.length === 0">
+          <td colspan="10" class="h-empty">No hay empleados activos que coincidan con la búsqueda.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CARDS MÓVIL -->
+  <div class="h-cards-wrap" *ngIf="!cargando">
+    <div *ngFor="let reg of registrosFiltrados" class="h-card">
+
+      <div class="h-card-header" (click)="toggleExpandido(reg)">
+        <div class="h-card-info">
+          <p class="h-card-nombre">{{ reg.empleado.nombreCompleto }}</p>
+          <p class="h-card-sub">{{ reg.empleado.cargo }} · {{ reg.empleado.obra }}</p>
+          <p class="h-card-cedula">CC {{ reg.empleado.cedula }}</p>
+        </div>
+        <span class="h-card-toggle">{{ reg.expandido ? '▲' : '▼' }}</span>
+      </div>
+
+      <div class="h-card-body" *ngIf="reg.expandido">
+
+        <!-- Ingreso móvil -->
+        <div class="h-card-seccion ingreso">
+          <p class="h-card-seccion-label">🟢 Ingreso</p>
+          <div class="h-card-inputs">
+            <input type="date" [(ngModel)]="reg.fechaIngreso" class="h-input" />
+            <input type="time" [(ngModel)]="reg.horaIngreso" class="h-input" />
+          </div>
+          <button class="h-btn h-btn-ingreso"
+                  (click)="guardarIngreso(reg)"
+                  [disabled]="reg.guardandoIngreso">
+            {{ reg.guardandoIngreso ? 'Guardando...' : 'Guardar ingreso' }}
+          </button>
+          <span class="h-feedback ok" *ngIf="reg.mensajeIngreso">{{ reg.mensajeIngreso }}</span>
+          <span class="h-feedback err" *ngIf="reg.errorIngreso">{{ reg.errorIngreso }}</span>
+        </div>
+
+        <!-- Salida móvil -->
+        <div class="h-card-seccion salida">
+          <p class="h-card-seccion-label">🔴 Salida</p>
+          <div class="h-card-inputs">
+            <input type="date" [(ngModel)]="reg.fechaSalida" class="h-input" />
+            <input type="time" [(ngModel)]="reg.horaSalida" class="h-input" />
+          </div>
+          <button class="h-btn h-btn-salida"
+                  (click)="guardarSalida(reg)"
+                  [disabled]="reg.guardandoSalida">
+            {{ reg.guardandoSalida ? 'Guardando...' : 'Guardar salida' }}
+          </button>
+          <span class="h-feedback ok" *ngIf="reg.mensajeSalida">{{ reg.mensajeSalida }}</span>
+          <span class="h-feedback err" *ngIf="reg.errorSalida">{{ reg.errorSalida }}</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="registrosFiltrados.length === 0 && !cargando" class="h-empty">
+      No hay empleados activos para mostrar.
+    </div>
+  </div>
+
+</div>

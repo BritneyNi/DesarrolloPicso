@@ -1,0 +1,172 @@
+/* =========================================
+   VARIABLES GLOBALES
+========================================= */
+:root {
+  --bg-light: #f4f7fc;
+  --card-light: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --border-light: #e5e7eb;
+  --bg-dark: #0f172a;
+  --card-dark: #1e293b;
+  --text-dark-primary: #f1f5f9;
+  --text-dark-secondary: #94a3b8;
+  --border-dark: #334155;
+}
+
+/* =========================================
+   CONTENEDOR GENERAL
+========================================= */
+.rrhh-dashboard {
+  padding: 120px 60px 60px 60px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(99,102,241,0.06), transparent 40%),
+    radial-gradient(circle at 90% 0%, rgba(59,130,246,0.06), transparent 40%),
+    #f9fafb;
+  animation: fadeInDashboard 0.6s ease-out;
+}
+
+@keyframes fadeInDashboard {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   HEADER
+========================================= */
+.dashboard-header {
+  margin-bottom: 50px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  position: relative;
+}
+
+.header-content > div:first-child {
+  flex: 1;
+  text-align: center;
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.dashboard-header::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  margin: 16px auto 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #6366f1, #3b82f6);
+}
+
+/* =========================================
+   BOTÓN EXPORTAR
+========================================= */
+.btn-exportar {
+  background: #00b37a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-exportar:hover {
+  background: #009966;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,179,122,0.3);
+}
+
+.btn-exportar:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================
+   GRID
+========================================= */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+/* =========================================
+   CARDS
+========================================= */
+app-card-contratos,
+app-card-afiliaciones,
+app-card-examen-ingreso,
+app-card-dotacion,
+app-card-alturas,
+app-card-liquidacion {
+  background: var(--card-light);
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid var(--border-light);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.04),
+    0 2px 6px rgba(0,0,0,0.03);
+  transition: all 0.25s ease;
+}
+
+app-card-contratos:hover,
+app-card-afiliaciones:hover,
+app-card-examen-ingreso:hover,
+app-card-dotacion:hover,
+app-card-alturas:hover,
+app-card-liquidacion:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.04),
+    0 2px 6px rgba(0,0,0,0.02);
+}
+
+/* =========================================
+   BOTÓN REGRESAR
+========================================= */
+app-boton-regresar {
+  position: fixed;
+  top: 95px;
+  left: 40px;
+  z-index: 50;
+  transition: transform 0.2s ease;
+}
+
+/* =========================================
+   MODO OSCURO
+========================================= */
+@media (prefers-color-scheme: dark) {
+  .rrhh-dashboard {
+    background:
+      radial-gradient(circle at 10% 10%, rgba(99,102,241,0.15), transparent 40%),
+      radial-gradient(circle at 90% 0%, rgba(59,130,246,0.15), transparent 40%),
+      #0b1220;
+  }
+}

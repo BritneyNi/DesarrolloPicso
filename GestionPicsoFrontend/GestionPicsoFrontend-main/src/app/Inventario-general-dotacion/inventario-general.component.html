@@ -1,0 +1,119 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+<div class="inventario-container">
+<h2>📦 Inventario General</h2>
+<div class="acciones-pdf">
+  <button class="btn-pdf" (click)="descargarPdfGeneral()">
+    📄 Descargar PDF General
+  </button>
+</div>
+
+<div class="top-panel">
+
+  <div class="cards">
+    <div class="card" (click)="aplicarFiltro('TODOS')">
+      <h3>📦 Elementos</h3>
+      <p>{{ totalElementos }}</p>
+    </div>
+
+    <div class="card ok" (click)="aplicarFiltro('OK')">
+      <h3>✅ OK</h3>
+      <p>{{ totalOk }}</p>
+    </div>
+
+    <div class="card bajo" (click)="aplicarFiltro('Bajo')">
+      <h3>⚠️ Bajo</h3>
+      <p>{{ totalBajo }}</p>
+    </div>
+
+    <div class="card agotado" (click)="aplicarFiltro('Agotado')">
+      <h3>❌ Agotados</h3>
+      <p>{{ totalAgotados }}</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="inventario-body">
+
+  <div class="grafico-panel">
+    <h4>Estado del Inventario</h4>
+    <canvas #graficoInventario></canvas>
+  </div>
+
+<div class="tabla-wrapper">
+<table class="tabla">
+  <thead>
+    <tr>
+      <th>Elemento</th>
+      <th>Tipo</th>
+      <th>Total Recibido</th>
+      <th>Disponible</th>
+      <th>Estado</th>
+      <th>Detalle</th>
+      <th>PDF</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <ng-container *ngFor="let e of inventarioFiltrado">
+      <tr>
+        <td class="link-elemento" (click)="irAInventarioElemento(e.elementoEppId)">
+          {{ e.elementoNombre }}
+        </td>
+        <td>{{ e.elementoTipo }}</td>
+        <td>{{ e.totalCantidad }}</td>
+        <td>{{ e.totalDisponible }}</td>
+        <td>
+          <span
+            [ngClass]="{
+              'ok': estado(e.totalCantidad, e.totalDisponible) === 'OK',
+              'bajo': estado(e.totalCantidad, e.totalDisponible) === 'Bajo',
+              'agotado': estado(e.totalCantidad, e.totalDisponible) === 'Agotado'
+            }">
+            {{ estado(e.totalCantidad, e.totalDisponible) }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm" (click)="toggle(e.elementoEppId)">
+            {{ expanded === e.elementoEppId ? 'Ocultar' : 'Ver' }}
+          </button>
+        </td>
+        <td>
+        <button
+            class="btn btn-sm btn-pdf"
+            (click)="descargarPdfElemento(e.elementoEppId)">
+            📄
+        </button>
+        </td>
+      </tr>
+
+      <!-- 🔽 Detalle -->
+      <tr *ngIf="expanded === e.elementoEppId">
+        <td colspan="6">
+          <table class="subtabla">
+            <thead>
+              <tr>
+                <th>Talla</th>
+                <th>Tipo</th>
+                <th>Total Recibido</th>
+                <th>Disponible</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of e.detalle">
+                <td>{{ d.talla }}</td>
+                <td>{{ d.tipo }}</td>
+                <td>{{ d.cantidadTotal }}</td>
+                <td>{{ d.cantidadDisponible }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>
+</div>
+</div>
+</div>

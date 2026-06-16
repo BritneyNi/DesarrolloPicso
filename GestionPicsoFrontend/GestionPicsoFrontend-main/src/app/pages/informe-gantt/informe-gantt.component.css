@@ -1,0 +1,92 @@
+.informe-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.btn-evidencias {
+  background: #f1f3f5;
+  border: 1px solid #d0d7de;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.evidencias-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.evidencias-modal {
+  background: white;
+  width: 800px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.2);
+}
+
+.evidencias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.evidencia-card {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  background: #f8f9fa;
+  transition: .2s;
+  text-align: center;
+}
+
+.evidencia-card:hover {
+  transform: translateY(-2px);
+}
+
+.evidencia-card.selected {
+  border-color: #0d6efd;
+  background: #eef4ff;
+}
+
+.evidencia-card input {
+  margin-bottom: 8px;
+}
+
+.evidencia-card img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.evidencia-card small {
+  display: block;
+  font-size: 11px;
+  color: #555;
+  word-break: break-word;
+}
+
+.btn-cerrar-evidencias {
+  margin-top: 20px;
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}

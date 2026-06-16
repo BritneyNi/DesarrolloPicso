@@ -1,0 +1,218 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="page-content">
+<h2>👷 Personal del permiso en caliente</h2>
+
+<div class="form-row">
+
+  <!-- INPUT AUTOCOMPLETE -->
+  <div class="autocomplete-container">
+
+    <input
+      type="text"
+      placeholder="🔍 Buscar empleado..."
+      [(ngModel)]="busquedaEmpleado"
+      (input)="filtrarEmpleadosPersonal()"
+      autocomplete="off"
+    />
+
+    <!-- LISTA -->
+    <ul
+      class="autocomplete-list"
+      *ngIf="empleadosFiltrados.length">
+
+      <li
+        *ngFor="let emp of empleadosFiltrados"
+        (click)="seleccionarEmpleadoPersonal(emp)">
+        {{ emp.nombreCompleto }} – {{ emp.cargo }}
+      </li>
+
+    </ul>
+
+  </div>
+
+  <button (click)="agregarPersonal()"
+          [disabled]="!empleadoIdSeleccionado || cargando">
+    ➕ Agregar
+  </button>
+
+</div>
+</div>
+
+<hr>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Cédula</th>
+      <th>Cargo</th>
+      <th>Firma</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let p of personal; let i = index">
+      <td>{{ p.empleado?.nombreCompleto }}</td>
+      <td>{{ p.empleado?.cedula }}</td>
+      <td>{{ p.empleado?.cargo }}</td>
+      <td>
+        <span *ngIf="p.firmaBase64">✔ Firmado</span>
+        <button *ngIf="!p.firmaBase64" (click)="abrirFirma(i)">✍ Firmar</button>
+
+        <div *ngIf="personalFirmandoIndex === i" class="firma-box">
+        <canvas
+  #canvas
+  width="300"
+  height="150"
+  class="firma-canvas"
+  (mousedown)="start($event, canvas)"
+  (mousemove)="draw($event)"
+  (mouseup)="end()"
+  (mouseleave)="end()"
+  (touchstart)="start($event, canvas)"
+  (touchmove)="draw($event)"
+  (touchend)="end()">
+</canvas>
+
+
+
+          <div class="firma-botones">
+            <button (click)="guardarFirma()">Guardar firma</button>
+            <button (click)="limpiar()">Limpiar</button>
+          </div>
+        </div>
+      </td>
+      <td>
+ <button
+  [style.background]="p.tieneEvaluacion ? '#4caf50' : '#1976d2'"
+  style="color:white"
+  (click)="abrirEvaluacion(p)">
+  📝 Evaluación
+</button>
+
+<button (click)="verEvaluaciones(p)">
+  📂 Evaluaciones
+</button>
+
+
+  <button (click)="eliminarPersonal(p.id)">
+    ❌ Eliminar
+  </button>
+</td>
+
+    </tr>
+  </tbody>
+</table>
+<div class="modal-backdrop" *ngIf="mostrarEvaluacion" (click)="cerrarEvaluacion()"></div>
+
+<div class="modal" *ngIf="mostrarEvaluacion" (click)="cerrarEvaluacion()">
+  <div class="modal-dialog modal-xl" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4>Evaluación – {{ personalEvaluando?.empleado?.nombreCompleto }}</h4>
+        <button (click)="mostrarEvaluacion=false">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th>Ítem</th>
+              <th>SI</th>
+              <th>NO</th>
+              <th>NA</th>
+              <th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let i of evaluacion, let idx =index">
+              <td>{{ i.item }}</td>
+
+              <td><input type="radio"  [name]="'respuesta_' + idx" [(ngModel)]="i.respuesta" value="SI" [disabled]="modoLectura"></td>
+              <td><input type="radio"  [name]="'respuesta_' + idx" [(ngModel)]="i.respuesta" value="NO" [disabled]="modoLectura"></td>
+              <td><input type="radio"  [name]="'respuesta_' + idx" [(ngModel)]="i.respuesta" value="NA" [disabled]="modoLectura"></td>
+
+              <td><input type="checkbox" [(ngModel)]="i.dias.L" [disabled]="modoLectura"></td>
+              <td><input type="checkbox" [(ngModel)]="i.dias.M" [disabled]="modoLectura"></td>
+              <td><input type="checkbox" [(ngModel)]="i.dias.X" [disabled]="modoLectura"></td>
+              <td><input type="checkbox" [(ngModel)]="i.dias.J" [disabled]="modoLectura"></td>
+              <td><input type="checkbox" [(ngModel)]="i.dias.V" [disabled]="modoLectura"></td>
+              <td><input type="checkbox" [(ngModel)]="i.dias.S" [disabled]="modoLectura"></td>
+              <td><input type="checkbox" [(ngModel)]="i.dias.D" [disabled]="modoLectura"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+     <div class="modal-footer">
+
+  <button (click)="cerrarEvaluacion()">
+    ❌ Cancelar
+  </button>
+
+  <!-- SOLO CUANDO ESTÁ VIENDO -->
+  <button 
+    *ngIf="modoLectura"
+    (click)="generarPdfEvaluacion()">
+    📄 PDF
+  </button>
+
+  <!-- SOLO CUANDO ESTÁ CREANDO -->
+  <button 
+    *ngIf="!modoLectura"
+    (click)="guardarEvaluacion()">
+    💾 Guardar
+  </button>
+
+</div>
+
+
+    </div>
+  </div>
+</div>
+<!-- ========================= -->
+<!-- MODAL LISTADO EVALUACIONES -->
+<!-- ========================= -->
+<div class="modal-backdrop" *ngIf="mostrarListadoEvaluaciones" (click)="mostrarListadoEvaluaciones =false"></div>
+
+<div class="modal" *ngIf="mostrarListadoEvaluaciones" (click)="mostrarListadoEvaluaciones=false">
+  <div class="modal-dialog" >
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4>📂 Evaluaciones realizadas</h4>
+        <button (click)="mostrarListadoEvaluaciones=false">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-sm table-bordered">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of evaluacionesRealizadas">
+              <td>{{ e.fecha | date:'short' }}</td>
+              <td>
+                <button (click)="verEvaluacion(e.id)">
+                  👁 Ver
+                </button>
+
+                <button (click)="eliminarEvaluacion(e.id)">
+                  🗑 Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,372 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+  min-height: 100vh;
+  padding: 1rem;
+  color: #2c2c2c;
+}
+
+/* TITULO */
+h2 {
+  text-align: center;
+  font-size: clamp(1.6rem, 4vw, 9.4rem);
+  font-weight: 600;
+  color: #1f3a5f;
+  margin: 5.0rem 0 2rem;
+
+}
+
+/* FORMULARIO */
+form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #dde3ea;
+}
+
+
+form input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #cfd6df;
+  font-size: 0.95rem;
+}
+
+
+form input:focus {
+  outline: none;
+  border-color: #1f3a5f;
+}
+
+form button {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: none;
+  background: #1f3a5f;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+form label {
+  grid-column: span 2;
+  font-weight: 500;
+  color: #425466;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+form button {
+  grid-column: span 2;
+}
+
+
+form button:hover {
+  background: #162b46;
+}
+
+/* TABLA DESKTOP */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #dde3ea;
+}
+
+thead {
+  background: #e9edf3;
+}
+
+th {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #425466;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+tbody tr:not(:last-child) {
+  border-bottom: 1px solid #eef2f6;
+}
+
+/* ESTADOS */
+.estado {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.estado.ok {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.estado.bajo {
+  background: #fff4e5;
+  color: #b26a00;
+}
+
+.estado.agotado {
+  background: #fdecea;
+  color: #a61b1b;
+}
+
+/* BOTON ELIMINAR */
+.estado-cell {
+  position: relative;
+}
+
+.btn-eliminar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  background: none;
+  color: #8a8a8a;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-eliminar:hover {
+  color: #a61b1b;
+}
+
+/* ========================= */
+/* 📱 TABLA TIPO CARD MÓVIL */
+/* ========================= */
+@media (max-width: 768px) {
+
+  table, thead, tbody, tr, td {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    background: #ffffff;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid #dde3ea;
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    font-size: 0.9rem;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #425466;
+  }
+
+  .btn-eliminar {
+    top: 10px;
+    right: 10px;
+  }
+}
+.estado-cell {
+  position: relative;
+  padding-right: 28px;
+}
+
+/* Botón ❌ */
+.btn-eliminar {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  border: none;
+  background: transparent;
+  color: #e53935;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.btn-eliminar:hover {
+  opacity: 1;
+  color: #b71c1c;
+}
+.error {
+  color: #d63031;
+  font-size: 0.8rem;
+  margin-top: 2px;
+  display: block;
+}
+.campo input[type="file"] {
+  padding: 0.4rem;
+  border: 1px dashed #cfd6df;
+  border-radius: 6px;
+  background: #fafafa;
+}
+.resumen-inventario {
+  display: flex;
+  gap: 20px;
+  margin: 15px 0;
+  padding: 12px 16px;
+  background: #f4f6f8;
+  border-radius: 8px;
+  border-left: 4px solid #1976d2;
+}
+
+.resumen-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.resumen-item .label {
+  font-size: 12px;
+  color: #555;
+}
+
+.resumen-item .valor {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.hint {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #777;
+}
+/* ================= KARDEX ================= */
+
+.kardex-container {
+  margin-top: 2rem;
+}
+
+.btn-kardex {
+  background: #1e293b;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-kardex:hover {
+  background: #334155;
+}
+
+.kardex-panel {
+  margin-top: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #f9fafb;
+}
+
+.kardex-panel table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kardex-panel th,
+.kardex-panel td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.kardex-panel th {
+  text-align: left;
+  background: #f1f5f9;
+}
+
+.loading,
+.empty {
+  padding: 1rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* ===== Movimiento badges ===== */
+
+.movimiento {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.movimiento.entrada {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.movimiento.salida {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.movimiento.devolucion {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.movimiento.ajuste {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.cantidad {
+  text-align: center;
+  font-weight: 600;
+}
+
+.obs {
+  max-width: 300px;
+  font-size: 13px;
+  color: #374151;
+}
+.detalle-movimiento {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.detalle-movimiento .obs {
+  color: #555;
+  font-style: italic;
+}
+
+.detalle-movimiento .personas {
+  margin-top: 4px;
+  padding-left: 6px;
+  border-left: 3px solid #ddd;
+}
+
+.detalle-movimiento .personas div {
+  line-height: 1.3;
+}

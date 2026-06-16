@@ -1,0 +1,210 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="ph-container">
+
+  <h2>🧪 Prueba de {{ form.tipoPrueba || 'Hermeticidad' }}</h2>
+
+  <form (ngSubmit)="guardar()">
+
+    <!-- 🔹 FILA 1 -->
+    <div class="row">
+      <div>
+        <label>Tipo de prueba</label>
+        <select [(ngModel)]="form.tipoPrueba" name="tipoPrueba" required>
+          <option value="">Seleccione</option>
+          <option value="Hermeticidad">Hermeticidad</option>
+          <option value="Estanqueidad">Estanqueidad</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Proyecto</label>
+        <input type="text" [(ngModel)]="form.proyecto" name="proyecto" placeholder="Proyecto" />
+      </div>
+    </div>
+
+    <!-- 🔹 FILA 2 -->
+    <div class="full">
+      <label>Cliente</label>
+      <input type="text" [(ngModel)]="form.cliente" name="cliente" placeholder="Cliente" required />
+    </div>
+
+    <!-- 🔹 FILA 3 -->
+    <div class="row">
+      <div>
+        <label>Inicio de prueba</label>
+        <input type="datetime-local" [(ngModel)]="form.inicioPrueba" name="inicioPrueba" required />
+      </div>
+
+      <div>
+        <label>Presión inicial (PSI / cm²)</label>
+        <input type="number" [(ngModel)]="form.presionInicial" name="presionInicial" />
+      </div>
+    </div>
+
+    <!-- 🔹 FILA 4 -->
+    <div class="full">
+      <label>Descripción de la prueba</label>
+      <textarea [(ngModel)]="form.descripcionPrueba" name="descripcionPrueba" placeholder="Descripción de la prueba"></textarea>
+    </div>
+
+    <!-- 🔹 FILA 5 -->
+    <div class="full">
+      <label>Imagen Inicio</label>
+      <input type="file" #fileInput (change)="onFileChange($event)" />
+    </div>
+
+    <div *ngIf="previewInicio">
+      <p>Vista previa:</p>
+      <img [src]="previewInicio" width="250" />
+    </div>
+
+    <button type="submit" [disabled]="cargando">
+      {{ cargando ? 'Guardando...' : 'Guardar Prueba' }}
+    </button>
+
+  </form>
+
+</div>
+
+<hr>
+
+<h3 style="margin-top:30px;">📋 Pruebas registradas</h3>
+<div class="table-container">
+<table >
+  <thead>
+    <tr>
+      <th>Proyecto</th>
+      <th>Cliente</th>
+      <th>Inicio</th>
+      <th>Fin</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+
+    <tbody>
+      <tr *ngFor="let p of pruebas">
+      <td>{{ p.proyecto }}</td>
+      <td>{{ p.cliente }}</td>
+      <td>{{ p.inicioPrueba | date:'short' }}</td>
+      <td>{{ p.finPrueba ? (p.finPrueba | date:'short') : '-' }}</td>
+      <td class="estado-col">
+
+  <div class="estado-wrapper">
+
+    <div class="estado-info">
+      <span *ngIf="p.estado === 'Iniciada'" class="estado-proceso">
+        🟡 En proceso
+      </span>
+
+      <span *ngIf="p.estado === 'Finalizada'" class="estado-finalizado">
+        🟢 Finalizada
+      </span>
+    </div>
+
+    <div class="menu-wrapper">
+      <button class="menu-btn" (click)="toggleMenu(p.id)">⋮</button>
+
+      <div class="menu" *ngIf="menuAbiertoId === p.id">
+
+        <button (click)="verPrueba(p.id)">
+          👁 Ver
+        </button>
+
+        <button *ngIf="p.estado === 'Finalizada'" (click)="editarPrueba(p.id)">
+          ✏️ Editar
+        </button>
+
+        <button *ngIf="p.estado === 'Iniciada'" (click)="abrirModal(p)">
+          Finalizar
+        </button>
+
+        <button *ngIf="p.estado === 'Finalizada'" (click)="descargarPdf(p.id)">
+        📄 PDF
+        </button>
+
+        <button (click)="eliminarPrueba(p.id)" class="danger">
+          🗑 Eliminar
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="modal" *ngIf="modalAbierto" (click)="cerrarModal()">
+   <div (click)="$event.stopPropagation()">
+
+  <div class="modal-content">
+
+    <h3>Finalizar Prueba</h3>
+
+    <!-- 🔹 FILA 1 -->
+    <div class="row">
+      <div>
+        <label>Fecha fin</label>
+        <input type="datetime-local" [(ngModel)]="formFinalizar.finPrueba" />
+      </div>
+
+      <div>
+        <label>Presión final (PSI / cm²)</label>
+        <input type="number" [(ngModel)]="formFinalizar.presionFinal" />
+      </div>
+    </div>
+
+    <!-- 🔹 FILA 2 -->
+    <div class="full">
+      <label>Cumple</label>
+      <select [(ngModel)]="formFinalizar.cumple">
+        <option value="">Seleccione</option>
+        <option value="Si">Si</option>
+        <option value="No">No</option>
+      </select>
+    </div>
+
+    <!-- 🔹 FIRMAS -->
+    <div class="firma-box">
+      <label>Firma Contratista</label>
+      <canvas #canvasContratista class="firma-canvas"></canvas>
+      <button type="button" (click)="limpiarFirma('contratista')">Limpiar</button>
+    </div>
+
+    <div class="firma-box">
+      <label>Firma Constructor</label>
+      <canvas #canvasConstructor class="firma-canvas"></canvas>
+      <button type="button" (click)="limpiarFirma('constructor')">Limpiar</button>
+    </div>
+
+    <!-- 🔹 IMAGEN -->
+    <div class="full">
+      <label>Imagen Final</label>
+      <input type="file" (change)="onFileChangeFinal($event)" />
+    </div>
+
+    <div *ngIf="previewFinal" class="full">
+      <img [src]="previewFinal" width="200">
+    </div>
+
+    <!-- 🔹 DESCRIPCION -->
+    <div class="full">
+      <label>Descripción</label>
+      <textarea [(ngModel)]="formFinalizar.descripcion" placeholder="Descripción"></textarea>
+    </div>
+
+    <!-- 🔹 ACCIONES -->
+    <div class="acciones">
+      <button (click)="finalizarPrueba()">Guardar</button>
+      <button (click)="cerrarModal()">Cancelar</button>
+    </div>
+
+  </div>
+  </div>
+
+</div>

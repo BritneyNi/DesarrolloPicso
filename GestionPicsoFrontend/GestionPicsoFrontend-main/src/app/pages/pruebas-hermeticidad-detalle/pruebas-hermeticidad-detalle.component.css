@@ -1,0 +1,176 @@
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  color: #eaeaea;
+}
+
+/* 🔹 TITULOS */
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f0404;
+}
+
+h3 {
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+/* 🔹 TARJETAS */
+.card {
+  background: #2a2a2a;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* 🔹 GRID */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.full {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+/* 🔹 FORM GROUP */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* 🔹 LABELS */
+label {
+  font-size: 12px;
+  margin-bottom: 2px;
+  color: #b0b0b0;
+}
+
+/* 🔥 INPUTS COMPACTOS */
+input,
+select {
+  width: 100%;
+  padding: 6px 8px;
+  height: 34px;
+  border-radius: 8px;
+  background: #1f1f1f;
+  border: 1px solid #444;
+  color: #fff;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+/* 🔹 TEXTAREA */
+textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  background: #1f1f1f;
+  border: 1px solid #444;
+  color: #fff;
+  font-size: 13px;
+  min-height: 70px;
+  resize: vertical;
+}
+
+/* 🔥 FOCUS */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #00bcd4;
+  box-shadow: 0 0 4px rgba(0,188,212,0.4);
+}
+
+/* 🔹 DISABLED */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+/* 🔹 ESTADO */
+.estado {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-block;
+  margin-top: 6px;
+  width: fit-content;
+}
+
+.estado.iniciada {
+  background: #ffc107;
+  color: #000;
+}
+
+.estado.finalizada {
+  background: #4caf50;
+  color: #fff;
+}
+
+/* 🔹 IMÁGENES */
+.imagenes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.imagenes div {
+  display: flex;
+  flex-direction: column;
+}
+
+.imagenes p {
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #ccc;
+}
+
+.imagenes img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  background: #fff;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid #444;
+}
+
+/* 🔹 BOTONES */
+.acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #00bcd4;
+  color: #000;
+  font-weight: 500;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #00a5bb;
+}
+
+button:active {
+  transform: scale(0.97);
+}

@@ -1,0 +1,183 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="ps-wrapper">
+
+  <div class="ps-header">
+    <h1 class="ps-titulo">Programación Semanal</h1>
+    <span class="ps-semana">📅 {{ semanaActual }}</span>
+  </div>
+
+  <!-- TABS -->
+  <div class="ps-tabs">
+    <button [class.activo]="vistaActiva === 'semana'" (click)="vistaActiva = 'semana'">
+      Esta semana
+    </button>
+    <button [class.activo]="vistaActiva === 'historico'" (click)="cargarHistorico()">
+      Historial
+    </button>
+    <button *ngIf="esAdmin" [class.activo]="vistaActiva === 'admin'" (click)="cargarTodasLasProgramaciones()">
+      👁 Todas las obras
+    </button>
+  </div>
+
+  <!-- VISTA SEMANA ACTUAL -->
+  <div *ngIf="vistaActiva === 'semana'">
+
+    <div *ngIf="cargando" class="ps-cargando">Cargando empleados...</div>
+
+    <div *ngIf="!cargando">
+
+      <!-- EMPLEADOS YA PROGRAMADOS -->
+      <div *ngIf="empleadosProgramados.length > 0" class="ps-seccion">
+        <h3 class="ps-seccion-titulo verde">✅ Programados esta semana ({{ empleadosProgramados.length }})</h3>
+        <table class="ps-tabla">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Cargo</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let emp of empleadosProgramados">
+              <td>{{ emp.nombreCompleto }}</td>
+              <td>{{ emp.cargo }}</td>
+              <td>
+                <button class="ps-btn-eliminar" (click)="eliminarProgramacion(emp.id)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- EMPLEADOS BLOQUEADOS -->
+      <div *ngIf="empleadosBloqueados.length > 0" class="ps-seccion">
+        <h3 class="ps-seccion-titulo rojo">🔒 No disponibles esta semana ({{ empleadosBloqueados.length }})</h3>
+        <table class="ps-tabla">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Obra</th>
+              <th>Residente</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let emp of empleadosBloqueados">
+              <td>{{ emp.nombreCompleto }}</td>
+              <td>{{ emp.obraBloqueo }}</td>
+              <td>{{ emp.residenteBloqueo }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- EMPLEADOS PENDIENTES DE PROGRAMAR -->
+      <div *ngIf="empleadosPendientes.length > 0" class="ps-seccion">
+        <h3 class="ps-seccion-titulo amarillo">⚠️ Pendientes de programar ({{ empleadosPendientes.length }})</h3>
+        <div class="ps-acciones-top">
+          <label>
+            <input type="checkbox"
+              [checked]="todosSeleccionados"
+              (change)="toggleTodos($any($event.target).checked)" />
+            Seleccionar todos
+          </label>
+          <button class="ps-btn-guardar"
+                  (click)="guardarProgramacion()"
+                  [disabled]="guardando || rol === 'responsable'"
+                  [title]="rol === 'responsable' ? 'Solo administradores pueden programar la semana' : ''">
+            {{ guardando ? 'Guardando...' : '💾 Programar semana' }}
+          </button>
+        </div>
+        <table class="ps-tabla">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Empleado</th>
+              <th>Cargo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let emp of empleadosPendientes">
+              <td>
+                <input type="checkbox" [(ngModel)]="emp.seleccionado" />
+              </td>
+              <td>{{ emp.nombreCompleto }}</td>
+              <td>{{ emp.cargo }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="empleados.length === 0" class="ps-vacio">
+        No hay empleados asignados a esta obra.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VISTA HISTORIAL -->
+  <div *ngIf="vistaActiva === 'historico'">
+    <h3 class="ps-seccion-titulo">📋 Historial de programaciones</h3>
+    <table class="ps-tabla" *ngIf="historico.length > 0">
+      <thead>
+        <tr>
+          <th>Empleado</th>
+          <th>Semana</th>
+          <th>Residente</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let h of historico">
+          <td>{{ h.empleadoNombre }}</td>
+          <td>{{ h.fechaInicioSemana | date:'dd/MM' }} - {{ h.fechaFinSemana | date:'dd/MM/yyyy' }}</td>
+          <td>{{ h.residenteNombre }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="historico.length === 0" class="ps-vacio">No hay historial disponible.</div>
+  </div>
+
+  <!-- VISTA ADMIN — todas las obras -->
+  <div *ngIf="vistaActiva === 'admin'">
+    <div *ngIf="cargandoAdmin" class="ps-cargando">Cargando programaciones...</div>
+
+    <div *ngIf="!cargandoAdmin">
+      <div *ngIf="todasLasProgramaciones.length === 0" class="ps-vacio">
+        No hay programaciones esta semana.
+      </div>
+
+      <div *ngFor="let obraId of obraIds" class="ps-seccion">
+        <h3 class="ps-seccion-titulo" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>🏗 {{ getNombreObra(obraId) }}</span>
+          <span style="font-size:12px;font-weight:400;color:#888;">{{ getPorObra(obraId).length }} persona(s)</span>
+        </h3>
+        <table class="ps-tabla">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Empleado</th>
+              <th>Residente</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of getPorObra(obraId); let i = index">
+              <td style="color:#ccc;font-size:12px;">{{ i + 1 }}</td>
+              <td>{{ p.empleadoNombre }}</td>
+              <td style="color:#888;">{{ p.residenteNombre }}</td>
+              <td>
+                <button class="ps-btn-eliminar" (click)="eliminarProgramacionAdmin(p.id)">
+                  Quitar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

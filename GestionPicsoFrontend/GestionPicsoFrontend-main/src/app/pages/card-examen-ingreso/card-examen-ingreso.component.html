@@ -1,0 +1,32 @@
+<div class="card">
+  <ng-container *ngIf="!loading && !error">
+    <div class="card-header">
+      <h3>📄 Examenes de ingreso</h3>
+      <span class="semaforo" [ngClass]="getSemaforo()"></span>
+    </div>
+    <div class="metric total">
+      <span>👥 Total empleados activos:</span>
+      <strong>{{ data?.totalEmpleadosActivos }}</strong>
+    </div>
+    <div class="metric success clickable" (click)="irConExamen()">
+      <span>✅ Empleados con examenes de ingreso:</span>
+      <strong>{{ data?.conExamen }}</strong>
+    </div>
+    <div class="metric warning clickable" (click)="irSinExamen()">
+      <span>⏳ Empleados sin examenes de ingreso:</span>
+      <strong>{{ data?.sinExamen }}</strong>
+    </div>
+    <div class="chart-container" *ngIf="data">
+      <div class="progress-bar">
+        <div class="progress-fill"
+          [style.width.%]="(data.conExamen / data.totalEmpleadosActivos) * 100">
+        </div>
+      </div>
+      <div class="progress-label">
+        {{ ((data.conExamen / data.totalEmpleadosActivos) * 100) | number:'1.0-0' }}% con examen
+      </div>
+    </div>
+  </ng-container>
+  <div *ngIf="loading" style="padding: 1rem; color: #aaa;">Cargando examenes...</div>
+  <div *ngIf="error" style="padding: 1rem; color: red;">Error cargando información</div>
+</div>

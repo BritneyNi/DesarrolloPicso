@@ -1,0 +1,231 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="inventario-admin">
+  <h2 id="title">Administración de Inventario</h2>
+
+  <div class="kpi-container">
+
+  <div class="kpi-card">
+    <h4>🔧 Herramientas</h4>
+    <p>{{ totalHerramientas }}</p>
+  </div>
+
+  <div class="kpi-card">
+    <h4>📦 Stock Total</h4>
+    <p>{{ stockTotal }}</p>
+  </div>
+
+  <div class="kpi-card">
+    <h4>⏳ Reservado</h4>
+    <p>{{ stockReservado }}</p>
+  </div>
+
+  <div class="kpi-card">
+    <h4>✅ Disponible</h4>
+    <p>{{ stockDisponible }}</p>
+  </div>
+
+</div>
+
+  <div class="search-and-add-container">
+    <div class="search-container">
+      <input
+        type="text"
+        placeholder="Buscar material..."
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="filtrarMateriales()"
+        class="search-input"
+      />
+    </div>
+    <button (click)="mostrarFormularioMaterial()" class="btn-agregar">
+      <i class="bx bx-plus-circle"></i>
+    </button>
+  </div>
+
+ <div id="excel-container">
+    <button id="excel" class="btn btn-agregar" id="solicitud"  (click)="exportarExcel()">
+      <i class="bx bx-download"></i> Exportar a Excel
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Código</th>
+          <th>Herramienta</th>
+          <th>Marca</th>
+          <th>Número de Serie</th>
+          <th>Cantidad</th>
+          <th>Ubicación</th>
+          <th>Responsable</th>
+          <th>Módulo</th>
+          <th>Nivel</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+  <tr *ngFor="let material of materialesFiltrados | slice:(currentPage - 1) * pageSize : currentPage * pageSize; let i = index; trackBy: trackById" [ngClass]="getStockClass(material)">
+
+  <td data-label="#"> {{ i + 1 }} </td>
+
+  <td data-label="Código">
+    {{ material.codigo }}
+  </td>
+
+  <td data-label="Herramienta">
+    {{ material.herramienta }}
+  </td>
+
+  <td data-label="Marca">
+    {{ material.marca || '-' }}
+  </td>
+
+  <td data-label="Número de Serie">
+    {{ material.numeroSerie || '-' }}
+  </td>
+
+ <td data-label="Cantidad">
+  {{ material.cantidad }}
+  <span class="stock-badge" *ngIf="material.cantidad - (material.stockReservado || 0) <= 2">
+    ⚠
+  </span>
+</td>
+
+  <td data-label="Ubicación" id="enlace" (click)="irAInventarioInterno(material.ubicacion)" class="td-clickable">
+    {{ material.ubicacion }}
+  </td>
+
+  <td data-label="Responsable">
+    {{ material.responsable }}
+  </td>
+
+  <td data-label="Módulo">
+    {{ material.modulo }}
+  </td>
+
+  <td data-label="Nivel">
+    {{ material.nivel }}
+  </td>
+
+  <td data-label="Acciones" class="container-row">
+
+    <button (click)="mostrarFormularioMaterial(material)" class="btn-editar">
+      <i class="bx bxs-edit"></i>
+    </button>
+
+    <button (click)="eliminarHerramienta(material.id)" class="btn-eliminar">
+      <i class="bx bx-trash"></i>
+    </button>
+
+  </td>
+
+</tr>
+      </tbody>
+    </table>
+  </div>
+
+  <nav *ngIf="pages.length > 1" class="pagination-container">
+    <ul class="pagination">
+      <li (click)="setPage(currentPage - 1)" [class.disabled]="currentPage === 1">«</li>
+      <li
+        *ngFor="let p of paginatedPages"
+        (click)="setPage(p)"
+        [class.active]="currentPage === p"
+      >
+        {{ p }}
+      </li>
+      <li (click)="setPage(currentPage + 1)" [class.disabled]="currentPage === pages.length">»</li>
+    </ul>
+  </nav>
+
+  <div *ngIf="mostrarFormulario" class="modal" (click)="cerrarFormulario()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>{{ esEdicion ? 'Editar Material' : 'Nuevo Material' }}</h3>
+      <div *ngIf="mensaje" [ngClass]="{'mensaje-exito': tipoMensaje === 'success', 'mensaje-error': tipoMensaje === 'error'}">
+        {{ mensaje }}
+      </div>
+
+      <form (ngSubmit)="guardarMaterial()">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Código:</label>
+            <input [(ngModel)]="materialActual.codigo" name="codigo" type="text" required />
+          </div>
+
+          <div class="form-group">
+            <label>Número de Serie:</label>
+            <input [(ngModel)]="materialActual.numeroSerie" name="numeroSerie" type="text" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Herramienta:</label>
+            <input [(ngModel)]="materialActual.herramienta" name="herramienta" type="text" required />
+          </div>
+
+          <div class="form-group">
+            <label>Cantidad:</label>
+            <input [(ngModel)]="materialActual.cantidad" name="cantidad" type="number" min="1" [disabled]="esEdicion" required />
+          </div>
+        </div>
+
+      <div class="form-group">
+        <label>Marca:</label>
+        <input [(ngModel)]="materialActual.marca" name="marca" type="text" />
+      </div>
+
+        <div class="form-group">
+          <label>Observaciones:</label>
+          <textarea [(ngModel)]="materialActual.observaciones" name="observaciones"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ubicación:</label>
+            <select [(ngModel)]="materialActual.ubicacion" name="ubicacion" class="form-select">
+              <option *ngFor="let obra of obras" [value]="obra.nombreObra">
+                {{ obra.nombreObra }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Responsable:</label>
+            <select [(ngModel)]="materialActual.responsable" name="responsable" class="form-select">
+            <option *ngFor="let e of empleados" [value]="e.nombreCompleto">
+              {{ e.nombreCompleto }}
+            </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          
+          <div class="form-group">
+          <label>Módulo:</label>
+          <input [(ngModel)]="materialActual.modulo" name="modulo" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label>Nivel:</label>
+            <input [(ngModel)]="materialActual.nivel" name="nivel" type="text" />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-guardar">
+            <i class="bx bx-save"></i> Guardar
+          </button>
+          <button type="button" (click)="cerrarFormulario()" class="btn-cancelar">
+            <i class="bx bx-x-circle"></i> Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

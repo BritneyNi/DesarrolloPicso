@@ -1,0 +1,593 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<h1>Permisos de Trabajo en Alturas</h1>
+
+<button class="btn-toggle"
+        type="button"
+        (click)="toggleFormulario()">
+  {{ mostrarFormulario ? 'Ocultar formulario' : 'Crear permiso de trabajo en alturas' }}
+</button>
+
+<div>
+  <input
+  type="text"
+  class="form-control mb-3"
+  placeholder="Buscar por empleado autorizado..."
+  [(ngModel)]="filtroEmpleado"
+  (input)="filtrarPermisos()"
+/>
+</div>
+
+<form *ngIf="mostrarFormulario" class="form-container" [formGroup]="form" (ngSubmit)="guardar()">
+  <button
+  type="button"
+  class="btn-cerrar-flotante"
+  (click)="toggleFormulario()"
+  title="Cerrar formulario">
+  ✖
+</button>
+  
+<!-- Encabezado y Datos Generales -->
+  <!-- Campos simples existentes -->
+   <!-- ================= DATOS GENERALES ================= -->
+  <section class="form-section">
+    <h3>Datos generales</h3>
+
+    <label>Fecha de registro</label>
+    <input type="date" formControlName="fecha">
+
+    <label>Fecha inicio</label>
+    <input type="date" formControlName="fechaInicio">
+
+    <label>Fecha finalización</label>
+    <input type="date" formControlName="fechaFinalizacion">
+
+    <label>Lugar de ejecución</label>
+    <input formControlName="lugarEjecucion">
+
+    <label>Altura aproximada (m)</label>
+    <input type="number" formControlName="alturaAproximada">
+  </section>
+
+
+
+<section class="form-section">
+  <h3>Tipo de trabajo</h3>
+
+  <div class="checkbox-row">
+    <label>
+      <input type="checkbox"
+        [checked]="form.get('tipoTrabajoRealizar')?.value === 'rutinario'"
+        (change)="form.get('tipoTrabajoRealizar')?.setValue('rutinario')">
+      Rutinario
+    </label>
+
+    <label>
+      <input type="checkbox"
+        [checked]="form.get('tipoTrabajoRealizar')?.value === 'No rutinario'"
+        (change)="form.get('tipoTrabajoRealizar')?.setValue('No rutinario')">
+      No rutinario
+    </label>
+  </div>
+</section>
+
+
+ 
+<section class="form-section">
+  <h3>Responsables</h3>
+
+  <label>Responsable del permiso</label>
+  <div>
+    <input
+      [value]="empleadoVisual['responsablePermiso'] || ''"
+      (input)="buscarEmpleados($any($event.target).value, 'responsablePermiso')" />
+
+    <ul class="autocomplete"
+        *ngIf="empleadosFiltrados.length && campoActivo === 'responsablePermiso'">
+      <li *ngFor="let e of empleadosFiltrados"
+          (mousedown)="seleccionarEmpleado(e)">
+        {{ e.nombreCompleto }} – {{ e.cargo }}
+      </li>
+    </ul>
+  </div>
+</section>
+
+
+ <section class="form-section">
+  <h3>Firma del responsable</h3>
+
+  <div class="firma-wrapper">
+    <canvas #canvasFirmaResponsable
+            width="300"
+            height="120"
+            class="firma-canvas"
+            (mousedown)="iniciarFirmaResponsable($event)"
+            (mousemove)="dibujarFirmaResponsable($event)"
+            (mouseup)="terminarFirmaResponsable()"
+            (mouseleave)="terminarFirmaResponsable()"
+            (touchstart)="iniciarFirmaResponsable($event)"
+            (touchmove)="dibujarFirmaResponsable($event)"
+            (touchend)="terminarFirmaResponsable()">
+    </canvas>
+
+    <button type="button"
+            class="btn-limpiar-firma"
+            (click)="limpiarFirmaResponsable()">
+      Limpiar
+    </button>
+  </div>
+</section>
+
+
+<section class="form-section">
+<label>Ayudante de Seguridad:</label>
+<input
+  [value]="empleadoVisual['ayudanteSeguridad'] || ''"
+  (input)="buscarEmpleados($any($event.target).value, 'ayudanteSeguridad')"
+/>
+
+<ul class="autocomplete"
+    *ngIf="empleadosFiltrados.length && campoActivo === 'ayudanteSeguridad'">
+  <li
+    *ngFor="let e of empleadosFiltrados"
+    (mousedown)="seleccionarEmpleado(e)"
+  >
+    {{ e.nombreCompleto }} – {{ e.cargo }}
+  </li>
+</ul>
+
+<label>Persona que autoriza el trabajo:</label>
+<input
+  [value]="empleadoVisual['personaAutoriza'] || ''"
+  (input)="buscarEmpleados($any($event.target).value, 'personaAutoriza')"
+/>
+
+<ul class="autocomplete"
+    *ngIf="empleadosFiltrados.length && campoActivo === 'personaAutoriza'">
+  <li
+    *ngFor="let e of empleadosFiltrados"
+    (mousedown)="seleccionarEmpleado(e)"
+  >
+    {{ e.nombreCompleto }} – {{ e.cargo }}
+  </li>
+</ul>
+
+
+
+<label>Coordinador de Trabajo en Alturas:</label>
+<input
+  [value]="empleadoVisual['coordinadorTrabajoAlturas'] || ''"
+  (input)="buscarEmpleados($any($event.target).value, 'coordinadorTrabajoAlturas')"
+/>
+
+<ul class="autocomplete"
+    *ngIf="empleadosFiltrados.length && campoActivo === 'coordinadorTrabajoAlturas'">
+  <li
+    *ngFor="let e of empleadosFiltrados"
+    (mousedown)="seleccionarEmpleado(e)"
+  >
+    {{ e.nombreCompleto }} – {{ e.cargo }}
+  </li>
+</ul>
+
+
+  <label>Descripción de la tarea:</label>
+  <textarea formControlName="descripcionTarea"></textarea>
+  <label>Herramientas a utilizar:</label>
+  <textarea formControlName="herramientaUtilizar"></textarea>
+</section>
+
+  <!-- Sección Repetitiva: Responsable Plan de Emergencia -->
+ <h3>Persona responsable de activar el plan de Emergencia</h3>
+
+<div formArrayName="responsablesPlanEmergencia">
+  <div
+    *ngFor="let resp of responsablesPlanEmergencia.controls; let i = index"
+    [formGroupName]="i"
+    style="border:1px solid #ccc; padding:10px; margin-bottom:10px;"
+  >
+    <label>Nombre:</label>
+    <input
+      formControlName="nombres"
+      (input)="buscarEmpleados($any($event.target).value, 'responsablesPlanEmergencia-' + i)"
+    />
+
+    <ul class="autocomplete"
+        *ngIf="empleadosFiltrados.length && campoActivo === 'responsablesPlanEmergencia-' + i">
+      <li
+        *ngFor="let e of empleadosFiltrados"
+        (mousedown)="seleccionarEmpleadoArray(e, i)"
+      >
+        {{ e.nombreCompleto }} – {{ e.cargo }}
+      </li>
+    </ul>
+
+    <button type="button" (click)="responsablesPlanEmergencia.removeAt(i)">
+      Eliminar
+    </button>
+  </div>
+
+  <button type="button" (click)="agregarResponsablePlanEmergencia()">
+    Agregar Responsable
+  </button>
+</div>
+<section class="form-section">
+  <!-- Medidas Prevención -->
+  <h3>Medidas de Prevención y Protección</h3>
+  <label><input type="checkbox" [checked]="medidasSeleccionadas.includes('Andamio')" (change)="onMedidaToggle('Andamio',$event)"> Andamio</label>
+  <label><input type="checkbox" [checked]="medidasSeleccionadas.includes('Elevador Personal')" (change)="onMedidaToggle('Elevador Personal', $event)"> Elevador Personal</label>
+  <label><input type="checkbox" [checked]="medidasSeleccionadas.includes('Espacio Confinado')" (change)="onMedidaToggle('Espacio Confinado', $event)"> Espacio Confinado</label>
+  <label><input type="checkbox" [checked]="medidasSeleccionadas.includes('Trabajo en Alturas')"  (change)="onMedidaToggle('Trabajo en Alturas', $event)"> Trabajo Alturas</label>
+  <label><input type="checkbox" [checked]="medidasSeleccionadas.includes('Escalera')"  (change)="onMedidaToggle('Escalera', $event)"> Escalera</label>
+  <label><input type="checkbox" [checked]="medidasSeleccionadas.includes('Energias Peligrosas')"  (change)="onMedidaToggle('Energias Peligrosas', $event)"> Energías Peligrosas</label>
+  <label>Otro:</label>
+  <input formControlName="otroAcceso">
+
+  <!-- Elementos de Protección -->
+  <h3>Elementos de protección personal y sistemas contra caidas:</h3>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Linea de VidaVertical')" (change)="onProteccionToggle('Linea de VidaVertical', $event)"> Línea de Vida Vertical</label>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Eslinga de posicionamiento')" (change)="onProteccionToggle('Eslinga de posicionamiento', $event)"> Eslinga Posicionamiento</label>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Sistemas de anclaje')" (change)="onProteccionToggle('Sistemas de anclaje', $event)"> Sistemas de Anclaje</label>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Arnes de cuerpo entero')" (change)="onProteccionToggle('Arnes de cuerpo entero', $event)"> Arnés Cuerpo Entero</label>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Guantes')" (change)="onProteccionToggle('Guantes', $event)"> Guantes</label>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Gafas')"  (change)="onProteccionToggle('Gafas', $event)"> Gafas</label>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Linea de vida horizontal')" (change)="onProteccionToggle('Linea de vida horizontal', $event)"> Línea de Vida Horizontal</label>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Casco de barboquejo')" (change)="onProteccionToggle('Casco de barboquejo', $event)"> Casco Barboquejo</label>
+  <label><input type="checkbox" [checked]="proteccionSeleccionada.includes('Senalizacion de area')"  (change)="onProteccionToggle('Senalizacion de area', $event)"> Señalización Área</label>
+  <label>Otros Elementos de protección personal o sistemas de protección contra caidas (¿cuales?):</label>
+  <textarea formControlName="otrosElementos"></textarea>
+</section>
+
+<section class="form-section">
+<label>
+  <input type="checkbox" formControlName="permisoTrabajoElectrico">
+  Trabajo eléctrico
+</label>
+</section>
+
+<section class="form-section">
+<label>Observaciones:</label>
+<textarea formControlName="observaciones" placeholder="Escriba observaciones adicionales"></textarea>
+</section>
+  
+<button type="submit">Guardar</button>
+</form>
+<!-- =========================
+     TABLA DE PERMISOS CREADOS
+========================= -->
+<h2 style="margin-top:30px;">Permisos registrados</h2>
+
+<table class="tabla-permisos" *ngIf="permisos?.length">
+  <thead>
+    <tr>
+      <th>Fecha registro</th>
+      <th>Lugar</th>
+      <th>Responsable</th>
+      <th>Altura (m)</th>
+      <th>Personal autorizado</th>
+      <th>Descripción</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  <ng-container *ngFor="let permiso of permisos">
+
+    <!-- FILA PRINCIPAL -->
+    <tr>
+      <td>{{ permiso.fecha | date:'yyyy-MM-dd' }}</td>
+      <td>{{ permiso.lugarEjecucion }}</td>
+      <td>{{ permiso.responsablePermisoEmpleado?.nombreCompleto }}</td>
+      <td>{{ permiso.alturaAproximada }}</td>
+<td>
+  <span *ngFor="let p of permiso.personalAutorizado; let i = index">
+    {{ p.nombres }}<span *ngIf="i < permiso.personalAutorizado.length - 1">, </span>
+  </span>
+</td>
+      <td>{{ permiso.descripcionTarea }}</td>
+      <td>
+        <button type="button" (click)="verDetalle(permiso.id)">
+          Detalles
+        </button>
+
+        <button type="button" (click)="togglePersonal(permiso)">
+          {{ permiso.mostrarPersonal ? 'Ocultar personal' : 'Ver personal' }}
+        </button>
+
+
+       <button type="button" (click)="toggleFormularioPersona(permiso)">
+        {{ permiso.mostrarFormularioPersona ? 'Cancelar' : 'Agregar persona' }}
+        </button>
+
+        <button
+        type="button"
+        style="background:#b71c1c; color:#fff; margin-left:5px;"
+        (click)="eliminarPermiso(permiso)">
+        🗑 Eliminar permiso
+        </button>
+
+          <form *ngIf="permiso.mostrarFormularioPersona"
+          [formGroup]="permiso.formPersona"
+          style="margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
+
+      <h5>Nueva persona autorizada</h5>
+
+      <label>Nombres:</label>
+    <input
+      formControlName="nombres"
+      (input)="buscarEmpleados($any($event.target).value, 'personalAutorizado')"
+    />
+
+    <ul class="autocomplete" *ngIf="empleadosFiltrados.length">
+      <li
+        *ngFor="let e of empleadosFiltrados"
+        (mousedown)="seleccionarEmpleadoPersonal(e, permiso)"
+      >
+        {{ e.nombreCompleto }}
+      </li>
+    </ul>
+
+  <label>¿Esta certificado?:</label>
+  <input formControlName="certificacion">
+
+  <label>
+    <input type="checkbox" formControlName="activoSeguridadSocial">
+    Activo Seguridad Social
+  </label>
+  
+  <button type="button" (click)="guardarPersona(permiso)">
+    Guardar persona
+  </button>
+
+  </form>
+      </td>
+    </tr>
+
+ <!-- FILA DESPLEGABLE: PERSONAL AUTORIZADO -->
+  <tr *ngIf="permiso.mostrarPersonal">
+  <td colspan="5" style="background:#f9f9f9; padding:10px;">
+
+    <h4>Personal autorizado</h4>
+
+    <div *ngIf="permiso.cargandoPersonal">
+      Cargando personal...
+    </div>
+
+    <table
+      *ngIf="!permiso.cargandoPersonal && permiso.personalAutorizado?.length"
+      style="width:100%; border-collapse:collapse;"
+    >
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Certificación</th>
+          <th>Seguridad Social</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <ng-container *ngFor="let p of permiso.personalAutorizado">
+
+          <!-- FILA PRINCIPAL PERSONA -->
+          <tr>
+            <td>{{ p.nombres }}</td>
+            <td>{{ p.certificacion }}</td>
+            <td>{{ p.activoSeguridadSocial ? 'Sí' : 'No' }}</td>
+            <td>
+              <button type="button" (click)="nuevaComprobacion(p)">
+  {{ p.mostrandoComprobacion ? 'Cancelar evaluación' : 'Crear evaluación' }}
+</button>
+
+
+              <button type="button" (click)="verEvaluaciones(permiso, p)">
+                Ver evaluaciones
+              </button>
+
+              <button
+  type="button"
+  style="margin-left:6px; background:#c62828; color:#fff; padding:4px 8px; border:none; cursor:pointer;"
+  (click)="eliminarPersona(permiso, p)">
+  🗑 Eliminar
+</button>
+
+            </td>
+          </tr>
+
+          <!-- FORMULARIO DE EVALUACIÓN -->
+          <ng-container *ngIf="p.mostrandoComprobacion">
+            <tr>
+              <td colspan="5" style="padding:10px; background:#f0f0f0; border:1px solid #ccc;">
+
+                <form [formGroup]="p.formComprobacion">
+
+                 <div
+  *ngFor="let item of itemsComprobacion; let i = index"
+  style="display:flex; align-items:flex-start; margin-bottom:8px;"
+>
+
+  <!-- TEXTO DEL ITEM -->
+  <span style="width:300px; font-size:13px;">
+    {{ item }}
+  </span>
+
+  <!-- GRUPO DEL ITEM -->
+  <div
+    [formGroupName]="'item' + (i + 1)"
+    style="display:flex; gap:16px; align-items:center;"
+  >
+
+    <!-- DÍAS -->
+    <div>
+      <label><input type="checkbox" formControlName="lunes"> L</label>
+      <label><input type="checkbox" formControlName="martes"> M</label>
+      <label><input type="checkbox" formControlName="miercoles"> X</label>
+      <label><input type="checkbox" formControlName="jueves"> J</label>
+      <label><input type="checkbox" formControlName="viernes"> V</label>
+      <label><input type="checkbox" formControlName="sabado">S</label>
+      <label><input type="checkbox" formControlName="domingo">D</label>
+    </div>
+
+    <!-- RESULTADO -->
+    <div style="border-left:1px solid #ccc; padding-left:10px;">
+      <label>
+        <input type="checkbox"
+               formControlName="si"
+               (change)="seleccionarResultado(p, i, 'si')">
+        Sí
+      </label>
+
+      <label style="margin-left:8px;">
+        <input type="checkbox"
+               formControlName="no"
+               (change)="seleccionarResultado(p, i, 'no')">
+        No
+      </label>
+
+      <label style="margin-left:8px;">
+        <input type="checkbox"
+               formControlName="noAplica"
+               (change)="seleccionarResultado(p, i, 'noAplica')">
+        No aplica
+      </label>
+    </div>
+
+  </div>
+</div>
+
+                  <h5>Firma del empleado</h5>
+                  <canvas
+  #canvasEval
+  width="300"
+  height="120"
+  class="firma-canvas"
+
+  (mousedown)="iniciarFirmaEvaluacion($event, p, canvasEval)"
+  (mousemove)="dibujarFirmaEvaluacion($event, p, canvasEval)"
+  (mouseup)="terminarFirmaEvaluacion(p, canvasEval)"
+  (mouseleave)="terminarFirmaEvaluacion(p, canvasEval)"
+
+  (touchstart)="iniciarFirmaEvaluacion($event, p, canvasEval)"
+  (touchmove)="dibujarFirmaEvaluacion($event, p, canvasEval)"
+  (touchend)="terminarFirmaEvaluacion(p, canvasEval)">
+</canvas>
+                  <br>
+                  <button type="button" (click)="limpiarFirmaEvaluacion(p, canvasEval)">
+                    Limpiar firma
+                  </button>
+
+                  <br><br>
+                  <button type="button" (click)="guardarComprobacion(p)" [disabled]="permiso.formPersona?.invalid">
+                    Guardar evaluación
+                  </button>
+
+                </form>
+
+              </td>
+            </tr>
+          </ng-container>
+
+          <!-- VER EVALUACIONES -->
+          <ng-container *ngIf="p.mostrandoEvaluaciones">
+            <tr>
+              <td colspan="5" style="background:#eef; padding:10px;">
+
+                <div *ngIf="p.cargandoEvaluaciones">
+                  Cargando evaluaciones...
+                </div>
+
+                <ng-container *ngIf="!p.cargandoEvaluaciones && p.comprobacionesPrevias?.length">
+
+                  <h5>Evaluaciones realizadas</h5>
+
+                  <div
+                    *ngFor="let ev of p.comprobacionesPrevias; let i = index"
+                    style="border:1px solid #ccc; padding:8px; margin-bottom:8px; background:#fff;"
+                  >
+                    <strong>Evaluación {{ i + 1 }}</strong><br>
+                    <small>{{ ev.fecha | date:'yyyy-MM-dd HH:mm' }}</small>
+
+                    <div
+                      *ngFor="let item of itemsComprobacion; let j = index"
+                      style="display:flex; gap:10px; font-size:13px; margin-top:4px;"
+                    >
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+  <span style="width:300px;">
+    {{ j + 1 }}. {{ item }}
+  </span>
+<span>
+  <ng-container [ngSwitch]="obtenerResultadoItem(ev.evaluacion['item' + (j + 1)])">
+
+    <!-- SI -->
+    <span *ngSwitchCase="'SI'" style="color:rgb(0, 0, 0); font-weight:bold;">
+      ✔ Sí
+      <span *ngIf="obtenerDiaItem(ev.evaluacion['item' + (j + 1)])">
+        ({{ obtenerDiaItem(ev.evaluacion['item' + (j + 1)]) }})
+      </span>
+    </span>
+
+    <!-- NO -->
+    <span *ngSwitchCase="'NO'" style="color:#000000; font-weight:bold;">
+      ✖ No
+    </span>
+
+    <!-- NO APLICA -->
+    <span *ngSwitchDefault style="color:#000000; font-style:italic;">
+      N/A
+    </span>
+
+  </ng-container>
+</span>
+</div>
+                    </div>
+
+                    <div *ngIf="ev.firmaEmpleadoBase64" style="margin-top:8px;">
+                      <strong>Firma empleado</strong><br>
+                      <img
+                        [src]="ev.firmaEmpleadoBase64"
+                        style="border:1px solid #000; width:180px; background:#fff;">
+                    </div>
+                    
+                    <div *ngIf="permiso.firmaResponsableBase64" style="margin-top:8px;">
+                      <strong>Firma Coordinador/a SST</strong><br>
+                      <img
+                        [src]="permiso.firmaResponsableBase64"
+                        style="border:1px solid #000; width:180px; background:#fff;">
+                    </div>
+                    <button
+            type="button"
+            style="margin-top:10px; background:#c62828; color:#fff; padding:4px 10px; border:none; cursor:pointer;"
+            (click)="eliminarEvaluacion(p, ev)">
+            🗑 Eliminar evaluación
+          </button>
+          <button
+  type="button"
+  style="margin-top:10px; background:#1976d2; color:#fff; padding:6px 12px; border:none; cursor:pointer;"
+  (click)="exportarPdf(permiso, p , ev)">
+  📄 Exportar PDF
+</button>
+                  </div>
+                </ng-container>
+                <div *ngIf="!p.cargandoEvaluaciones && !p.comprobacionesPrevias?.length">
+                  Esta persona no tiene evaluaciones registradas.
+                </div>
+
+              </td>
+            </tr>
+          </ng-container>
+
+        </ng-container>
+
+      </tbody>
+    </table>
+
+    <p *ngIf="!permiso.cargandoPersonal && !permiso.personalAutorizado?.length">
+      No hay personal asignado a este permiso.
+    </p>
+
+  </td>
+</tr>
+
+

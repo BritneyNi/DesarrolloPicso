@@ -1,0 +1,29 @@
+<div class="card">
+  <ng-container *ngIf="!loading && !error">
+    <div class="card-header">
+      <h3>🦺 Dotación</h3>
+      <span class="semaforo" [ngClass]="getSemaforo()"></span>
+    </div>
+    <div class="metric total">
+      <span>👥 Total empleados activos</span>
+      <strong>{{ data?.totalEmpleadosActivos }}</strong>
+    </div>
+    <div class="metric success clickable" (click)="irDotacionVigente()">
+      <span>✅ Vigente</span>
+      <strong>{{ data.conDotacionVigente }}</strong>
+    </div>
+    <div class="metric warning clickable" (click)="irDotacionVencida()">
+      <span>⏳ Vencida</span>
+      <strong>{{ data.dotacionVencida }}</strong>
+    </div>
+    <div class="metric total clickable" *ngIf="data.sinDotacion > 0" (click)="irSinDotacion()">
+      <span>🚨 Sin dotación</span>
+      <strong>{{ data.sinDotacion }}</strong>
+    </div>
+    <div class="grafica-container">
+      <canvas #dotacionChart></canvas>
+    </div>
+  </ng-container>
+  <div *ngIf="loading" style="padding: 1rem; color: #aaa;">Cargando dotación...</div>
+  <div *ngIf="error" style="padding: 1rem; color: red;">Error cargando información</div>
+</div>

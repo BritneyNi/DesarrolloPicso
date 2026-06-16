@@ -1,0 +1,132 @@
+.ps-wrapper {
+  padding: 80px 20px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ps-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ps-titulo {
+  font-size: 1.6rem;
+  color: #333;
+}
+
+.ps-semana {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ps-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.ps-tabs button {
+  padding: 8px 20px;
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.ps-tabs button.activo {
+  background: #333;
+  color: white;
+  border-color: #333;
+}
+
+.ps-seccion {
+  margin-bottom: 30px;
+}
+
+.ps-seccion-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.ps-seccion-titulo.verde  { background: #e8f5e9; color: #2e7d32; }
+.ps-seccion-titulo.rojo   { background: #ffebee; color: #c62828; }
+.ps-seccion-titulo.amarillo { background: #fff8e1; color: #f57f17; }
+
+.ps-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ps-tabla th {
+  background: #f5f5f5;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+}
+
+.ps-tabla td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.ps-tabla tr:hover td {
+  background: #fafafa;
+}
+
+.ps-acciones-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ps-btn-guardar {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.ps-btn-guardar:hover { background: #1b5e20; }
+.ps-btn-guardar:disabled { background: #aaa; cursor: not-allowed; }
+
+.ps-btn-eliminar {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.ps-btn-eliminar:hover { background: #ffcdd2; }
+
+.ps-cargando {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.ps-vacio {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-style: italic;
+}

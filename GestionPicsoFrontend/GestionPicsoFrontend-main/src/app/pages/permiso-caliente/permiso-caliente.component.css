@@ -1,0 +1,271 @@
+.header-permiso {
+  margin-top: 80px; /* deja espacio al navbar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.header-permiso app-boton-regresar {
+  align-self: flex-start;
+}
+
+h1 {
+  margin-top: 65px;
+  text-align: center;
+}
+/* Contenedor general */
+.form-wrapper {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Título */
+.form-wrapper h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+/* Formulario */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Inputs y textareas */
+.form-container input,
+.form-container textarea,
+.form-container select {
+  font-size: 0.95rem;
+  padding: 6px 10px;
+}
+
+
+/* Labels */
+.form-container label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Secciones con checkbox */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px 16px;
+}
+
+/* Autorizantes */
+.autorizante-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: #f9fafb;
+}
+
+/* Botones */
+button {
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2563eb;
+  color: #fff;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Botones secundarios */
+button[type="button"] {
+  background-color: #fbbd23;
+}
+
+button[type="button"]:hover {
+  background-color: #4b5563;
+}
+
+/* Firma */
+.firma-box {
+  display: inline-block;
+  padding: 5px;
+  border: 2px dashed #1976d2; /* marco azul */
+  background-color: #f9f9f9; /* ligero gris de fondo */
+  border-radius: 4px;
+  position: relative;
+  width: 310px; /* un poquito más grande que el canvas */
+}
+
+.firma-canvas {
+  display: block;
+  background-color: #fff; /* fondo blanco real del canvas */
+  cursor: crosshair;
+  border: 1px solid #ccc; /* borde del canvas */
+}
+
+.firma-botones {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .checkbox-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .autorizante-row {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .firma-box {
+    width: 100%;
+  }
+}
+.table-wrapper {
+  overflow-x: auto; /* 🔥 para móviles */
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* asegura scroll horizontal en pantallas pequeñas */
+}
+
+thead {
+  background-color: #525252;
+  color: #fff;
+}
+
+th, td {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+button {
+  padding: 4px 8px;
+  margin-right: 4px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+button:first-child {
+  background-color: #4a4a4b;
+  color: #fff;
+}
+
+button:nth-child(2) {
+  background-color: #fbbd23;
+  color: #000;
+}
+
+button:last-child {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  th, td {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+  }
+
+  button {
+    margin-bottom: 4px;
+    width: 100%;
+  }
+}
+
+.buscador-wrapper {
+  margin: 15px 0;
+}
+
+.buscador-wrapper input {
+  width: 300px;
+  padding: 6px 10px;
+}
+.autocomplete-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+  max-height: 180px;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.autocomplete-list li {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.autocomplete-list li:hover {
+  background: #f0f0f0;
+}
+
+
+
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.btn-flotante-cerrar {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #ef4444;
+  color: #fff;
+  border-radius: 50px;
+  padding: 10px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 2000;
+}
+
+.btn-flotante-cerrar:hover {
+  background-color: #dc2626;
+}

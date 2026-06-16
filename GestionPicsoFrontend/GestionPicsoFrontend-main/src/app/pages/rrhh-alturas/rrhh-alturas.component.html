@@ -1,0 +1,119 @@
+<app-navbar></app-navbar>
+<app-boton-regresar rutaDestino="/rrhh/dashboard"></app-boton-regresar>
+
+<div class="alturas-container">
+
+  <div class="header">
+    <h2>
+  Curso de Alturas - 
+  {{
+    estado === 'vigentes' ? 'Vigentes' :
+    estado === 'vencidos' ? 'Vencidos' :
+    estado === 'sin-curso' ? 'Sin Curso' : ''
+  }}
+</h2>
+
+
+   <div class="estado-tabs">
+  <button 
+    [class.activo]="estado === 'vigentes'"
+    (click)="cambiarEstado('vigentes')">
+    Vigentes
+  </button>
+
+  <button 
+    [class.activo]="estado === 'vencidos'"
+    (click)="cambiarEstado('vencidos')">
+    Vencidos
+  </button>
+
+  <button 
+    [class.activo]="estado === 'sin-curso'"
+    (click)="cambiarEstado('sin-curso')">
+    Sin Curso
+  </button>
+</div>
+
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Cargando información...
+  </div>
+
+  <div class="tabla-wrapper" *ngIf="!loading">
+
+    <div class="buscador-container">
+  <input 
+    type="text"
+    placeholder="🔍 Buscar por nombre, cédula, cargo u obra..."
+    [(ngModel)]="terminoBusqueda"
+    (input)="filtrar()"
+  />
+</div>
+
+
+    <table *ngIf="empleados.length > 0">
+     <thead>
+  <tr>
+    <th>Nombre</th>
+    <th>Cédula</th>
+    <th>Cargo</th>
+    <th>Obra</th>
+    <th>Fecha Curso</th>
+    <th>Vencimiento</th>
+  </tr>
+</thead>
+<tbody>
+  <tr *ngFor="let e of empleados">
+  <td>{{ e.nombreCompleto }}</td>
+  <td>{{ e.cedula }}</td>
+  <td>{{ e.cargo }}</td>
+  <td>{{ e.obra }}</td>
+
+  <!-- Fecha Curso -->
+  <td>
+    <ng-container *ngIf="editandoId === e.id; else vistaCurso">
+      <input type="date" [(ngModel)]="e.fechaCurso">
+    </ng-container>
+    <ng-template #vistaCurso>
+      {{ e.fechaCurso | date:'yyyy-MM-dd' }}
+    </ng-template>
+  </td>
+
+  <!-- Fecha Vencimiento -->
+  <td>
+    <ng-container *ngIf="editandoId === e.id; else vistaVencimiento">
+      <input type="date" [(ngModel)]="e.fechaVencimiento">
+    </ng-container>
+    <ng-template #vistaVencimiento>
+      <span class="badge"
+        [ngClass]="estado === 'vigentes' ? 'vigente' : 'vencido'">
+        {{ e.fechaVencimiento | date:'yyyy-MM-dd' }}
+      </span>
+    </ng-template>
+  </td>
+
+  <!-- Acciones -->
+  <td>
+    <ng-container *ngIf="editandoId !== e.id">
+      <button (click)="editar(e)">✏️</button>
+    </ng-container>
+
+    <ng-container *ngIf="editandoId === e.id">
+      <button (click)="guardar(e)">💾</button>
+      <button (click)="cancelar()">❌</button>
+    </ng-container>
+  </td>
+</tr>
+
+</tbody>
+
+    </table>
+
+    <div *ngIf="empleados.length === 0" class="empty">
+      No hay empleados en esta categoría.
+    </div>
+
+  </div>
+
+</div>

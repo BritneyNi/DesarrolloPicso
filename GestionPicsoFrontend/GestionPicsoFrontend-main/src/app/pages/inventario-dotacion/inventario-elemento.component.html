@@ -1,0 +1,207 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+<h2>Inventario - {{ elementoNombre }}</h2>
+
+<div class="resumen-inventario" *ngIf="inventarios.length > 0">
+  <div class="resumen-item">
+    <span class="label">Total recibido (acumulado)</span>
+    <span class="valor">{{ totalCantidad }}</span>
+  </div>
+
+  <div class="resumen-item">
+    <span class="label">Total disponible</span>
+    <span class="valor">{{ totalDisponible }}</span>
+  </div>
+</div>
+
+<small class="hint">
+  Los valores corresponden al inventario acumulado por talla y tipo.
+</small>
+
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+  <div class="campo">
+    <label>Talla:</label>
+    <input placeholder="Talla" formControlName="talla" />
+    <small class="error" *ngIf="form.get('talla')?.touched && form.get('talla')?.hasError('required')">
+      La talla es obligatoria
+    </small>
+  </div>
+
+  <div class="campo">
+    <label>Tipo:</label>
+    <input placeholder="Tipo" formControlName="tipo" />
+  </div>
+
+  <div class="campo">
+    <label>Fecha de recepción:</label>
+    <input type="date" formControlName="fechaRecepcion" />
+    <small class="error" *ngIf="form.get('fechaRecepcion')?.touched && form.get('fechaRecepcion')?.hasError('required')">
+      La fecha de recepción es obligatoria
+    </small>
+  </div>
+
+  <div class="campo">
+    <label>Cantidad:</label>
+    <input type="number" formControlName="cantidadTotal" />
+    <small class="error" *ngIf="form.get('cantidadTotal')?.touched && form.get('cantidadTotal')?.hasError('required')">
+      La cantidad es obligatoria
+    </small>
+    <small class="error" *ngIf="form.get('cantidadTotal')?.hasError('min')">
+      La cantidad debe ser mayor a cero
+    </small>
+  </div>
+
+  <div class="campo">
+  <label>Evidencia (foto o PDF):</label>
+  <input
+    type="file"
+    (change)="onFileSelected($event)"
+    accept="image/*,.pdf"
+    />
+  </div>
+
+  <button type="submit">Agregar</button>
+</form>
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Talla</th>
+      <th>Tipo</th>
+      <th>Evidencia</th>
+      <th>Fecha de recepción</th>
+      <th>Total recibido(acumulado)</th>
+      <th>Disponible</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+   <tr *ngFor="let i of inventarios">
+  <td data-label="Talla">{{ i.talla }}</td>
+  <td data-label="Tipo">{{ i.tipo }}</td>
+  <td data-label="Evidencia">
+  <a
+    *ngIf="i.evidenciaUrl"
+    [href]="apiBase + i.evidenciaUrl"
+    target="_blank"
+    rel="noopener"
+  >
+    Ver
+  </a>
+  <span *ngIf="!i.evidenciaUrl">—</span>
+</td>
+
+  <td data-label="fechaRecepcion">{{ i.fechaRecepcion | date:' dd/MM/yyyy' }}</td>
+  <td data-label="Total recibido">
+    {{ i.cantidadTotal }}
+  </td>
+  <td data-label="Disponible">
+    {{ i.cantidadDisponible }}
+  </td>
+
+  <td data-label="Estado" class="estado-cell">
+    <button
+      *ngIf="i.cantidadDisponible === i.cantidadTotal"
+      class="btn-eliminar"
+      title="Eliminar"
+      (click)="eliminarInventario(i.id)">
+      ✖
+    </button>
+
+    <span
+      class="estado"
+      [ngClass]="{
+        'ok': i.estadoStock === 'OK',
+        'bajo': i.estadoStock === 'Bajo',
+        'agotado': i.estadoStock === 'Agotado'
+      }">
+      {{ i.estadoStock }}
+    </span>
+  </td>
+</tr>
+
+  </tbody>
+</table>
+
+<div class="kardex-container">
+  <button class="btn-kardex" (click)="toggleKardex()">
+    {{ mostrarKardex ? 'Ocultar' : 'Ver' }} kardex de movimientos
+  </button>
+
+  <div *ngIf="mostrarKardex" class="kardex-panel">
+
+    <div *ngIf="cargandoKardex" class="loading">
+      Cargando movimientos...
+    </div>
+
+    <!-- Tabla de movimientos agrupados -->
+    <div *ngIf="!cargandoKardex && gruposKardex.length > 0">
+      <div *ngFor="let grupo of gruposKardex" class="grupo-movimientos">
+        <!-- Encabezado del grupo -->
+        <div class="grupo-header" *ngIf="grupo.actaEntregaEppId">
+          <strong>Entrega #{{ grupo.actaEntregaEppId }}</strong>
+        </div>
+        <div class="grupo-header" *ngIf="!grupo.actaEntregaEppId">
+          <strong>INGRESOS AL INVENTARIO</strong>
+        </div>
+
+        <!-- Tabla de movimientos dentro del grupo -->
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Movimiento</th>
+              <th>Talla</th>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of grupo.items">
+              <td>{{ m.fecha | date:'dd/MM/yyyy HH:mm a' }}</td>
+              <td>
+                <span
+                  class="movimiento"
+                  [ngClass]="{
+                    'entrada': m.tipoMovimiento === 'Entrada',
+                    'salida': m.tipoMovimiento === 'Salida',
+                    'devolucion': m.tipoMovimiento === 'Devolucion',
+                    'ajuste': m.tipoMovimiento === 'Ajuste'
+                  }"
+                >
+                  {{ m.tipoMovimiento }}
+                </span>
+              </td>
+              <td>{{ m.talla }}</td>
+              <td>{{ m.tipo }}</td>
+              <td class="cantidad">{{ m.cantidad }}</td>
+              <td>
+                <div class="detalle-movimiento">
+                  <div *ngIf="m.observacion" class="obs">{{ m.observacion }}</div>
+                  <div *ngIf="m.tipoMovimiento === 'Salida' || m.tipoMovimiento === 'Devolucion'" class="personas">
+                    <div *ngIf="m.usuarioEntregaNombre">
+                      <strong>Entrega:</strong> {{ m.usuarioEntregaNombre }}
+                    </div>
+                    <div *ngIf="m.empleadoRecibeNombre">
+                      <strong>Recibe:</strong> {{ m.empleadoRecibeNombre }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mensaje si no hay movimientos -->
+    <div *ngIf="!cargandoKardex && gruposKardex.length === 0" class="empty">
+      No hay movimientos registrados.
+    </div>
+  </div>
+</div>
+

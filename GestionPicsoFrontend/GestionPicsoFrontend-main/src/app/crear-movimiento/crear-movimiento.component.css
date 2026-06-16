@@ -1,0 +1,13 @@
+.formulario-tiempos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  width: 100%;
+}
+
+mat-dialog-actions {
+  padding: 0.5rem 1rem;
+}

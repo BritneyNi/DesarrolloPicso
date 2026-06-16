@@ -1,0 +1,90 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="page-container">
+
+  <header class="page-header">
+  <h2>📄 Exámenes de Ingreso</h2>
+  <p class="subtitle">
+    Gestión de empleados con y sin examen de ingreso
+  </p>
+</header>
+
+<div class="tabs">
+  <button 
+    (click)="cambiarVista('sin')" 
+    [class.active]="vista === 'sin'">
+    ❌ Sin examen
+  </button>
+
+  <button 
+    (click)="cambiarVista('con')" 
+    [class.active]="vista === 'con'">
+    ✅ Con examen
+  </button>
+</div>
+
+
+  <div class="table-card">
+
+    <div *ngIf="loading" class="loading">
+      Cargando...
+    </div>
+<div class="search-box">
+  <input 
+    type="text"
+    placeholder="🔍 Buscar por nombre, cédula, cargo u obra..."
+    [(ngModel)]="busqueda"
+    (input)="filtrar()"
+  />
+</div>
+
+    <table *ngIf="!loading && empleados.length > 0">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Cédula</th>
+          <th>Cargo</th>
+          <th>Obra</th>
+            <th>
+            {{ vista === 'sin' ? 'Asignar fecha' : 'Editar fecha' }}
+            </th>
+        </tr>
+      </thead>
+      <tbody>
+       <tr *ngFor="let emp of empleados">
+        <td>{{ emp.nombreCompleto }}</td>
+        <td>{{ emp.cedula }}</td>
+        <td>{{ emp.cargo }}</td>
+        <td>{{ emp.obra }}</td>
+  <!-- SIN examen -->
+  <td *ngIf="vista === 'sin'">
+    <input type="date" [(ngModel)]="emp.nuevaFecha" />
+    <button (click)="guardarFecha(emp)">
+      💾 Guardar
+    </button>
+  </td>
+
+  <!-- CON examen -->
+  <td *ngIf="vista === 'con'">
+  <input 
+    type="date" 
+    [(ngModel)]="emp.fechaExamenIngreso" 
+  />
+  <button (click)="guardarFecha(emp)">
+    ✏️ Actualizar
+  </button>
+</td>
+
+</tr>
+
+
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && empleados.length === 0" class="empty-state">
+      🎉 Todos tienen examen de ingreso
+    </div>
+
+  </div>
+</div>

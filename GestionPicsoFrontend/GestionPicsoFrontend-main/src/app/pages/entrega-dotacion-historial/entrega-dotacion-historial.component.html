@@ -1,0 +1,128 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="page-content">
+  <h2>Historial de entregas de dotación</h2>
+
+  <div class="filtro">
+    <div class="filtro-item autocomplete">
+  <label>Buscar empleado:</label>
+
+  <input
+    type="text"
+    [formControl]="filtroEmpleado"
+    placeholder="Buscar empleado..."
+    (focus)="mostrarDropdown = true"
+    autocomplete="off"
+  />
+
+  <ul *ngIf="mostrarDropdown && empleadosFiltrados.length">
+    <li
+      *ngFor="let emp of empleadosFiltrados"
+      (click)="seleccionarEmpleado(emp)">
+     <span [innerHTML]="resaltarNombre(emp.nombre)"></span>
+    </li>
+  </ul>
+</div>
+
+
+    <div class="filtro-item">
+      <label>Desde:</label>
+      <input type="date" [formControl]="filtroFechaInicio" />
+    </div>
+
+    <div class="filtro-item">
+      <label>Hasta:</label>
+      <input type="date" [formControl]="filtroFechaFin" />
+    </div>
+
+    <div class="filtro-item">
+    <button *ngIf="empleadoSeleccionadoId" (click)="descargarPdfEmpleado()">
+      📄 PDF masivo del empleado
+    </button>
+  </div>
+  </div>
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Empleado</th>
+        <th>Fecha y hora de entrega</th>
+        <th>Lugar de entrega</th>
+        <th>Observaciones</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let acta of entregasFiltradas">
+
+        <!-- Fila principal -->
+         
+        <tr [class.acta-activa]="empleadoActual === acta.actaId.toString()">
+          <td data-label="Empleado">{{ acta.empleadoNombre }}</td>
+          <td data-label="Fecha y hora de entrega">{{ acta.fechaEntrega | date:'dd/MM/yyyy - hh:mm a' }}</td>
+          <td data-label="lugarEntrega">{{ acta.lugarEntrega }}</td>
+          <td data-label="Observaciones">{{ acta.observaciones }}</td>
+          <td data-label="Acciones">
+            <button (click)="toggleHistorial(acta.actaId)">
+              {{ empleadoActual === acta.actaId.toString() ? 'Ocultar historial' : 'Ver historial' }}
+            </button>
+            <button
+              class="btn"
+              (click)="descargarPdf(acta.actaId)">
+              📄 PDF
+            </button>
+          </td>
+        </tr>
+
+        <!-- Responsable -->
+        <tr class="acta-header">
+          <td colspan="4">
+            <strong>Responsable:</strong> {{ acta.responsableNombre }}
+          </td>
+        </tr>
+
+        <!-- Tabla nested de elementos -->
+        <tr *ngIf="empleadoActual === acta.actaId.toString()">
+          <td colspan="4">
+            <table class="tabla-nested">
+              <thead>
+                <h2>Historial</h2>
+                <tr>
+                  <th>Elemento</th>
+                  <th>Talla/Tipo</th>
+                  <th>Cantidad</th>
+                  <th>Estado</th>
+                  <th>Evidencias</th>
+                  <th>Fecha de Entrega</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let e of acta.elementos">
+                  <td data-label="Elemento">{{ e.nombre }}</td>
+                  <td data-label="Talla/Tipo">{{ e.talla }}</td>
+                  <td data-label="Cantidad">{{ e.cantidad }}</td>
+                  <td data-label="Estado">{{ e.estado }}</td>
+                  <td data-label="Evidencias">
+                    <ul *ngIf="e.evidencias && e.evidencias.length > 0">
+                      <li *ngFor="let url of e.evidencias">
+                        <a [href]="url" target="_blank">Ver evidencia</a>
+                      </li>
+                    </ul>
+                    <input type="file" (change)="subirEvidencia(e.id, $event)" accept="image/*,application/pdf" />
+                  </td>
+                  <td data-label="Fecha de Entrega">{{ e.fechaEntrega | date:'dd/MM/yyyy - hh:mm a' }}</td>
+                  <td data-label="Acciones">
+                    <button *ngIf="e.estado==='Activo'" (click)="devolver(e.id)">Devolver</button>
+                    <button *ngIf="e.estado==='Activo'" (click)="marcarPerdido(e.id)">Perdido</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>

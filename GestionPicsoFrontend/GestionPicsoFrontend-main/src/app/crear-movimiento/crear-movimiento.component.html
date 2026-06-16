@@ -1,0 +1,88 @@
+<!-- src/app/crear-movimiento/crear-movimiento.component.html -->
+<mat-dialog-content>
+  <form (ngSubmit)="crearMovimiento()" class="formulario-tiempos">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Herramienta</mat-label>
+      <mat-select [(ngModel)]="movimiento.inventarioId"
+                  name="inventarioId"
+                  (selectionChange)="onHerramientaChange($event.value)"
+                  required>
+        <mat-option *ngFor="let h of herramientas" [value]="h.id">
+          {{ h.herramienta }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Código Herramienta</mat-label>
+      <input matInput [(ngModel)]="movimiento.codigoHerramienta" name="codigoHerramienta" readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Nombre Herramienta</mat-label>
+      <input matInput [(ngModel)]="movimiento.nombreHerramienta" name="nombreHerramienta" readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Responsable</mat-label>
+      <mat-select [(ngModel)]="movimiento.responsable" name="responsable" required>
+        <mat-option *ngFor="let u of responsables" [value]="u.nombreCompleto">
+          {{ u.nombreCompleto }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Obra</mat-label>
+      <mat-select [(ngModel)]="movimiento.obra" name="obra" required>
+        <mat-option *ngFor="let o of obras" [value]="o.nombreObra">
+          {{ o.nombreObra }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Fecha Movimiento</mat-label>
+      <input matInput type="datetime-local" [(ngModel)]="movimiento.fechaMovimiento" name="fechaMovimiento" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Tipo Movimiento</mat-label>
+      <mat-select [(ngModel)]="movimiento.tipoMovimiento" name="tipoMovimiento" required>
+        <mat-option value="Salida">Salida</mat-option>
+        <mat-option value="Entrada">Entrada</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Estado</mat-label>
+      <mat-select [(ngModel)]="movimiento.estado" name="estado" required>
+        <mat-option value="En uso">En uso</mat-option>
+        <mat-option value="Disponible">Disponible</mat-option>
+        <mat-option value="En reparación">En reparación</mat-option>
+        <mat-option value="Baja">Baja</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+    <mat-label>Cantidad</mat-label>
+      <input 
+        matInput 
+        type="number"
+        min="1"
+        [(ngModel)]="movimiento.cantidad" 
+        name="cantidad"
+        required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Comentario</mat-label>
+      <textarea matInput rows="3" [(ngModel)]="movimiento.comentario" name="comentario"></textarea>
+    </mat-form-field>
+
+    <mat-dialog-actions align="end">
+      <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit">Crear Movimiento</button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

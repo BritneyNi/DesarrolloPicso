@@ -1,0 +1,65 @@
+﻿/* LISTA TIEMPOS — estilos del panel de registro */
+
+.lt-panel-global { background: #f4f6f9; border: 1px solid #dde3ec; border-radius: 10px; padding: 16px 20px 12px; margin-bottom: 20px; }
+.lt-panel-titulo { font-size: 14px; font-weight: 600; color: #4a5568; margin: 0 0 12px; }
+.lt-panel-controles { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+.lt-control-grupo { display: flex; flex-direction: column; gap: 4px; min-width: 180px; }
+.lt-label { font-size: 12px; font-weight: 600; color: #555; }
+.lt-input { border: 1px solid #cdd5df; border-radius: 6px; padding: 7px 10px; font-size: 13px; outline: none; transition: border-color .2s; background: #fff; width: 100%; }
+.lt-input:focus { border-color: #4a90e2; }
+.lt-input-sm { padding: 5px 7px; font-size: 12px; }
+.lt-btn { border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: opacity .15s, transform .1s; white-space: nowrap; }
+.lt-btn:disabled { opacity: .5; cursor: not-allowed; }
+.lt-btn:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+.lt-btn-sec { background: #e9ecef; color: #495057; }
+.lt-btn-ingreso { background: #28a745; color: #fff; }
+.lt-btn-salida { background: #dc3545; color: #fff; }
+.lt-panel-masivo { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.lt-btn-masivo { padding: 9px 20px; font-size: 13px; }
+.lt-btn-sm { padding: 5px 10px; font-size: 11px; }
+.lt-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e2e8f0; }
+.lt-stat { font-size: 12px; font-weight: 600; color: #555; }
+.lt-stat.verde { color: #28a745; }
+.lt-stat.rojo { color: #dc3545; }
+.lt-stat.gris { color: #6c757d; }
+.lt-aviso-semana { background: #e8f4fd; border-left: 4px solid #4a90e2; border-radius: 6px; padding: 10px 14px; font-size: 13px; color: #1a5276; margin-bottom: 14px; }
+.lt-banner-bloqueo { background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px; padding: 10px 14px; font-size: 13px; color: #856404; margin-bottom: 14px; }
+.lt-table-wrap { overflow-x: auto; display: block; }
+@media (max-width: 767px) { .lt-table-wrap { display: none; } }
+.lt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.lt-table th { background: #343a40; color: #fff; padding: 9px 10px; text-align: center; font-weight: 600; font-size: 12px; }
+.lt-table td { padding: 8px 10px; vertical-align: middle; border-bottom: 1px solid #e9ecef; text-align: center; }
+.lt-fila:hover td { background: #f8f9fa; }
+.th-ing, .td-ing { background: rgba(40,167,69,.06); border-left: 2px solid #28a74533; }
+.th-sal, .td-sal { background: rgba(220,53,69,.06); border-left: 2px solid #dc354533; }
+.td-accion { white-space: nowrap; }
+.lt-fila-bloqueada td { background: #f8f9fa; color: #aaa; }
+.lt-nombre-cell { text-align: left !important; }
+.lt-nombre { font-weight: 600; display: block; }
+.lt-ultimo-reg { font-size: 11px; color: #888; }
+.lt-badge-bloqueo { display: inline-block; background: #6c757d; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+.lt-bloqueado-msg { font-size: 12px; color: #888; font-style: italic; text-align: left !important; }
+.lt-empty { text-align: center; padding: 24px; color: #888; font-style: italic; }
+.lt-feedback { display: block; font-size: 11px; margin-top: 3px; }
+.lt-feedback.ok { color: #28a745; }
+.lt-feedback.err { color: #dc3545; }
+.lt-cards-wrap { display: none; }
+@media (max-width: 767px) { .lt-cards-wrap { display: flex; flex-direction: column; gap: 12px; } }
+.lt-card { border: 1px solid #dde3ec; border-radius: 10px; overflow: hidden; background: #fff; }
+.lt-card-bloqueada { background: #f8f9fa; border-color: #ccc; }
+.lt-card-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; background: #f4f6f9; }
+.lt-card-header .lt-nombre { font-weight: 600; font-size: 14px; margin: 0; }
+.lt-card-sub { font-size: 11px; color: #888; margin: 2px 0 0; }
+.lt-toggle { font-size: 12px; color: #888; }
+.lt-card-body { padding: 12px 14px; border-top: 1px solid #e9ecef; }
+.lt-card-seccion { margin-bottom: 14px; padding: 10px; border-radius: 8px; }
+.lt-card-seccion.ingreso { background: rgba(40,167,69,.07); }
+.lt-card-seccion.salida { background: rgba(220,53,69,.07); }
+.lt-card-label { font-weight: 600; font-size: 13px; margin: 0 0 8px; }
+.lt-card-inputs { display: flex; gap: 8px; margin-bottom: 8px; }
+.lt-card-inputs .lt-input { flex: 1; }
+.formulario-ausentismo, .formulario-actualizar { max-width: 900px; padding: 10px 0; }
+.form-control { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; margin-bottom: 5px; }
+.table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+.table th, .table td { padding: 10px; text-align: center; }
+.table th { background-color: #343a40; color: white; }

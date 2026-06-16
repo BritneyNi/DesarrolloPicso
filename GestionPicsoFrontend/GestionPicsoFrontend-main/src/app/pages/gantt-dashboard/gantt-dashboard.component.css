@@ -1,0 +1,349 @@
+.gantt-container {
+  width: 100%;          /* 🔥 antes 1250px */
+  max-width: 100%;
+  height: 500px;
+  overflow-x: auto;     /* 🔥 scroll horizontal en cel */
+  overflow-y: auto;
+}
+.main-content {
+  text-align: center;
+  padding-top: 80px;
+}
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 🔝 HEADER */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+  background: #f8f9fa;
+padding: 15px;
+border-radius: 10px;
+}
+.dashboard-header {
+  position: relative; /* 🔥 clave */
+}
+
+.header-left {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.header-right {
+  margin-left: auto; /* 🔥 lo manda a la derecha */
+}
+/* lado izquierdo */
+.header-left h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.subtitulo {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* lado derecho */
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.header-right label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.header-right select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  min-width: 180px;
+}
+
+/* títulos de secciones */
+.section-title {
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* 🔝 GANTT grande */
+.gantt-section {
+  width: 100%;
+  height: 500px; /* o el que quieras */
+}
+
+/* 🔻 CONTENEDOR INFERIOR */
+.bottom-section {
+  display: flex;
+  gap: 20px;
+}
+
+/* 📊 cada gráfica abajo */
+.chart-card {
+  flex: 1;              /* divide el espacio en 2 */
+  height: 250px;        /* más pequeñas */
+  min-width: 0;
+}
+
+/* canvas ocupa todo el contenedor */
+.chart-card canvas,
+.gantt-section canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+.gantt-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.gantt-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+@media (max-width: 768px) {
+
+  .main-content {
+    padding-top: 60px;
+  }
+
+  .gantt-container {
+    height: 400px; /* más compacto */
+  }
+
+  .bottom-section {
+    flex-direction: column; /* 🔥 se apilan */
+  }
+
+  .chart-card {
+    height: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-right {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .header-right select {
+    width: 100%;
+  }
+
+  .header-left h1 {
+    font-size: 20px;
+  }
+}
+
+/* 🔥 BOTÓN */
+.btn-crear {
+  margin-top: 10px;
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* 🔥 OVERLAY OSCURO */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background: rgba(0, 0, 0, 0.55); /* 🔥 oscurito pro */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+/* 🔥 CAJA DEL MODAL */
+.modal {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+
+  width: 420px;
+  max-width: 90%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+  animation: fadeInScale 0.2s ease;
+
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* 🔥 INPUTS BONITOS */
+.modal input,
+.modal select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* 🔥 BOTONES */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.modal-actions button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-actions button:first-child {
+  background: #198754;
+  color: white;
+}
+
+.btn-cancel {
+  background: #dc3545;
+  color: white;
+}
+
+/* ✨ ANIMACIÓN PRO */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.alerta {
+  margin: 15px 0;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  animation: aparecer 0.4s ease;
+}
+
+.alerta.success {
+  background:#e8f5e9;
+  color:#2e7d32;
+}
+
+.alerta.warning {
+  background:#fff8e1;
+  color:#f9a825;
+}
+
+.alerta.risk {
+  background:#fff3e0;
+  color:#ef6c00;
+}
+
+.alerta.danger {
+  background:#ffebee;
+  color:#c62828;
+}
+
+@keyframes aparecer {
+  from { opacity:0; transform:translateY(-5px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.alertas-actividades{
+  margin-top:10px;
+}
+
+.alerta-actividad{
+  background:#fff3e0;
+  border-left:5px solid #ef6c00;
+  padding:10px;
+  margin-bottom:6px;
+  border-radius:6px;
+  font-weight:500;
+  animation: aparecer .3s ease;
+}
+
+.curva-s-container{
+  width:100%;
+  position:relative;
+  height: 400px;
+}
+
+.timeline-obra{
+  width:100%;
+  text-align:center;
+  margin-top:12px;
+}
+
+/* 🔥 ESTA ES LA MAGIA */
+.fechas-obra{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  width:90%;              /* 👈 ajusta alineación */
+  margin:0 auto;          /* 👈 centra debajo del chart */
+
+  font-size:12px;
+  color:#666;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+/* 🔴 eliminar */
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #bb2d3b;
+}
+
+/* 🟡 editar */
+.btn-warning {
+  background: #ffc107;
+  color: #333;
+}
+
+.btn-warning:hover {
+  background: #e0a800;
+}

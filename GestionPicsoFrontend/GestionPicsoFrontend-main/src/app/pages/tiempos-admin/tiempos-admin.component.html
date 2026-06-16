@@ -1,0 +1,122 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="tiempos-admin container mt-4">
+  <h2 class="mb-4 text-center">Total de Horas por Empleado</h2>
+  <form class="row g-3 mb-4 align-items-end">
+
+    <!-- Buscador rápido de empleados -->
+    <div id="filtro" class="col-md-4">
+      <label for="busquedaEmpleado" class="form-label">Buscar empleado</label>
+      <input
+        type="text"
+        id="busquedaEmpleado"
+        [(ngModel)]="busquedaEmpleado"
+        name="busquedaEmpleado"
+        class="form-control"
+        placeholder="Escriba el nombre..."
+        (input)="filtrarEmpleado()"
+      />
+    </div>
+
+    <div id="filtro" class="col-md-4">
+      <label for="fechaInicio" class="form-label">Fecha inicio</label>
+      <input
+        type="date"
+        id="fechaInicio"
+        [(ngModel)]="fechaInicio"
+        name="fechaInicio"
+        class="form-control"
+      />
+    </div>
+
+    <div id="filtro" class="col-md-4">
+      <label for="fechaFin" class="form-label">Fecha fin</label>
+      <input
+        type="date"
+        id="fechaFin"
+        [(ngModel)]="fechaFin"
+        name="fechaFin"
+        class="form-control"
+      />
+    </div>
+
+    <div id="filtro" class="col-md-4">
+      <label for="ubicacion" class="form-label">Ubicación</label>
+      <select
+        id="ubicacion"
+        [(ngModel)]="ubicacionSeleccionada"
+        name="ubicacion"
+        class="form-control"
+        (change)="cargarResumen()">
+        <option value="Todos">-- Todas --</option>
+        <option *ngFor="let u of ubicaciones" [value]="u">{{ u }}</option>
+      </select>
+    </div>
+
+    <div id="filtro" class="col-md-4">
+      <label for="obra" class="form-label">Obra</label>
+      <select
+        id="obra"
+        [(ngModel)]="obraSeleccionada"
+        name="obra"
+        class="form-control"
+        (change)="cargarResumen()">
+        <option value="Todos">-- Todas --</option>
+        <option *ngFor="let o of obras" [value]="o">{{ o }}</option>
+      </select>
+    </div>
+
+    <div id="filtro" class="col-md-4">
+      <label for="empleado" class="form-label">Empleado</label>
+      <select
+        id="empleado"
+        [(ngModel)]="empleadoSeleccionado"
+        name="empleado"
+        class="form-control"
+        (change)="cargarResumen()">
+        <option value="Todos">-- Todos --</option>
+        <option *ngFor="let e of empleados" [value]="e">{{ e }}</option>
+      </select>
+    </div>
+
+  </form>
+
+  <ng-container *ngIf="resumenEmpleados.length > 0; else sinDatos">
+
+    <div class="text-end mt-3">
+      <button id="btn" class="btn btn-success" (click)="exportarExcel()">
+        <i class="bx bx-export"></i> Exportar a Excel
+      </button>
+    </div>
+
+    <table class="table table-striped table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Nombre Completo</th>
+          <th>Fecha Entrada</th>
+          <th>Hora Entrada</th>
+          <th>Fecha Salida</th>
+          <th>Hora Salida</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let emp of resumenEmpleados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ emp.nombreCompleto }}</td>
+          <td>{{ emp.fecha | date:'dd/MM/yyyy' }}</td>
+          <td>{{ emp.horaEntradaFormateada }}</td>
+          <td>{{ emp.fechaSalida | date:'dd/MM/yyyy'}}</td>
+          <td>{{ emp.horaSalidaFormateada }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+
+  <ng-template #sinDatos>
+    <div id="mensaje" class="alert alert-info text-center">
+      No hay datos para mostrar.
+    </div>
+  </ng-template>
+</div>

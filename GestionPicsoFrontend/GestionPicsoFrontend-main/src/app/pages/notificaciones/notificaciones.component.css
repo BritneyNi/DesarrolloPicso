@@ -1,0 +1,150 @@
+.bandeja-container{
+  margin-top:70px;
+  padding:20px;
+}
+
+.titulo-bandeja{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+/* grupo contenedor */
+.grupo{
+  margin-bottom:24px;
+  padding:16px;
+  border-radius:14px;
+  background:#f7f9fc;
+}
+
+/* header */
+.grupo-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.grupo-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.grupo-icon{
+  font-size:20px;
+}
+
+.grupo-title{
+  font-weight:600;
+}
+
+/* KPI */
+.grupo-kpi{
+  background:#1976d2;
+  color:white;
+  min-width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  font-weight:600;
+}
+
+/* cards */
+.cards-container{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.card-noti{
+  background:white;
+  padding:14px;
+  border-radius:10px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.08);
+  transition:.2s;
+  border-left:5px solid transparent;
+  cursor: pointer;
+}
+
+.card-noti:hover{
+  transform:translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* colores contextuales */
+.alturas{ border-left-color:#ff9800; }
+.examen{ border-left-color:#4caf50; }
+.documento{ border-left-color:#1976d2; }
+
+.titulo{ font-weight:600; }
+.mensaje{ color:#666; }
+
+.empty{
+  padding:20px;
+  text-align:center;
+  color:#888;
+}
+
+/* header click */
+.clickable{
+  cursor:pointer;
+  user-select:none;
+  transition:.15s;
+}
+
+.clickable:hover{
+  transform:scale(1.01);
+}
+
+/* header right */
+.grupo-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* flecha */
+.flecha{
+  font-size:14px;
+  transition:.25s;
+}
+
+.rotada{
+  transform:rotate(180deg);
+}
+
+/* cards contenedor anim */
+.cards-container{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  animation:fade .25s ease;
+}
+
+@keyframes fade{
+  from{ opacity:0; transform:translateY(-4px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* ⭐ DASHBOARD COLORS (esto es lo que querías) */
+.alturas{
+  border-left-color:#ff9800;
+  background:#fff3e0;
+}
+
+.examen{
+  border-left-color:#4caf50;
+  background:#e8f5e9;
+}
+
+.documento{
+  border-left-color:#1976d2;
+  background:#e3f2fd;
+}
+
+.card-noti.cumpleanos {
+  border-left: 5px solid #f59e0b;
+  background: linear-gradient(135deg, #fff7ed, #fffbeb);
+}

@@ -1,0 +1,111 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+
+<div class="container">
+  <h1>Gestión de Dotación</h1>
+
+  <div class="acciones">
+    <button class="btn btn-primary" (click)="abrirModal()">
+  + Nuevo elemento
+</button>
+<button class="btn" (click)="irAEntregas()">
+  Entregar dotación
+</button>
+
+<button class="btn btn-info" (click)="verHistorial()">
+    Ver historial
+  </button>
+
+  <button class="btn btn-secondary" (click)="irInventarioGeneral()">
+  📦 Inventario General
+</button>
+
+  </div>
+
+  <h2>Almacén de elementos</h2>
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Elemento</th>
+        <th>Tipo</th>
+        <th>Estado</th>
+        <th>Evidencia</th>
+        <th>Fecha de recepcion</th>
+        <th>descripcion</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+  <tr *ngFor="let e of elementos">
+    <td>{{ e.nombre }}</td>
+    <td>{{ e.tipo }}</td>
+    <td>
+      <span [class.activo]="e.estado === 'Activo'">
+        {{ e.estado }}
+      </span>
+    </td>
+   <td>
+  <span *ngIf="e.evidenciaPath">
+        <a [href]="e.evidenciaPath" target="_blank">Ver evidencia</a>
+      </span>
+    </td>
+<td>
+{{ e.fechaCreacion | date:'dd/MM/yyyy hh:mm a' }}
+</td>
+    <td>{{ e.descripcion || '' }}</td>
+
+    <td>
+      <button class="btn btn-sm btn-warning" (click)="editarElemento(e.id)">Editar</button>
+      <button class="btn btn-sm" (click)="irAInventario(e.id)">Inventario</button>
+      <button class="btn btn-sm btn-danger" (click)="eliminarElemento(e.id)">Eliminar</button>
+    </td>
+  </tr>
+</tbody>
+
+  </table>
+</div>
+<div class="modal-backdrop" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+
+    <div class="modal-header">
+      <h3>Nuevo elemento</h3>
+      <button (click)="cerrarModal()">✖</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="modal-body">
+
+      <label>Nombre</label>
+<input type="text" formControlName="nombre" />
+      <label>Tipo</label>
+      <select formControlName="tipo">
+        <option value="EPP">EPP</option>
+        <option value="Dotación">Dotación</option>
+      </select>
+
+      <label>Descripción</label>
+      <textarea formControlName="descripcion"></textarea>
+
+      <label>Vida útil (meses)</label>
+      <input type="number" formControlName="vidaUtilMeses" />
+
+      <label>
+        <input type="checkbox" formControlName="requiereEvidencia" />
+        Requiere evidencia
+      </label>
+
+      <!-- solo aparece si requiere evidencia -->
+      <div *ngIf="form.get('requiereEvidencia')?.value">
+      <label>Subir evidencia</label>
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" [disabled]="form.invalid">Guardar</button>
+      </div>
+
+    </form>
+  </div>
+</div>

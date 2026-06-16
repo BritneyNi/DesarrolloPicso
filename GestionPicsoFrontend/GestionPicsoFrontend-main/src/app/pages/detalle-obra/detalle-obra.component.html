@@ -1,0 +1,59 @@
+<app-navbar></app-navbar>
+<app-boton-regresar *ngIf="cargo !== 'responsable'"></app-boton-regresar>
+<button *ngIf="cargo === 'responsable'" class="btn-volver" (click)="irAHome()">
+  ‹ Volver
+</button>
+
+<div class="do-container">
+  <div class="do-header" *ngIf="obra; else loading">
+    <h1 class="do-titulo">{{ obra.nombreObra }}</h1>
+    <div class="do-info">
+      <span><strong>Tamaño:</strong> {{ obra.tamano }} m²</span>
+      <span><strong>Responsable:</strong> {{ obra.responsableNombre }}</span>
+      <span><strong>Cliente:</strong> {{ obra.clienteObra }}</span>
+    </div>
+  </div>
+
+  <div class="do-grid" *ngIf="obra">
+
+    <button class="do-card card-verde" *ngIf="cargo !== 'cliente'" (click)="irAAsignarEmpleados()">
+      <span class="do-card-icon">👷</span>
+      <span class="do-card-label">Asignar Empleados</span>
+    </button>
+
+    <button class="do-card card-verde" *ngIf="cargo !== 'cliente'" (click)="irAGestionPersonal()">
+      <span class="do-card-icon">⏱️</span>
+      <span class="do-card-label">Gestionar Personal</span>
+    </button>
+
+    <button class="do-card card-naranja" *ngIf="cargo !== 'cliente'" (click)="irAAusentismos()">
+      <span class="do-card-icon">📋</span>
+      <span class="do-card-label">Gestionar Ausentismos</span>
+    </button>
+
+    <button class="do-card card-azul" *ngIf="cargo !== 'cliente'" (click)="irADotacion()">
+      <span class="do-card-icon">👕</span>
+      <span class="do-card-label">Dotación</span>
+    </button>
+
+    <button class="do-card card-rojo" *ngIf="cargo !== 'cliente'" (click)="irAGestionRendimiento(obra.nombreObra)">
+      <span class="do-card-icon">📈</span>
+      <span class="do-card-label">Gestionar Rendimiento</span>
+    </button>
+
+    <button class="do-card card-navy" *ngIf="cargo === 'responsable'" (click)="irAGantt()">
+      <span class="do-card-icon">📅</span>
+      <span class="do-card-label">Gestionar Actividades (Gantt)</span>
+    </button>
+
+    <button class="do-card card-verde-oscuro" *ngIf="cargo === 'responsable'" (click)="irAPruebasHermeticidad()">
+      <span class="do-card-icon">🧪</span>
+      <span class="do-card-label">Pruebas de Hermeticidad</span>
+    </button>
+
+  </div>
+
+  <ng-template #loading>
+    <p class="do-loading">Cargando detalles...</p>
+  </ng-template>
+</div>

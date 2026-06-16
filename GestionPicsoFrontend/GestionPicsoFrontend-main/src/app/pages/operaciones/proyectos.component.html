@@ -1,0 +1,61 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="mod-container">
+  <div class="mod-header">
+    <h1 class="mod-titulo">Gestión de Operaciones</h1>
+    <p class="mod-subtitulo">Administra obras, inventarios y contratistas</p>
+  </div>
+
+  <div class="mod-grid">
+
+    <div class="mod-card" *ngIf="rol === 'admin' || rol === 'almacenista'" (click)="irAObrasAdmin()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">01 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🏗️</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Obras</h3>
+        <p class="mod-card-desc">Gestiona todas las obras del sistema</p>
+      </div>
+    </div>
+
+    <div class="mod-card" *ngIf="rol === 'admin' || rol === 'almacenista'" (click)="irAInventarios()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">02 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">📦</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Inventarios</h3>
+        <p class="mod-card-desc">Gestiona los inventarios</p>
+      </div>
+    </div>
+
+    <div class="mod-card" (click)="irAContratista()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">03 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🤝</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Contratistas</h3>
+        <p class="mod-card-desc">Gestiona contratistas por obra</p>
+      </div>
+    </div>
+
+    <div class="mod-card" (click)="irAPruebasHermeticidad()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">04 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🧪</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Pruebas de Hermeticidad</h3>
+        <p class="mod-card-desc">Gestiona inicio y cierre de pruebas</p>
+      </div>
+    </div>
+
+  </div>
+</div>

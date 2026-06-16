@@ -1,0 +1,255 @@
+<app-navbar></app-navbar>
+
+<div class="contenido">
+<app-boton-regresar></app-boton-regresar>
+<h2>Entrega de Dotación</h2>
+<button class="btn btn-info" (click)="verHistorial()">Ver historial</button>
+
+<form [formGroup]="form"  >
+
+  <label>Empleado</label>
+<input
+  type="text"
+  placeholder="Buscar empleado..."
+  (input)="filtrarEmpleadosInput($event)"
+  [value]="empleadoSeleccionado?.nombreCompleto || ''"
+/>
+
+<ul class="autocomplete" *ngIf="empleadosFiltrados.length">
+  <li
+    *ngFor="let emp of empleadosFiltrados"
+    (click)="seleccionarEmpleado(emp)">
+    {{ emp.nombreCompleto }}
+  </li>
+</ul>
+
+<!-- 📱 MÓVIL -->
+<div *ngIf="esMovil">
+  <label>Responsable de entrega</label>
+  <select
+    class="form-control"
+    [formControl]="formResponsable">
+
+    <option value="">Seleccione responsable</option>
+    <option
+      *ngFor="let r of responsablesEntrega"
+      [value]="r.id">
+      {{ r.nombreCompleto }}
+    </option>
+  </select>
+</div>
+
+<!-- 💻 DESKTOP -->
+<div *ngIf="!esMovil" class="autocomplete-entrega">
+  <label>Responsable de entrega</label>
+
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Buscar responsable"
+    [value]="responsableEntregaSeleccionado?.nombreCompleto || ''"
+    (input)="filtrarResponsablesEntrega($event)"
+    (focus)="onFocusResponsableEntrega()"
+    readonly
+  />
+
+  <ul
+  class="autocomplete-list"
+  *ngIf="mostrarListaEntrega && responsablesEntregaFiltrados.length"
+  (click)="$event.stopPropagation()"
+  (touchstart)="$event.stopPropagation()"
+>
+  <li
+    *ngFor="let r of responsablesEntregaFiltrados"
+    (mousedown)="seleccionarResponsableEntrega(r)">
+    {{ r.nombreCompleto }}
+  </li>
+</ul>
+
+</div>
+
+<div class="autocomplete-envio">
+  <label>Responsable de envio</label>
+
+  <input
+    type="text"
+    placeholder="Escriba el responsable de envío..."
+    [value]="responsableEnvioSeleccionado?.nombreCompleto || ''"
+    (focus)="onFocusResponsableEnvio()"
+    (input)="filtrarResponsablesEnvio($event)"
+  />
+
+  <ul
+  class="autocomplete"
+  *ngIf="mostrarListaEnvio && responsablesEnvioFiltrados.length"
+  (click)="$event.stopPropagation()"
+  (touchstart)="$event.stopPropagation()"
+>
+  <li
+    *ngFor="let r of responsablesEnvioFiltrados"
+    (mousedown)="seleccionarResponsableEnvio(r)">
+    {{ r.nombreCompleto }}
+  </li>
+</ul>  
+</div>
+
+<small class="error"
+  *ngIf="form.get('responsableEnvio')?.touched && form.get('responsableEnvio')?.hasError('required')">
+  Debe indicar quién envía la dotación
+</small>
+
+
+<label>Lugar de entrega</label>
+<input type="text" formControlName="lugarEntrega" />
+<small class="error"
+  *ngIf="form.get('lugarEntrega')?.touched && form.get('lugarEntrega')?.hasError('required')">
+  Debe indicar el lugar de entrega
+</small>
+
+<label>Elemento</label>
+<select
+  formControlName="elementoId"
+  (change)="onElementoChange($event)">  
+  <option value="">Seleccione elemento</option>
+  <option *ngFor="let e of elementos" [value]="e.id">
+    {{ e.nombre }}
+  </option>
+</select>
+
+<label>Inventario disponible</label>
+
+<div *ngIf="inventarios.length === 0" class="muted">
+  Seleccione un elemento para ver tallas disponibles
+</div>
+
+<div *ngFor="let i of inventarios" class="inventario-item">
+  <label>
+    <input
+      type="checkbox"
+        [checked]="estaSeleccionado(i.id)"
+      (change)="toggleElemento(i.id, $event)"
+    />
+    {{ i.talla }} — {{ i.cantidadDisponible }} disponibles
+  </label>
+
+  <input
+    *ngIf="estaSeleccionado(i.id)"
+    type="number"
+    min="1"
+    [max]="i.cantidadDisponible"
+    [value]="getCantidad(i.id)"
+    (input)="setCantidad(i.id, $any($event.target).value)"
+  />
+</div>
+<div *ngIf="elementosSeleccionados.length">
+  <p><strong>Elementos agregados:</strong></p>
+  <ul>
+    <li *ngFor="let e of elementosSeleccionados">
+  {{ e.elementoNombre }} ({{ e.talla }}) — {{ e.cantidad }}
+</li>
+  </ul>
+</div>
+
+
+  
+  <label>Observaciones</label>
+  <textarea formControlName="observaciones"></textarea>
+
+  <div class="acciones">
+  <!-- Entrega múltiple -->
+  <button
+  type="button"
+  class="btn btn-success"
+  [disabled]="elementosSeleccionados.length === 0"
+  (click)="continuarEntrega()">
+  Continuar ({{ totalCantidad }} ítems)
+</button>
+
+</div>
+</form>
+
+<div *ngIf="mostrarResumen" class="resumen-entrega">
+
+  <h3>Resumen de entrega ({{ totalCantidad }} unidades)</h3>
+
+  <p>
+    <strong>Empleado:</strong>
+    {{ empleadoSeleccionado?.nombreCompleto }}
+  </p>
+
+   <p *ngIf="form.value.lugarEntrega">
+    <strong>Lugar de entrega:</strong> {{form.value.lugarEntrega}}
+  </p>
+
+  <p *ngIf="form.value.observaciones">
+    <strong>Observaciones:</strong> {{ form.value.observaciones }}
+  </p>
+
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Elemento</th>
+        <th>Talla</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let e of elementosSeleccionados">
+    <td>{{ e.elementoNombre }}</td>
+    <td>{{ e.talla }}</td>
+    <td>{{ e.cantidad }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <p>
+   <strong>Total a entregar:</strong> {{ totalCantidad }}
+
+  </p>
+
+  <h4>Firmas</h4>
+
+<div class="firmas">
+  <div class="firma-box">
+    <p><strong>Firma Empleado</strong></p>
+    <canvas #firmaEmpleado width="300" height="150"
+  (pointerdown)="iniciarFirmaPointer($event, 'empleado')"
+  (pointermove)="dibujarFirmaPointer($event)"
+  (pointerup)="finalizarFirma()"
+  (pointerleave)="finalizarFirma()">
+</canvas>
+
+    <button type="button" (click)="limpiarFirma('empleado')">Limpiar</button>
+  </div>
+
+  <div class="firma-box">
+    <p><strong>Firma Responsable</strong></p>
+   <canvas #firmaResponsable width="300" height="150"
+  (pointerdown)="iniciarFirmaPointer($event, 'responsable')"
+  (pointermove)="dibujarFirmaPointer($event)"
+  (pointerup)="finalizarFirma()"
+  (pointerleave)="finalizarFirma()">
+</canvas>
+
+    <button type="button" (click)="limpiarFirma('responsable')">Limpiar</button>
+  </div>
+</div>
+
+
+  <div class="acciones">
+    <button
+      class="btn btn-secondary"
+      (click)="mostrarResumen = false">
+      Volver
+    </button>
+
+   <button
+  class="btn btn-success"
+  (click)="confirmarEntregaFinal()">
+  Confirmar entrega
+</button>
+
+  </div>
+</div>
+</div>

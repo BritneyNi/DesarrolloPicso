@@ -1,0 +1,86 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="permisos-admin">
+  <h2 id="title">Permisos Especiales Registrados</h2>
+
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Buscar..."
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="filtrarPermisos()"
+      class="search-input"
+    />
+  </div>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Empleado</th>
+          <th>Comentarios</th>
+          <th>Fecha de inicio</th>
+          <th>Fecha de fin</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doc of documentosFiltrados; let i = index">
+          <td>{{ i + 1 }}</td>
+
+          <!-- Nombre Empleado -->
+          <td>
+            <ng-container *ngIf="documentoEditando && documentoEditando.id === doc.id; else mostrarNombre">
+              <input [(ngModel)]="documentoEditando.nombreEmpleado" class="form-control" />
+            </ng-container>
+            <ng-template #mostrarNombre>
+              {{ doc.nombreEmpleado }}
+            </ng-template>
+          </td>
+
+          <td>
+            <ng-container *ngIf="documentoEditando && documentoEditando.id === doc.id; else mostrarComentarios">
+              <input [(ngModel)]="documentoEditando.comentarios" class="form-control" />
+            </ng-container>
+            <ng-template #mostrarComentarios>
+              {{ doc.comentarios }}
+            </ng-template>
+          </td>
+
+          <!-- Fechas -->
+          <td>{{ doc.fechaInicio | date: 'dd-MM-yyyy' }}</td>
+          <td>{{ doc.fechaFin | date: 'dd-MM-yyyy' }}</td>
+
+          <!-- Acciones -->
+          <td class="container-row">
+            <ng-container *ngIf="documentoEditando?.id === doc.id; else accionesNormales">
+              <button class="btn-guardar" (click)="guardarCambios()">
+                <i class='bx bx-save' style='color:#ffffff'></i>
+              </button>
+              <button class="btn-cancelar" (click)="cancelarEdicion()">
+                <i class='bx bx-x-circle' style='color:#ffffff'></i>
+              </button>
+            </ng-container>
+
+            <ng-template #accionesNormales>
+              <button class="btn-editar" (click)="editar(doc)">
+                <i class='bx bxs-edit'></i>
+              </button>
+              <button class="btn-eliminar" (click)="eliminar(doc.id!)">
+                <i class='bx bx-trash' style='color:#ffffff'></i>
+              </button>
+              <button class="btn-descargar" (click)="descargar(doc)" *ngIf="doc.nombreArchivo !== 'SinArchivo'">
+                <i class='bx bx-download'></i>
+              </button>
+              <button class="btn-ver" (click)="ver(doc)" *ngIf="doc.nombreArchivo !== 'SinArchivo'">
+                <i class='bx bx-show' style='color:#ffffff'></i>
+              </button>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

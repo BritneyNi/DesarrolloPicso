@@ -1,0 +1,241 @@
+
+<app-navbar></app-navbar>
+
+<div class="header-permiso">
+  <app-boton-regresar></app-boton-regresar>
+
+  <h1>Permiso en Caliente</h1>
+
+  <button
+    type="button"
+    class="btn-crear"
+    (click)="toggleFormulario()">
+    {{ mostrarFormulario ? '❌ Cerrar formulario' : '➕ Nuevo Permiso en Caliente' }}
+  </button>
+</div>
+
+<div class="buscador-wrapper">
+  <input
+    type="text"
+    placeholder="🔍 Buscar por empleado activo..."
+    [(ngModel)]="textoBusqueda"
+    (input)="filtrarPermisos()"
+  />
+</div>
+
+<div *ngIf="mostrarFormulario" class="form-wrapper">
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="form-container">
+
+  <div class="form-grid">
+
+  <div class="form-group">
+  <label>Nombre de la empresa:</label>
+  <input type="text" formControlName="nombreEmpresa">
+  </div>
+
+  <div class="form-group">
+  <label>NIT:</label>
+  <input type="text" formControlName="nit">
+  </div>
+
+  <div class="form-group">
+  <label>Proyecto:</label>
+  <input type="text" formControlName="proyecto">
+  </div>
+
+  <div class="form-group">
+  <label>Fecha inicio:</label>
+  <input type="date" formControlName="fechaInicio">
+  </div>
+
+  <div class="form-group">
+  <label>Fecha cierre:</label>
+  <input type="date" formControlName="fechaCierre">
+  </div>
+
+  <div class="form-group">
+  <label>Número de permiso:</label>
+  <input type="text" formControlName="numeroPermiso">
+  </div>
+
+</div>
+
+  <label>Herramientas:</label>
+  <textarea formControlName="herramientas"></textarea>
+
+  <label>Tipo de trabajo:</label>
+  <input type="text" formControlName="tipoTrabajo">
+
+  <label>Descripción de la tarea:</label>
+  <textarea formControlName="descripcionTarea"></textarea>
+
+  <h3>Elementos de Protección</h3>
+
+<div class="checkbox-grid">
+  <label *ngFor="let item of elementosProteccion">
+    <input
+      type="checkbox"
+      [checked]="elementosSeleccionados?.includes(item)"
+      (change)="onElementoChange($event, item)">
+    {{ item }}
+  </label>
+</div>
+<h3>Peligros</h3>
+
+<div class="checkbox-grid">
+  <label *ngFor="let item of peligros">
+    <input
+      type="checkbox"
+      [checked]="peligrosSeleccionados?.includes(item)"
+      (change)="onPeligroChange($event, item)">
+    {{ item }}
+  </label>
+</div>
+<h3>Personas que autorizan el trabajo</h3>
+
+<div formArrayName="autorizantes">
+
+  <div *ngFor="let auth of autorizantes.controls; let i = index"
+       [formGroupName]="i"
+       class="autorizante-row">
+
+    <label>Responsable autorizante:</label>
+
+    <!-- INPUT BUSCADOR -->
+    <input
+      type="text"
+      placeholder="🔍 Buscar empleado..."
+      formControlName="busqueda"
+      (input)="filtrarEmpleados(i)"
+      class="input-busqueda"
+      autocomplete="off"
+    />
+
+    <!-- LISTA AUTOCOMPLETE -->
+    <ul class="autocomplete-list"
+        *ngIf="auth.get('empleadosFiltrados')?.value?.length">
+
+      <li
+        *ngFor="let emp of auth.get('empleadosFiltrados')?.value"
+        (click)="seleccionarEmpleado(i, emp)">
+        {{ emp.nombreCompleto }} – {{ emp.cargo }}
+      </li>
+
+    </ul>
+
+    <!-- FIRMA -->
+    <button type="button" (click)="abrirFirma(i)">
+      ✍ Firmar
+    </button>
+
+    <span *ngIf="auth.value.firmaBase64">✔ Firmado</span>
+
+    <div *ngIf="autorizanteFirmandoIndex === i" class="firma-box">
+      <canvas #canvas
+        width="300"
+        height="150"
+        (mousedown)="start($event)"
+        (mousemove)="draw($event)"
+        (mouseup)="end()"
+        (mouseleave)="end()"
+        (touchstart)="start($event)"
+        (touchmove)="draw($event)"
+        (touchend)="end()"
+        style="touch-action:none;">
+      </canvas>
+
+      <div class="firma-botones">
+        <button type="button" (click)="guardarFirma()">Guardar firma</button>
+        <button type="button" (click)="limpiar()">Limpiar</button>
+      </div>
+    </div>
+
+    <button type="button" (click)="eliminarAutorizante(i)">❌</button>
+
+  </div>
+
+  <button type="button" (click)="agregarAutorizante()">
+    ➕ Agregar autorizante
+  </button>
+
+</div>
+
+
+  <button type="submit" [disabled]="guardando">
+    {{ guardando ? 'Guardando...' : 'Guardar permiso' }}
+  </button>
+  
+    <button
+  class="btn-flotante-cerrar"
+  (click)="toggleFormulario(); scrollToTop()">
+  ❌ Cerrar
+</button>
+
+  </form>
+ 
+</div>
+<div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Empresa</th>
+          <th>Proyecto</th>
+          <th>Tipo de trabajo</th>
+          <th>Responsables</th>
+          <th>Personal</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let permiso of permisosFiltrados">
+          <td>{{ permiso.fechaInicio | date:'shortDate' }}</td>
+          <td>{{ permiso.nombreEmpresa }}</td>
+          <td>{{ permiso.proyecto }}</td>
+          <td>{{ permiso.tipoTrabajo }}</td>
+          <td>
+  <ng-container *ngIf="permiso.autorizantes?.length; else sinAutorizantes">
+    <div
+      *ngFor="let a of permiso.autorizantes"
+      style="font-size:12px; line-height:1.2;"
+    >
+      • {{ a.empleado?.nombreCompleto ?? 'Sin nombre' }}
+    </div>
+  </ng-container>
+
+  <ng-template #sinAutorizantes>
+    <span style="font-style:italic; color:#777;">-</span>
+  </ng-template>
+</td>
+
+          <td>
+  <ng-container *ngIf="permiso.personal?.length; else sinPersonal">
+    <div
+      *ngFor="let p of permiso.personal"
+      style="font-size:12px; line-height:1.2;"
+    >
+      • {{ p.empleado?.nombreCompleto ?? 'Sin nombre' }}
+    </div>
+  </ng-container>
+
+  <ng-template #sinPersonal>
+    <span style="font-style:italic; color:#777;">
+      Sin personal
+    </span>
+  </ng-template>
+</td>
+
+        <td>
+        <button class="btn-eliminar" (click)="eliminarPermiso(permiso.id)">
+            🗑 Eliminar
+        </button>
+        <button (click)="verDetalle(permiso.id)">👁 Ver</button>
+        <button (click)="gestionarPersonal(permiso.id)">
+          👷 Personal
+        </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

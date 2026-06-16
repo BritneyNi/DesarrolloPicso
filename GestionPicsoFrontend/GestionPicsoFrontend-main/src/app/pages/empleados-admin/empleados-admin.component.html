@@ -1,0 +1,487 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="empleados-admin">
+  <h2 id="title">Listado Maestro de Empleados</h2>
+  <div class="acciones-top" *ngIf="!esResponsable">
+    <button (click)="mostrarModalExportar = true" class="btn-exportar">
+      📥 Exportar Excel
+    </button>
+    <button (click)="mostrarFormularioEmpleado()" class="btn-agregar">
+      <i class='bx bx-user-plus'></i> Agregar Empleado
+    </button>
+    <button (click)="irADashboardRRHH()" class="btn-dashboard">
+      📊 Dashboard RRHH
+    </button>
+  </div>
+
+  <div class="filtros">
+    <button (click)="filtrarPorEstado('Activo')" class="btn-filtro activo">Activos</button>
+    <button (click)="filtrarPorEstado('Todos')" class="btn-filtro todos">Todos</button>
+
+    <!-- Filtro por mes de cumpleaños -->
+    <div class="filtro-mes-wrap" *ngIf="!esResponsable">
+      <select (change)="onMesCumpleChange($event)" class="filtro-mes-select">
+        <option [value]="0">🎂 Cumpleaños — Todos</option>
+        <option *ngFor="let mes of meses; let i = index" [value]="i + 1">{{ mes }}</option>
+      </select>
+    </div>
+
+    <div class="search-container">
+      <input type="text" placeholder="Buscar..." [(ngModel)]="searchQuery" (ngModelChange)="filtrarEmpleados()" class="search-input">
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th *ngIf="!esResponsable">#</th>
+          <th *ngIf="!esResponsable">Estado</th>
+          <th>Empleado</th>
+          <th>Cédula</th>
+          <th>Teléfono</th>
+          <th>Cargo</th>
+          <th *ngIf="!esResponsable">Ubicación<br>
+            <select [(ngModel)]="filtroUbicacion" (change)="filtrarEmpleados()">
+              <option value="">-- Todas --</option>
+              <option *ngFor="let u of ubicaciones" [value]="u">{{ u }}</option>
+            </select>
+          </th>
+          <th *ngIf="!esResponsable">Tipo Contrato
+            <select [(ngModel)]="filtroTipoContrato" (change)="filtrarEmpleados()">
+              <option value="">-- Todos --</option>
+              <option *ngFor="let t of tipoContrato" [value]="t">{{ t }}</option>
+            </select>
+          </th>
+          <th *ngIf="!esResponsable">Firmó Contrato
+            <select [(ngModel)]="filtroFirmaContrato" (change)="filtrarEmpleados()">
+              <option value="">Todos</option>
+              <option *ngFor="let f of filtroFirma" [value]="f">{{ f }}</option>
+            </select>
+          </th>
+          <th *ngIf="puedeVerDatosSensibles">Salario</th>
+          <th *ngIf="puedeVerDatosSensibles">N° Cuenta</th>
+          <th *ngIf="esResponsable">Obra</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let empleado of empleadosPaginados; let i = index">
+          <td *ngIf="!esResponsable">{{ (paginaActual - 1) * itemsPorPagina + i + 1 }}</td>
+          <td *ngIf="!esResponsable">{{ empleado.estado }}</td>
+          <td>
+            {{ empleado.nombreCompleto }}
+            <span *ngIf="cumpleEsteMes(empleado.fechaNacimiento)" class="badge-cumple">🎂 Este mes</span>
+            <span *ngIf="empleado.fechaNacimiento" class="cumple-fecha">{{ fechaCumple(empleado.fechaNacimiento) }}</span>
+          </td>
+          <td>{{ empleado.cedula }}</td>
+          <td>{{ empleado.telefono || 'N/A' }}</td>
+          <td>{{ empleado.cargo }}</td>
+          <td *ngIf="!esResponsable">{{ empleado.ubicacion || 'N/A' }}</td>
+          <td *ngIf="!esResponsable">{{ empleado.tipoContrato }}</td>
+          <td *ngIf="!esResponsable">{{ empleado.firmoContrato || 'Pendiente' }}</td>
+          <td *ngIf="puedeVerDatosSensibles">{{ empleado.salario | number:'1.2-2' }}</td>
+          <td *ngIf="puedeVerDatosSensibles">{{ empleado.numeroCuenta || 'N/A' }}</td>
+          <td *ngIf="esResponsable">{{ empleado.obra || 'Sin asignar' }}</td>
+          <td>
+            <button *ngIf="!esResponsable" (click)="mostrarFormularioEmpleado(empleado)" class="btn-editar">
+              <i class='bx bxs-edit'></i>
+            </button>
+            <button *ngIf="esResponsable" (click)="abrirCambioObra(empleado)" class="btn-editar">
+              🏗️ Cambiar obra
+            </button>
+            <button *ngIf="!esResponsable" class="btn-contrato" title="Descargar contrato" (click)="descargarContrato(empleado.id)">
+              📄
+            </button>
+            <button *ngIf="!esResponsable" class="btn btn-detalles" (click)="verDetalles(empleado)">
+              👁️ Detalles
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="paginacion">
+    <button (click)="cambiarPagina(-1)" [disabled]="paginaActual === 1">Anterior</button>
+    <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+    <button (click)="cambiarPagina(1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+  </div>
+
+  <!-- MODAL CREAR/EDITAR -->
+  <div *ngIf="mostrarFormulario && !modoDetalle && !modoCambioObra" class="modal" (click)="cerrarFormulario()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="btn-cerrar" type="button" (click)="cerrarFormulario()">✕</button>
+      <h3>{{ esEdicion ? 'Editar Empleado' : 'Nuevo Empleado' }}</h3>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Nombre Completo <span class="text-danger">*</span></label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.nombreCompleto"
+            (input)="validarNombreCompleto($event)" placeholder="Ejemplo: Juan Pablo Restrepo" />
+        </div>
+
+        <div class="form-group">
+          <label>Cédula <span class="text-danger">*</span></label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.cedula"
+            (keypress)="permitirCedula($event)" (paste)="bloquearPegadoCedula($event)"
+            maxlength="20" placeholder="Cédula" />
+        </div>
+
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.telefono"
+            (keypress)="permitirSoloNumeros($event)" (paste)="bloquearPegadoInvalido($event)"
+            maxlength="15" placeholder="Teléfono mínimo 7 dígitos" />
+        </div>
+
+        <div class="form-group">
+          <label>Teléfono Emergencia</label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.telefonoEmergencia"
+            (keypress)="permitirSoloNumeros($event)" (paste)="bloquearPegadoInvalido($event)"
+            maxlength="15" placeholder="Teléfono emergencia" />
+        </div>
+
+        <div class="form-group">
+          <label>Fecha de Nacimiento</label>
+          <input [readonly]="esResponsable" type="date" [(ngModel)]="empleadoActual.fechaNacimiento" />
+        </div>
+
+        <div class="form-group">
+          <label>Correo</label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.correo"
+            (input)="validarCorreo($event)" placeholder="ejemplo@empresa.com" />
+        </div>
+
+        <div class="form-group">
+          <label>Cargo <span class="text-danger">*</span></label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.cargo"
+            (input)="onCargoInput($event)" (paste)="onCargoPaste($event)" />
+        </div>
+
+        <div class="form-group">
+          <label>Turno</label>
+          <select [(ngModel)]="empleadoActual.turno" [disabled]="esResponsable">
+            <option value="Diurno">Diurno</option>
+            <option value="Nocturno">Nocturno</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="obra">Obra <span class="text-danger">*</span></label>
+          <select id="obra" [(ngModel)]="empleadoActual.obra" required>
+            <option value="">Seleccione una obra</option>
+            <option *ngFor="let o of obras" [value]="o.nombreObra">{{ o.nombreObra }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Ubicación</label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.ubicacion"
+            (input)="onUbicacionInput($event)" (paste)="onUbicacionPaste($event)" />
+        </div>
+
+        <div class="form-group">
+          <label>Dirección</label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.direccion"
+            (input)="onDireccionInput($event)" (paste)="onDireccionPaste($event)" />
+        </div>
+
+        <div class="form-group">
+          <label>Tipo Contrato</label>
+          <select [(ngModel)]="empleadoActual.tipoContrato" [disabled]="esResponsable" required>
+            <option value="">Seleccionar tipo...</option>
+            <option *ngFor="let tipo of tiposContrato" [value]="tipo">{{ tipo }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Fecha en que inicia el contrato</label>
+          <input [readonly]="esResponsable" type="date" [(ngModel)]="empleadoActual.fechaInicioContrato" required />
+        </div>
+
+        <div class="form-group">
+          <label>Fecha en que finaliza el contrato</label>
+          <input [readonly]="esResponsable" type="date" [(ngModel)]="empleadoActual.fechaRetiro" />
+        </div>
+
+        <div class="form-group">
+          <label>Estado <span class="text-danger">*</span></label>
+          <select [(ngModel)]="empleadoActual.estado" [disabled]="esResponsable" required>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>¿Firmó Contrato?</label>
+          <select [(ngModel)]="empleadoActual.firmoContrato" [disabled]="esResponsable" required>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+            <option value="En Proceso">En Proceso</option>
+          </select>
+        </div>
+
+        <div *ngIf="puedeVerDatosSensibles" class="form-group">
+          <label>Salario <span class="text-danger">*</span></label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.salario"
+            (input)="validarSalario($event)" (blur)="verificarSalarioMinimo($event)"
+            placeholder="Salario mínimo 1'200.000" />
+        </div>
+
+        <div class="form-group">
+          <label>Bono</label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.bono"
+            (input)="validarBono($event)" placeholder="Ejemplo: Bono extra 2025" />
+        </div>
+
+        <div *ngIf="puedeVerDatosSensibles" class="form-group">
+          <label>N° Cuenta</label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.numeroCuenta"
+            (input)="validarNumeroCuenta($event)" placeholder="Número de cuenta" />
+        </div>
+
+        <div class="form-group">
+          <label>AFP <span class="text-danger">*</span></label>
+          <select [(ngModel)]="empleadoActual.fondoPension" [disabled]="esResponsable" required>
+            <option value="">Seleccionar fondo</option>
+            <option value="Colpensiones">Colpensiones</option>
+            <option value="FNA">FNA</option>
+            <option value="Porvenir">Porvenir</option>
+            <option value="Proteccion">Protección</option>
+            <option value="Colfondos">Colfondos</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>EPS <span class="text-danger">*</span></label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.eps"
+            (input)="validarEPS($event)" placeholder="Ejemplo: Sura EPS" />
+        </div>
+
+        <div class="form-group">
+          <label>ARL</label>
+          <input [readonly]="esResponsable" type="text" [(ngModel)]="empleadoActual.arl" readonly />
+        </div>
+
+        <div class="form-group">
+          <label>CCF</label>
+          <select [(ngModel)]="empleadoActual.ccf" [disabled]="esResponsable" required>
+            <option value="Comfama">Comfama</option>
+            <option value="Compensar">Compensar</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>¿Se le pagó Liquidación?</label>
+          <select [(ngModel)]="empleadoActual.pagoLiquidacion" [disabled]="esResponsable">
+            <option value="SI">Sí</option>
+            <option value="NO">No</option>
+            <option value="No Aplica">No aplica</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Examen de Ingreso</label>
+          <input [readonly]="esResponsable" type="date" [(ngModel)]="empleadoActual.examenIngreso" />
+        </div>
+
+        <div class="form-group">
+          <label>Fecha aptitud en alturas</label>
+          <input [readonly]="esResponsable" type="date" [(ngModel)]="empleadoActual.aptitudEnAltura" />
+        </div>
+
+        <div class="form-group">
+          <label>🔎 Constancia aptitud en alturas</label>
+          <div class="archivo-aptitud-wrapper">
+            <input type="file" id="archivoAptitud" (change)="seleccionarArchivo($event)" />
+            <button type="button" class="btn-subir" (click)="subirArchivo()"
+              [disabled]="!archivoAptitud || empleadoActual.id === 0">Subir</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Vencimiento aptitud en alturas</label>
+          <input [readonly]="esResponsable" type="date" [(ngModel)]="empleadoActual.vencimientoAptitudAlturas" />
+        </div>
+
+        <div class="form-group">
+          <label>Fecha Reentrenamiento</label>
+          <input [readonly]="esResponsable" type="date" [(ngModel)]="empleadoActual.fechaReentrenamiento" />
+        </div>
+
+        <div class="form-group" style="grid-column: span 2;">
+          <label>Observación</label>
+          <textarea [readonly]="esResponsable" [(ngModel)]="empleadoActual.observacion"
+            (input)="validarObservacion($event)" (paste)="bloquearPegado($event)"
+            placeholder="Observación"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-guardar" (click)="guardarEmpleado()">
+          {{ esEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+        <button class="btn-cancelar" (click)="cerrarFormulario()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CAMBIO OBRA -->
+  <div *ngIf="mostrarFormulario && esResponsable && modoCambioObra" class="modal">
+    <div class="modal-content">
+      <h3>Cambiar obra</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input readonly [(ngModel)]="empleadoActual.nombreCompleto">
+        </div>
+        <div class="form-group">
+          <label>Cédula</label>
+          <input readonly [(ngModel)]="empleadoActual.cedula">
+        </div>
+        <div class="form-group">
+          <label>Cargo</label>
+          <input readonly [(ngModel)]="empleadoActual.cargo">
+        </div>
+        <div class="form-group">
+          <label>Obra</label>
+          <select [(ngModel)]="empleadoActual.obra">
+            <option *ngFor="let o of obras" [value]="o.nombreObra">{{ o.nombreObra }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-guardar" (click)="guardarEmpleado()">Guardar</button>
+        <button class="btn-cancelar" (click)="cerrarFormulario()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DETALLES -->
+  <div *ngIf="mostrarFormulario && modoDetalle" class="modal">
+    <div class="modal-content">
+      <h3>Detalles del empleado</h3>
+      <div class="form-grid solo-lectura">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input readonly [value]="empleadoActual.nombreCompleto">
+        </div>
+        <div class="form-group">
+          <label>Cédula</label>
+          <input readonly [value]="empleadoActual.cedula">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input readonly [value]="empleadoActual.telefono">
+        </div>
+        <div class="form-group">
+          <label>Teléfono de emergencia</label>
+          <input readonly [value]="empleadoActual.telefonoEmergencia">
+        </div>
+        <div class="form-group">
+          <label>Fecha de Nacimiento</label>
+          <input readonly [value]="empleadoActual.fechaNacimiento | date:'yyyy-MM-dd'">
+        </div>
+        <div class="form-group">
+          <label>Correo</label>
+          <input readonly [value]="empleadoActual.correo">
+        </div>
+        <div class="form-group">
+          <label>Cargo</label>
+          <input readonly [value]="empleadoActual.cargo">
+        </div>
+        <div class="form-group">
+          <label>Turno</label>
+          <input readonly [value]="empleadoActual.turno || 'Diurno'">
+        </div>
+        <div class="form-group">
+          <label>Ubicación</label>
+          <input readonly [value]="empleadoActual.ubicacion">
+        </div>
+        <div class="form-group">
+          <label>Dirección</label>
+          <input readonly [value]="empleadoActual.direccion">
+        </div>
+        <div class="form-group">
+          <label>Obra</label>
+          <input readonly [value]="empleadoActual.obra">
+        </div>
+        <div class="form-group">
+          <label>Tipo de contrato</label>
+          <input readonly [value]="empleadoActual.tipoContrato">
+        </div>
+        <div class="form-group">
+          <label>Fondo de pensión</label>
+          <input readonly [value]="empleadoActual.fondoPension">
+        </div>
+        <div class="form-group">
+          <label>EPS</label>
+          <input readonly [value]="empleadoActual.eps">
+        </div>
+        <div class="form-group">
+          <label>ARL</label>
+          <input readonly [value]="empleadoActual.arl">
+        </div>
+        <div class="form-group">
+          <label>Caja de compensación familiar</label>
+          <input readonly [value]="empleadoActual.ccf">
+        </div>
+        <div class="form-group">
+          <label>Pago Liquidación</label>
+          <input readonly [value]="empleadoActual.pagoLiquidacion">
+        </div>
+        <div class="form-group">
+          <label>Fecha del examen de ingreso</label>
+          <input readonly [value]="empleadoActual.examenIngreso | date:'yyyy-MM-dd'">
+        </div>
+        <div class="form-group">
+          <label>Fecha aptitud en alturas</label>
+          <input readonly [value]="empleadoActual.aptitudEnAltura | date:'yyyy-MM-dd'">
+        </div>
+        <div class="form-group" *ngIf="empleadoActual.aptitudArchivoSas">
+          <label>Aptitud alturas</label>
+          <a [href]="empleadoActual.aptitudArchivoSas" target="_blank" rel="noopener">📄 Ver archivo</a>
+        </div>
+        <div class="form-group">
+          <label>Vencimiento aptitud en alturas</label>
+          <input readonly [value]="empleadoActual.vencimientoAptitudAlturas | date:'yyyy-MM-dd'">
+        </div>
+        <div class="form-group">
+          <label>Fecha de reentrenamiento</label>
+          <input readonly [value]="empleadoActual.fechaReentrenamiento | date:'yyyy-MM-dd'">
+        </div>
+        <div class="form-group">
+          <label>Observaciones</label>
+          <input readonly [value]="empleadoActual.observacion">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancelar" (click)="cerrarFormulario()">Cerrar</button>
+        <button *ngIf="!esResponsable" class="btn-guardar" (click)="editarDesdeDetalle()">✏️ Editar</button>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL EXPORTAR EXCEL -->
+<div *ngIf="mostrarModalExportar" class="modal" (click)="mostrarModalExportar = false">
+  <div class="modal-content" (click)="$event.stopPropagation()" style="max-width:400px">
+    <h3 style="margin-bottom:16px">📥 Exportar Excel</h3>
+    <p style="font-size:13px;color:#888;margin-bottom:16px">
+      Se exportarán <strong>{{ empleadosFiltrados.length }}</strong> empleados con los filtros actuales.
+    </p>
+    <p style="font-size:13px;font-weight:600;margin-bottom:10px">Selecciona las columnas:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <label *ngFor="let col of columnasExportar" style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;background:#f9f9f9;padding:8px 10px;border-radius:8px;border:1px solid #eee">
+        <input type="checkbox" [(ngModel)]="col.seleccionada" style="width:16px;height:16px;cursor:pointer" />
+        {{ col.label }}
+      </label>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button (click)="exportarExcel()" class="btn-guardar" style="flex:1">Descargar</button>
+      <button (click)="mostrarModalExportar = false" class="btn-cancelar" style="flex:1">Cancelar</button>
+    </div>
+  </div>
+</div>
+</div>

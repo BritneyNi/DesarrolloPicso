@@ -1,0 +1,29 @@
+<div class="card">
+  <ng-container *ngIf="!loading && !error">
+    <div class="card-header">
+      <h3>🧗 Curso de Alturas</h3>
+      <span class="semaforo" [ngClass]="getSemaforo()"></span>
+    </div>
+    <div class="metric total">
+      <span>👥 Total empleados activos</span>
+      <strong>{{ data?.totalEmpleadosActivos }}</strong>
+    </div>
+    <div class="metric success clickable" (click)="verVigentes()">
+      <span>Vigentes</span>
+      <strong>{{ data.vigentes }}</strong>
+    </div>
+    <div class="metric danger clickable" (click)="verVencidos()">
+      <span>Vencidos</span>
+      <strong>{{ data.vencidos }}</strong>
+    </div>
+    <div class="metric warning clickable" (click)="verSinCurso()">
+      <span>Sin curso</span>
+      <strong>{{ data.sinCurso }}</strong>
+    </div>
+    <div class="grafica-container">
+      <canvas id="alturasChart"></canvas>
+    </div>
+  </ng-container>
+  <div *ngIf="loading" style="padding: 1rem; color: #aaa;">Cargando alturas...</div>
+  <div *ngIf="error" style="padding: 1rem; color: red;">Error al cargar datos</div>
+</div>

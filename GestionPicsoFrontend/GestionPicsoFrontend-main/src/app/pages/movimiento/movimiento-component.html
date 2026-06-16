@@ -1,0 +1,59 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="usuarios-admin">
+  <h2>Lista de Movimientos</h2>
+
+  <!-- Buscador -->
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Buscar..."
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="filtrarMovimientos()"
+      class="search-input" />
+  </div>
+
+  <!-- Botón Crear -->
+  <button class="btn-agregar" (click)="abrirCrearMovimiento()">
+    Crear Movimiento
+  </button>
+
+  <!-- Tabla de Movimientos -->
+  <div *ngIf="movimientosFiltrados.length; else sinMovimientos" class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Codigo</th>
+          <th>Herramienta</th>
+          <th>Responsable</th>
+          <th>Fecha Movimiento</th>
+          <th>Tipo Movimiento</th>
+          <th>Obra</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of movimientosFiltrados">
+          <td>{{ m.codigoHerramienta }}</td>
+          <td>{{ m.nombreHerramienta }}</td>
+          <td>{{ m.responsable }}</td>
+          <td>{{ m.fechaMovimiento | date: 'dd/MM/yyyy ' }}</td>
+          <td>{{ m.tipoMovimiento }}</td>
+          <td>{{ m.obra }}</td>
+          <td>{{ m.estado }}</td>
+          <td class="container-row">
+            <button class="btn-editar" (click)="abrirCrearMovimiento(m)">
+              Editar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #sinMovimientos>
+    <p>No se han registrado movimientos.</p>
+  </ng-template>
+</div>

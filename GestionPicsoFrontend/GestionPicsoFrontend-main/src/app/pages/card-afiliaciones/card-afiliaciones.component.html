@@ -1,0 +1,30 @@
+<div class="card">
+  <h3>🧾 Afiliaciones</h3>
+
+  <div class="metric total">
+    <span>👥 Total empleados activos</span>
+    <strong>{{ data?.totalEmpleadosActivos }}</strong>
+  </div>
+
+ <div class="metric success clickable" (click)="irEstado('completas')">
+    <span>✅ Afiliaciones completas</span>
+    <strong>{{ data?.completos }}</strong>
+  </div>
+
+  <div class="metric warning clickable" (click)="irEstado('incompletas')">
+    <span>⚠️ Incompletas</span>
+    <strong>{{ data?.incompletos }}</strong>
+  </div>
+
+  <div class="metric danger clickable" (click)="irEstado('sin-afiliacion')">
+    <span>❌ Sin afiliación</span>
+    <strong>{{ data?.sinAfiliacion }}</strong>
+  </div>
+
+  <div class="grafica-container">
+    <canvas #afiliacionesChart></canvas>
+  </div>
+</div>
+
+<div class="card loading" *ngIf="loading">Cargando afiliaciones...</div>
+<div class="card error" *ngIf="error">Error cargando información</div>

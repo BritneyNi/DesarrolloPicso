@@ -1,0 +1,226 @@
+﻿<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="gp-wrapper">
+
+  <!-- HEADER -->
+  <div class="gp-header">
+    <h1 class="gp-titulo">Gestión de Tiempos del Personal</h1>
+    <button class="gp-btn-refresh" (click)="cargarTiempos()" title="Refrescar datos">
+      <i class="bx bx-refresh"></i>
+    </button>
+  </div>
+
+  <!-- CONTADORES DE ESTADO -->
+  <div class="gp-contadores">
+    <div class="gp-contador verde" (click)="filtrarPorEstado('ingreso-salida')"
+         [class.activo]="filtroEstado === 'ingreso-salida'">
+      <span class="gp-contador-numero">{{ contarEstado('ingreso-salida') }}</span>
+      <span class="gp-contador-label">✅ Completos</span>
+    </div>
+    <div class="gp-contador amarillo" (click)="filtrarPorEstado('solo-ingreso')"
+         [class.activo]="filtroEstado === 'solo-ingreso'">
+      <span class="gp-contador-numero">{{ contarEstado('solo-ingreso') }}</span>
+      <span class="gp-contador-label">🟡 Sin salida</span>
+    </div>
+    <div class="gp-contador rojo" (click)="filtrarPorEstado('falta-ingreso')"
+         [class.activo]="filtroEstado === 'falta-ingreso'">
+      <span class="gp-contador-numero">{{ contarEstado('falta-ingreso') }}</span>
+      <span class="gp-contador-label">🔴 Sin ingreso</span>
+    </div>
+    <div class="gp-contador gris" (click)="filtrarPorEstado('sin-tiempos')"
+         [class.activo]="filtroEstado === 'sin-tiempos'">
+      <span class="gp-contador-numero">{{ contarEstado('sin-tiempos') }}</span>
+      <span class="gp-contador-label">⚪ Sin registro</span>
+    </div>
+    <div class="gp-contador morado" (click)="filtrarPorEstado('ausentismo')"
+         [class.activo]="filtroEstado === 'ausentismo'">
+      <span class="gp-contador-numero">{{ contarEstado('ausentismo') }}</span>
+      <span class="gp-contador-label">🟣 Ausentismo</span>
+    </div>
+  </div>
+
+  <!-- BUSCADOR + TOTAL -->
+  <div class="gp-buscador-row">
+    <div class="gp-search-wrap">
+      <i class="bx bx-search gp-search-icon"></i>
+      <input
+        type="text"
+        placeholder="Buscar empleado..."
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="filtrarEmpleados()"
+        class="gp-search-input"
+      />
+      <span *ngIf="searchQuery" class="gp-search-clear" (click)="searchQuery=''; filtrarEmpleados()">✕</span>
+    </div>
+    <div class="gp-total-badge">
+      <span>{{ empleadosFiltrados.length }}</span> empleados
+    </div>
+  </div>
+
+  <!-- VISTA ESCRITORIO: TABLA -->
+  <div class="gp-table-wrap hide-mobile">
+    <table class="gp-table">
+      <thead>
+        <tr>
+          <th>
+            <input type="checkbox" [(ngModel)]="todosSeleccionados" (change)="toggleSeleccionarTodos()" />
+          </th>
+          <th>Estado</th>
+          <th>Cédula</th>
+          <th>Nombre</th>
+          <th>Cargo</th>
+          <th>Obra</th>
+          <th>Ingreso</th>
+          <th>Salida</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let emp of empleadosFiltrados">
+          <tr [ngClass]="obtenerClaseFila(emp)">
+            <td>
+              <input type="checkbox" [(ngModel)]="emp.seleccionado"
+                (change)="verificarSeleccionIndividual(); onCheckboxChange(emp)" />
+            </td>
+            <td>
+              <span class="gp-badge" [ngClass]="'badge-' + emp.estadoTemporario">
+                {{ etiquetaEstado(emp.estadoTemporario) }}
+              </span>
+            </td>
+            <td class="gp-cedula">{{ emp.cedula }}</td>
+            <td class="gp-nombre">
+              {{ emp.nombreCompleto }}
+              <span *ngIf="emp.estadoTemporario === 'ausentismo'" class="gp-ausente-tag">Ausente</span>
+            </td>
+            <td>{{ emp.cargo }}</td>
+            <td>{{ emp.obra }}</td>
+            <td>
+              <ng-container *ngIf="emp.estadoTemporario === 'ausentismo'; else ingreso">
+                <span class="gp-time gp-time-ausente">Desde {{ emp.fechaHoraEntrada | date:'dd/MM/yyyy' }}</span>
+              </ng-container>
+              <ng-template #ingreso>
+                <ng-container *ngIf="emp.fechaHoraEntrada; else sinIngreso">
+                  <span class="gp-time" [class.gp-time-tardio]="esTardio(emp.fechaHoraEntrada)">
+                    {{ emp.fechaHoraEntrada | date:'hh:mm a' }}
+                    <span *ngIf="esTardio(emp.fechaHoraEntrada)" class="gp-tardio-tag">Tardío</span>
+                  </span>
+                </ng-container>
+                <ng-template #sinIngreso>
+                  <span class="gp-time gp-time-vacio">—</span>
+                </ng-template>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="emp.estadoTemporario === 'ausentismo'; else salida">
+                <span class="gp-time gp-time-ausente">Hasta {{ emp.fechaHoraSalida | date:'dd/MM/yyyy' }}</span>
+              </ng-container>
+              <ng-template #salida>
+                <span class="gp-time" *ngIf="emp.fechaHoraSalida; else sinSalida">
+                  {{ emp.fechaHoraSalida | date:'hh:mm a' }}
+                </span>
+                <ng-template #sinSalida>
+                  <span class="gp-time gp-time-vacio">—</span>
+                </ng-template>
+              </ng-template>
+            </td>
+            <td>{{ emp.observacion }}</td>
+          </tr>
+
+          <!-- PANEL INLINE -->
+          <tr *ngIf="emp.seleccionado" class="gp-panel-inline">
+            <td colspan="9">
+              <div class="gp-panel-acciones">
+                <span class="gp-panel-nombre">⚡ {{ emp.nombreCompleto }}</span>
+                <div class="gp-panel-botones">
+                  <div class="gp-panel-grupo">
+                    <label class="gp-panel-label">🟢 Ingreso</label>
+                    <input type="time" [(ngModel)]="emp.horaIngresoManual" class="gp-input-hora">
+                    <button class="gp-btn-ingreso" (click)="registrarIngresoRapido(emp)">Guardar</button>
+                    <span class="gp-feedback-ok" *ngIf="emp.mensajeIngreso">{{ emp.mensajeIngreso }}</span>
+                  </div>
+                  <div class="gp-panel-grupo">
+                    <label class="gp-panel-label">🔴 Salida</label>
+                    <input type="time" [(ngModel)]="emp.horaSalidaManual" class="gp-input-hora">
+                    <button class="gp-btn-salida" (click)="registrarSalidaRapida(emp)">Guardar</button>
+                    <span class="gp-feedback-ok" *ngIf="emp.mensajeSalida">{{ emp.mensajeSalida }}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VISTA MÓVIL: CARDS -->
+  <div class="gp-cards-wrap show-mobile">
+    <div *ngFor="let emp of empleadosFiltrados"
+         class="gp-card"
+         [ngClass]="'card-' + emp.estadoTemporario">
+      <div class="gp-card-header">
+        <input type="checkbox" [(ngModel)]="emp.seleccionado"
+          (change)="verificarSeleccionIndividual(); onCheckboxChange(emp)" />
+        <span class="gp-badge" [ngClass]="'badge-' + emp.estadoTemporario">
+          {{ etiquetaEstado(emp.estadoTemporario) }}
+        </span>
+      </div>
+      <div class="gp-card-body">
+        <p class="gp-card-nombre">{{ emp.nombreCompleto }}</p>
+        <p class="gp-card-sub">{{ emp.cargo }} · {{ emp.obra }}</p>
+        <p class="gp-card-sub gp-cedula-card">CC {{ emp.cedula }}</p>
+      </div>
+      <div class="gp-card-tiempos">
+        <div class="gp-card-tiempo">
+          <span class="gp-card-tiempo-label">Ingreso</span>
+          <span class="gp-card-tiempo-val" [class.gp-time-tardio]="esTardio(emp.fechaHoraEntrada)">
+            {{ emp.fechaHoraEntrada ? (emp.fechaHoraEntrada | date:'hh:mm a') : '—' }}
+            <span *ngIf="esTardio(emp.fechaHoraEntrada)" class="gp-tardio-tag">Tardío</span>
+          </span>
+        </div>
+        <div class="gp-card-tiempo">
+          <span class="gp-card-tiempo-label">Salida</span>
+          <span class="gp-card-tiempo-val">
+            {{ emp.fechaHoraSalida ? (emp.fechaHoraSalida | date:'hh:mm a') : '—' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- PANEL INLINE MÓVIL -->
+      <div *ngIf="emp.seleccionado" class="gp-panel-acciones">
+        <div class="gp-panel-botones">
+          <div class="gp-panel-grupo">
+            <label class="gp-panel-label">🟢 Ingreso</label>
+            <input type="time" [(ngModel)]="emp.horaIngresoManual" class="gp-input-hora">
+            <button class="gp-btn-ingreso" (click)="registrarIngresoRapido(emp)">Guardar</button>
+            <span class="gp-feedback-ok" *ngIf="emp.mensajeIngreso">{{ emp.mensajeIngreso }}</span>
+          </div>
+          <div class="gp-panel-grupo">
+            <label class="gp-panel-label">🔴 Salida</label>
+            <input type="time" [(ngModel)]="emp.horaSalidaManual" class="gp-input-hora">
+            <button class="gp-btn-salida" (click)="registrarSalidaRapida(emp)">Guardar</button>
+            <span class="gp-feedback-ok" *ngIf="emp.mensajeSalida">{{ emp.mensajeSalida }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="empleadosFiltrados.length === 0" class="gp-empty">
+      Sin empleados para mostrar
+    </div>
+  </div>
+
+  <!-- ACCIONES -->
+  <app-lista-tiempos
+    [empleadosSeleccionados]="empleadosSeleccionados"
+    [rolUsuario]="rol"
+    (tiemposActualizados)="onTiemposActualizados()">
+  </app-lista-tiempos>
+
+</div>
+
+<!-- Botón subir -->
+<button class="btn-bajar" (click)="subirAlInicio()" title="Ir al inicio">
+  <i class="bx bx-up-arrow-alt"></i>
+</button>

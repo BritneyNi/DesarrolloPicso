@@ -1,0 +1,21 @@
+<app-navbar></app-navbar>
+
+<h1 id="title">Bienvenido</h1>
+<p *ngIf="rol === 'admin'"><b>Usuario admin.</b> Tienes acceso total al sistema.</p>
+<p *ngIf="rol === 'cliente'"><b>Usuario cliente.</b> Aquí puedes explorar tus proyectos.</p>
+<p *ngIf="rol === 'responsable'"><b>Usuario de Gestión.</b> Eres responsable de la gestión interna.</p>
+<p *ngIf="rol === 'contabilidad'"><b>Usuario de contabilidad.</b> Acceso a módulos contables.</p>
+<p *ngIf="rol === 'sst'"><b>Usuario SST.</b> Aquí puedes ver tus obras asignadas.</p>
+
+<div
+  class="card"
+  *ngIf="rol === 'admin' || rol === 'cliente' || rol === 'responsable' || rol === 'sst'"
+  [ngClass]="{
+    'admin-card': rol === 'admin',
+    'cliente-card': rol === 'cliente',
+    'responsable-card': rol === 'responsable',
+    'sst-card': rol === 'sst'
+  }"
+>
+  <app-lista-obras [rol]="rol" [usuario]="usuario"></app-lista-obras>
+</div>

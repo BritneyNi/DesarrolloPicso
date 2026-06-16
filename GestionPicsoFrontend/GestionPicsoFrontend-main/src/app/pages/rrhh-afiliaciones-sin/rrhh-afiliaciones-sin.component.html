@@ -1,0 +1,98 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<h2>
+  Empleados 
+  {{ estado === 'completas' ? 'con afiliación completa' :
+     estado === 'incompletas' ? 'con afiliación incompleta' :
+     'sin afiliación' }}
+</h2>
+
+<!-- Tabs organizados -->
+<div class="tabs-container">
+  <div class="tabs">
+    <button (click)="ir('completas')" [class.active]="estado === 'completas'">
+      ✅ Completas
+    </button>
+
+    <button (click)="ir('incompletas')" [class.active]="estado === 'incompletas'">
+      ⚠️ Incompletas
+    </button>
+
+    <button (click)="ir('sin-afiliacion')" [class.active]="estado === 'sin-afiliacion'">
+      ❌ Sin afiliación
+    </button>
+  </div>
+
+  <!-- Buscador -->
+  <div class="buscador">
+    <input type="text" placeholder="Buscar empleado..." [(ngModel)]="filtro" />
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading">
+  Cargando...
+</div>
+
+<div *ngIf="!loading" class="table-card">
+
+  <table *ngIf="empleadosFiltrados.length > 0">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Cédula</th>
+        <th>Cargo</th>
+        <th *ngIf="estado !== 'completas'">Acción</th>
+      </tr>
+    </thead>
+  <tbody>
+  <ng-container *ngFor="let emp of empleadosFiltrados">
+    <tr>
+      <td>{{ emp.nombreCompleto }}</td>
+      <td>{{ emp.cedula }}</td>
+      <td>{{ emp.cargo }}</td>
+        <td *ngIf="estado !== 'completas'">
+        <button *ngIf="!emp.afiliadoCompleto" (click)="toggleAfiliar(emp)">📝 Afiliar</button>
+      </td>
+      <td *ngIf="emp.afiliadoCompleto"></td> <!-- Columna vacía para mantener alineación -->
+    </tr>
+
+    <tr *ngIf="emp.mostrarForm ">
+      <td colspan="4">
+        <form (ngSubmit)="guardarAfiliacion(emp)" #form="ngForm" class="afiliacion-form">
+          <input type="text" placeholder="EPS" [(ngModel)]="emp.eps" name="eps" required />
+          <input type="text" placeholder="ARL" [(ngModel)]="emp.arl" name="arl" required />
+                
+          <!-- Select Fondo de Pensión -->
+          <select [(ngModel)]="emp.fondoPension" name="fondoPension" required>
+            <option value="" disabled>Seleccione Fondo Pensión</option>
+            <option value="Colpensiones">Colpensiones</option>
+            <option value="FNA">FNA</option>
+            <option value="Porvenir">Porvenir</option>
+            <option value="Proteccion">Protección</option>
+            <option value="Colfondos">Colfondos</option>
+          </select>
+
+          <!-- Select CCF -->
+          <select [(ngModel)]="emp.ccf" name="ccf" required>
+            <option value="" disabled>Seleccione CCF</option>
+            <option value="Comfama">Comfama</option>
+            <option value="Compensar">Compensar</option>
+          </select>
+
+          <button type="submit" [disabled]="form.invalid">Guardar</button>
+          <button type="button" (click)="emp.mostrarForm = false">Cancelar</button>
+        </form>
+      </td>
+    </tr>
+  </ng-container>
+</tbody>
+
+
+  </table>
+
+  <div *ngIf="empleadosFiltrados.length === 0" class="empty-state">
+    🎉 Todos los empleados tienen afiliación
+  </div>
+</div>
+

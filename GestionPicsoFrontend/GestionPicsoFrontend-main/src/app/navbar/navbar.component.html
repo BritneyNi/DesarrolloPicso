@@ -1,0 +1,16 @@
+<nav>
+  <ul>
+    <li><a (click)="home()"><i class='bx bx-home-alt-2'></i></a></li>
+    <li><button (click)="profile()"><i class='bx bx-user'></i></button></li>
+    <li *ngIf="isAdmin() || isResponsable()"><a (click)="panel()"><i class='bx bx-book-content'></i></a></li>
+    <li id="logout"><button (click)="logout()"><i class='bx bx-log-out'></i></button></li>
+    <li *ngIf="isAdmin() || isResponsable()" class="notificacion-container">
+      <button (click)="irNotificaciones()">
+        <i class='bx bx-bell'></i>
+        <span *ngIf="notificacionesCount > 0" class="badge">
+          {{ notificacionesCount }}
+        </span>
+      </button>
+    </li>
+  </ul>
+</nav>

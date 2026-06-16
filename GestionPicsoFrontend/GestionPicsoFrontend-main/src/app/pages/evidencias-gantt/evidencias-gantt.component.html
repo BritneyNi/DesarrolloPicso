@@ -1,0 +1,17 @@
+<div class="evidencias-box">
+
+  <h4>📸 Evidencias</h4>
+
+  <input type="file" (change)="onFileChange($event)">
+  <button (click)="subir()">Subir</button>
+
+  <div class="galeria">
+
+    <div class="img-card" *ngFor="let e of evidencias">
+      <img [src]="e.url" alt="evidencia">
+      <small>{{ e.fechaSubida | date:'short' }}</small>
+    </div>
+
+  </div>
+
+</div>

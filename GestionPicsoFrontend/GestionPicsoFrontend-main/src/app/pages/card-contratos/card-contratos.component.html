@@ -1,0 +1,32 @@
+<div class="card">
+  <ng-container *ngIf="!loading && !error">
+    <div class="card-header">
+      <h3>📄 Contratos</h3>
+      <span class="semaforo" [ngClass]="getSemaforo()"></span>
+    </div>
+
+    <div class="metric total">
+      <span>👥 Total empleados activos</span>
+      <strong>{{ data?.totalEmpleadosActivos }}</strong>
+    </div>
+    <div class="metric success clickable" (click)="irFirmados()">
+      <span>✅ Contratos firmados</span>
+      <strong>{{ data?.contratosFirmados }}</strong>
+    </div>
+    <div class="metric warning clickable" (click)="irPendientes()">
+      <span>⏳ Pendientes de firma</span>
+      <strong>{{ data?.contratosPendientes }}</strong>
+    </div>
+  </ng-container>
+
+  <div class="grafica-container">
+    <canvas #contratosChart></canvas>
+  </div>
+
+  <div *ngIf="loading" style="padding: 1rem; color: #aaa;">
+    Cargando contratos...
+  </div>
+  <div *ngIf="error" style="padding: 1rem; color: red;">
+    Error cargando información
+  </div>
+</div>

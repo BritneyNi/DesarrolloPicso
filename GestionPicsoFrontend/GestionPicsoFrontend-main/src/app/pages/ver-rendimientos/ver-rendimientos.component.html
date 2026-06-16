@@ -1,0 +1,80 @@
+<!-- ver-rendimientos.component.html -->
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="inventario-admin">
+  <h2 id="title">Resumen de Rendimientos</h2>
+
+  <div class="search-container">
+    <input
+      [(ngModel)]="searchQuery"
+      (input)="filtrarRendimientos()"
+      class="search-input"
+      placeholder="Buscar por nombre u obra"
+    />
+  </div>
+
+  <div class="table-responsive" *ngIf="!loading; else loadingTpl">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Tipo</th>                <!-- Nueva columna -->
+          <th>Obra</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let e of resumenRendimientos; let i = index">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ e.nombre }}</td>
+            <td>
+              {{ e.esContratista ? 'Contratista' : 'Empleado' }}
+            </td>
+            <td>{{ e.nombreObra }}</td>
+            <td>
+              <button class="btn btn-info" (click)="toggleActividades(e.id)">
+                {{ e.mostrar ? 'Ocultar actividades' : 'Ver actividades' }}
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="e.mostrar">
+            <td colspan="5">
+              <div class="table-responsive">
+                <table
+                  class="table table-sm table-bordered table-light"
+                  *ngIf="e.actividades.length > 0; else noActs">
+                  <thead>
+                    <tr>
+                      <th>Actividad</th>
+                      <th>Unidad</th>
+                      <th>Total Cantidad</th>
+                      <th>Total Días</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let a of e.actividades">
+                      <td>{{ a.actividad }}</td>
+                      <td>{{ a.unidad }}</td>
+                      <td>{{ a.totalCantidad }}</td>
+                      <td>{{ a.totalDias }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <ng-template #noActs>
+                  <p class="mensaje-info">No hay actividades registradas.</p>
+                </ng-template>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #loadingTpl>
+    <p>Cargando...</p>
+  </ng-template>
+</div>

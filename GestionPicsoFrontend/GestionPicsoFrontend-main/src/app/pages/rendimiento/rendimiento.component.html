@@ -1,0 +1,128 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="solicitudes-admin container mt-4">
+  <h2 id="title">Registro de Rendimiento</h2>
+
+    <button class="btn" id="ver-rendimiento" *ngIf="cargo !== 'cliente'" (click)="irAVerRendimiento()">Ver Rendimientos</button>
+
+  <div class="formulario-solicitud">
+    <form (ngSubmit)="guardarRendimiento()" #formRend="ngForm">
+      <!-- Selección de Obra -->
+      <div class="form-group">
+        <label class="form-label">Obra</label>
+        <select class="form-select"
+                [(ngModel)]="rendimiento.obraId"
+                name="obraId"
+                [disabled]="!isAdmin"
+                required>
+          <option value="" disabled selected>Seleccione obra</option>
+          <option *ngFor="let o of obras" [value]="o.id">{{ o.nombreObra }}</option>
+        </select>
+      </div>
+
+      <!-- Actividad -->
+      <div class="form-group" *ngIf="rendimiento.obraId">
+        <label class="form-label">Actividad</label>
+        <select class="form-select"
+                [(ngModel)]="rendimiento.actividad"
+                name="actividad"
+                required>
+          <option value="" disabled selected>Seleccione una actividad</option>
+          <option *ngFor="let act of actividades" [value]="act">{{ act }}</option>
+        </select>
+      </div>
+
+      <!-- Tipo destinatario -->
+      <div *ngIf="rendimiento.actividad" class="form-group">
+        <label class="form-label">¿Quién realizó la actividad?</label>
+        <select class="form-select" [(ngModel)]="destinatarioTipo" name="destinatarioTipo" required>
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="empleado">Empleado</option>
+          <option value="contratista">Contratista</option>
+        </select>
+      </div>
+
+      <!-- Empleado -->
+      <div *ngIf="destinatarioTipo === 'empleado'" class="form-group">
+        <label class="form-label">Empleado</label>
+        <select class="form-select" [(ngModel)]="rendimiento.idEmpleado" name="idEmpleado" required>
+          <option value="" disabled selected>Seleccione empleado</option>
+          <option *ngFor="let e of empleados" [value]="e.id">{{ e.nombre }}</option>
+        </select>
+      </div>
+
+      <!-- Contratista con botón “Nuevo” -->
+      <div *ngIf="destinatarioTipo === 'contratista'" class="form-group d-flex align-items-end gap-2">
+        <div class="flex-grow-1">
+          <label class="form-label">Contratista</label>
+          <select class="form-select" [(ngModel)]="rendimiento.idContratista" name="idContratista" required>
+            <option value="" disabled selected>Seleccione contratista</option>
+            <option *ngFor="let c of contratistas" [value]="c.id">{{ c.nombre }}</option>
+          </select>
+        </div>
+        <button type="button" id="btnNuevoContratista" class="btn btn-secondary h-100" (click)="abrirModalContratista()">
+          <i class="bx bx-user-plus"></i> Nuevo
+        </button>
+      </div>
+
+      <!-- Detalles adicionales -->
+      <div *ngIf="rendimiento.idEmpleado || rendimiento.idContratista">
+        <div class="form-group">
+          <label class="form-label">Unidad</label>
+          <select class="form-select" [(ngModel)]="rendimiento.unidad" name="unidad" required>
+            <option value="" disabled selected>Seleccione unidad</option>
+            <option *ngFor="let u of unidades" [value]="u">{{ u }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cantidad</label>
+          <input type="number" class="form-control" min="0" [(ngModel)]="rendimiento.cantidad" name="cantidad" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Días</label>
+          <input type="number" class="form-control" min="0" [(ngModel)]="rendimiento.dias" name="dias" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Observaciones</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="rendimiento.observaciones" name="observaciones"></textarea>
+        </div>
+      </div>
+
+      <!-- Botón Guardar -->
+      <div class="form-group mt-3">
+        <button type="submit" class="btn-guardar" [disabled]="formRend.invalid">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="mostrarModalContratista" class="modal">
+  <div class="modal-content">
+    <h3>Agregar Contratista</h3>
+
+    <label>Nombre:</label>
+    <input [(ngModel)]="nuevoContratista.nombre" type="text" required>
+
+    <label>Cédula:</label>
+    <input [(ngModel)]="nuevoContratista.cedula" type="text" required>
+
+    <label>Teléfono:</label>
+    <input [(ngModel)]="nuevoContratista.telefono" type="text" required>
+
+    <label>Obra:</label>
+    <select [(ngModel)]="nuevoContratista.obraId" required>
+      <option [ngValue]="0" disabled selected>Seleccione una obra</option>
+      <option *ngFor="let obra of obras" [ngValue]="obra.id">{{ obra.nombreObra }}</option>
+    </select>
+
+    <div class="mt-3 d-flex justify-content-end gap-2">
+      <button (click)="guardarNuevoContratista()" class="btn-guardar">
+        <i class="bx bx-save"></i> Guardar
+      </button>
+      <button (click)="cerrarModalContratista()" class="btn-cancelar">
+        <i class="bx bx-x-circle"></i> Cancelar
+      </button>
+    </div>
+  </div>
+</div>

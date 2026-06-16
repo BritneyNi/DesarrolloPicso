@@ -1,0 +1,272 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="obras-admin">
+  <h2 id="title" *ngIf="!esResponsable && !esSST">Administración de Obras</h2>
+
+  <div class="search-container" *ngIf="!esResponsable && !esSST">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchQuery"
+      (ngModelChange)="filtrarObras()" class="search-input">
+  </div>
+
+  <select *ngIf="!esResponsable && !esSST" [(ngModel)]="estadoSeleccionado" (ngModelChange)="cargarObrasPorEstado()">
+    <option value="todos">Todas</option>
+    <option value="Activo">Activas</option>
+    <option value="Inactivo">Inactivas</option>
+  </select>
+
+  <table class="table" *ngIf="!esResponsable && !esSST">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre de la Obra</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Responsable</th>
+        <th>Ciudad</th>
+        <th>Área (m²)</th>
+        <th>Costo de obra</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let obra of obrasFiltrados; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ obra.nombreObra }}</td>
+        <td>{{ obra.fechaInicio | date:'dd/MM/yyyy' }}</td>
+        <td>{{ obra.fechaFin | date:'dd/MM/yyyy'}}</td>
+        <td>{{ obra.responsableNombre || 'Sin responsable' }}</td>
+        <td>{{ obra.ciudad || 'Sin definir'}}</td>
+        <td>{{ obra.tamano !== null && obra.tamano !== undefined ? obra.tamano + ' mt²' : '-' }}</td>
+        <td>{{ obra.costoObra }}</td>
+        <td>
+          <button *ngIf="obra.estado === 'Inactivo'" (click)="reactivarObra(obra.id)" class="btn-reactivar" title="Reactivar obra">
+            <i class='bx bx-show'></i>
+          </button>
+          <button (click)="mostrarFormularioObra(obra)" class="btn-editar" title="Editar obra">
+            <i class='bx bxs-edit'></i>
+          </button>
+          <button (click)="verObrerosObra(obra)" class="btn-obreros" title="Ver y asignar obreros">
+            👷
+          </button>
+          <button *ngIf="obra.estado === 'Activo'" (click)="InactivarObra(obra.id)" class="btn-inactivar" title="Inactivar obra">
+            <i class='bx bx-hide'></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button *ngIf="!esResponsable && !esSST" (click)="mostrarFormularioObra()" class="btn-agregar">
+    <i class='bx bx-user-plus'></i> Agregar Obra
+  </button>
+
+  <!-- MODAL CREAR/EDITAR -->
+  <div *ngIf="mostrarFormulario && !modoDetalle" class="modal" (click)="cerrarFormulario()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>{{ esEdicion ? 'Editar Obra' : 'Nueva Obra' }}</h3>
+
+      <label>Nombre de la Obra:</label>
+      <input [(ngModel)]="obraActual.nombreObra" type="text" required>
+
+      <label>Fecha Inicio:</label>
+      <input type="date" [(ngModel)]="obraActual.fechaInicio" required>
+
+      <label>Fecha Fin:</label>
+      <input type="date" [(ngModel)]="obraActual.fechaFin" required>
+
+      <label>Responsable:</label>
+      <select [(ngModel)]="obraActual.responsableId" required>
+        <option [ngValue]="null">Sin responsable</option>
+        <option *ngFor="let resp of responsables" [ngValue]="resp?.id">
+          {{ resp?.nombreCompleto }}
+        </option>
+      </select>
+
+      <label>SST:</label>
+      <select [(ngModel)]="obraActual.responsableSecundario">
+        <option *ngFor="let sst of sstDisponibles" [value]="sst.nombre">
+          {{ sst.nombre }}
+        </option>
+      </select>
+
+      <label>Costo de la Obra:</label>
+      <input type="number" [(ngModel)]="obraActual.costoObra" step="0.01" required>
+
+      <label>Tamaño (m²):</label>
+      <input type="number" [(ngModel)]="obraActual.tamano" step="1" placeholder="Ej: 120" required/>
+
+      <label>Cliente:</label>
+      <select [(ngModel)]="obraActual.clienteObra" required>
+        <option *ngFor="let cli of clientes" [value]="cli.nombre">
+          {{ cli.nombre }}
+        </option>
+      </select>
+
+      <label>Ciudad:</label>
+      <select [(ngModel)]="obraActual.ciudad" required>
+        <option value="Bogotá">Bogotá</option>
+        <option value="Medellín">Medellín</option>
+        <option value="Rionegro">Rionegro</option>
+      </select>
+
+      <label>Turno de la obra:</label>
+      <select [(ngModel)]="obraActual.turnoObra">
+        <option value="Diurno">🌞 Diurno</option>
+        <option value="Nocturno">🌙 Nocturno</option>
+        <option value="Mixto">🔄 Mixto</option>
+      </select>
+
+      <label>Ubicación:</label>
+      <input [(ngModel)]="obraActual.ubicacion" type="text" placeholder="Ingrese la ubicación">
+
+      <div class="modal-actions">
+        <button (click)="guardarObra()" class="btn-guardar">
+          <i class='bx bx-save'></i> Guardar
+        </button>
+        <button (click)="cerrarFormulario()" class="btn-cancelar">
+          <i class='bx bx-x-circle'></i> Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL OBREROS -->
+  <div *ngIf="modoDetalle && mostrarFormulario" class="modal" (click)="cerrarDetalle()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="detalle-header">
+        <h3>👷 Obreros — {{ obraActual.nombreObra }}</h3>
+        <button class="btn-exportar-pdf" (click)="exportarDetallePDF()">
+          📄 Exportar PDF
+        </button>
+      </div>
+
+      <div class="detalle-obra-info">
+        <strong>Obra:</strong> {{ obraActual.nombreObra }} &nbsp;|&nbsp;
+        <strong>Turno:</strong> {{ obraActual.turnoObra || 'Diurno' }} &nbsp;|&nbsp;
+        <strong>Responsable:</strong> {{ getNombreResponsable() }}
+      </div>
+
+      <!-- Buscador + filtro cargo -->
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <input type="text" placeholder="🔍 Buscar por nombre..."
+          [(ngModel)]="busquedaEmpleado"
+          (ngModelChange)="filtrarEmpleadosModal()"
+          style="flex:1;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;">
+        <select [(ngModel)]="filtroCargoModal" (ngModelChange)="filtrarEmpleadosModal()"
+          style="padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:13px;background:white;cursor:pointer;max-width:160px;">
+          <option value="">Todos los cargos</option>
+          <option *ngFor="let cargo of cargosDisponibles" [value]="cargo">{{ cargo }}</option>
+        </select>
+      </div>
+
+      <!-- Lista obreros -->
+      <div class="obreros-lista">
+        <div *ngFor="let emp of empleadosFiltrados"
+          class="obrero-item"
+          (click)="toggleEmpleado(emp.id)"
+          [style.background]="estaSeleccionado(emp.id) ? '#e8f5e9' : 'white'">
+          <div class="obrero-check"
+            [style.background]="estaSeleccionado(emp.id) ? '#4caf50' : 'white'"
+            [style.border-color]="estaSeleccionado(emp.id) ? '#4caf50' : '#ccc'">
+            <span *ngIf="estaSeleccionado(emp.id)" style="color:white;font-size:12px;font-weight:bold;">✔</span>
+          </div>
+          <div class="obrero-info">
+            <span class="obrero-nombre">{{ emp.nombreCompleto }}</span>
+            <span class="obrero-cargo">{{ emp.cargo }}</span>
+          </div>
+          <span *ngIf="emp.obra && emp.obra !== obraActual.nombreObra"
+            class="alerta-otra-obra" title="Asignado a otra obra: {{ emp.obra }}">
+            ⚠️ {{ emp.obra }}
+          </span>
+        </div>
+        <div *ngIf="empleadosFiltrados.length === 0"
+          style="padding:16px;text-align:center;color:#bbb;font-size:14px;">
+          No se encontraron obreros
+        </div>
+      </div>
+
+      <!-- Contador seleccionados -->
+      <div class="obreros-contador" style="margin:10px 0;">
+        <span class="contador-badge">{{ empleadosSeleccionados.length }}</span>
+        <small style="color:#666;">obrero(s) seleccionado(s)</small>
+      </div>
+
+      <!-- Contador por turno -->
+      <div class="turnos-contador" *ngIf="empleadosDetalleList.length > 0">
+        <span class="turno-badge diurno">🌞 Diurno: {{ contarTurno('Diurno') }}</span>
+        <span class="turno-badge nocturno">🌙 Nocturno: {{ contarTurno('Nocturno') }}</span>
+        <span class="turno-badge mixto">🔄 Mixto: {{ contarTurno('Mixto') }}</span>
+      </div>
+
+      <!-- Tabla obreros asignados con rango y botón copiar -->
+      <div *ngIf="empleadosDetalleList.length > 0">
+        <div id="seccion-screenshot" style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px;margin:12px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div>
+              <p style="margin:0;font-weight:700;font-size:15px;">📋 Programación Semanal</p>
+              <p style="margin:2px 0 0;font-size:13px;color:#555;">
+                <strong>Obra:</strong> {{ obraActual.nombreObra }} &nbsp;|&nbsp;
+                <strong>Período:</strong> {{ semanaActual }}
+              </p>
+              <p style="margin:2px 0 0;font-size:13px;color:#555;">
+                <strong>Responsable:</strong> {{ getNombreResponsable() }} &nbsp;|&nbsp;
+                <strong>Turno:</strong> {{ obraActual.turnoObra || 'Diurno' }}
+              </p>
+              <div *ngIf="esResponsable || esSST" style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <label style="font-size:13px;color:#555;font-weight:600;">📅 Rango de fechas:</label>
+                <input type="date" [(ngModel)]="fechaInicioRango" (change)="onRangoChange()"
+                  style="padding:4px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;cursor:pointer;">
+                <span style="font-size:13px;color:#555;">→</span>
+                <input type="date" [(ngModel)]="fechaFinRango" (change)="onRangoChange()"
+                  style="padding:4px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;cursor:pointer;">
+              </div>
+            </div>
+          </div>
+
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:#1e3a5f;color:#fff;">
+                <th style="padding:8px;text-align:left;">#</th>
+                <th style="padding:8px;text-align:left;">Nombre</th>
+                <th style="padding:8px;text-align:left;">Cédula</th>
+                <th style="padding:8px;text-align:left;">Cargo</th>
+                <th style="padding:8px;text-align:left;">Turno</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let emp of empleadosDetalleList; let i = index"
+                  [style.background]="i % 2 === 0 ? '#f9f9f9' : '#fff'">
+                <td style="padding:7px 8px;">{{ i + 1 }}</td>
+                <td style="padding:7px 8px;font-weight:600;">{{ emp.nombreCompleto }}</td>
+                <td style="padding:7px 8px;color:#666;">{{ emp.cedula }}</td>
+                <td style="padding:7px 8px;">{{ emp.cargo }}</td>
+                <td style="padding:7px 8px;">{{ emp.turno || 'Diurno' }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p style="margin:8px 0 0;font-size:11px;color:#999;text-align:right;">
+            Total: {{ empleadosDetalleList.length }} empleado(s) — PICSO Ingeniería
+          </p>
+        </div>
+
+        <div style="text-align:center;margin-bottom:8px;">
+          <button (click)="copiarComoImagen()" class="btn-copiar-imagen">
+            📸 Copiar como imagen
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button (click)="guardarAsignacion()" class="btn-guardar">
+          💾 Guardar asignación
+        </button>
+        <button (click)="cerrarDetalle()" class="btn-cancelar">
+          ← Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

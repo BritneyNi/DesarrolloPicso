@@ -1,0 +1,147 @@
+.mod-container {
+  max-width: 1000px;
+  margin: 80px auto 40px auto;
+  padding: 24px 20px;
+}
+
+.mod-header {
+  margin-bottom: 28px;
+}
+
+.mod-titulo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0 0 6px 0;
+}
+
+.mod-subtitulo {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+}
+
+.mod-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.mod-card {
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  padding: 20px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-height: 155px;
+}
+
+.mod-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  border-color: #ddd;
+}
+
+.mod-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mod-card-num {
+  font-size: 11px;
+  color: #bbb;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.mod-card-arrow {
+  font-size: 16px;
+  color: #ddd;
+  transition: color 0.2s;
+}
+
+.mod-card:hover .mod-card-arrow {
+  color: #7ab800;
+}
+
+.mod-card-icon {
+  font-size: 1.8rem;
+  background: #f5f5f5;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mod-card-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 3px 0;
+}
+
+.mod-card-desc {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .mod-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .mod-container {
+    margin-top: 70px;
+    padding: 16px 12px;
+  }
+  .mod-titulo {
+    font-size: 1.4rem;
+  }
+  .mod-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .mod-card {
+    padding: 16px 12px;
+    min-height: 130px;
+  }
+}
+
+/* Inventarios por obra header */
+.inv-obras-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 28px 0 16px 0;
+}
+
+.inv-obras-titulo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.inv-obras-count {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.mod-empty {
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  padding: 40px 0;
+}

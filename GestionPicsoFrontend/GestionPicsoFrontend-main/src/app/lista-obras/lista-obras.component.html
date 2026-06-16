@@ -1,0 +1,23 @@
+<div class="lo-wrapper">
+  <div class="lo-header">
+    <h2 class="lo-titulo">Mis Obras</h2>
+    <span class="lo-count">{{ obrasFiltradas.length }} obra(s) activa(s)</span>
+  </div>
+
+  <p *ngIf="obrasFiltradas.length === 0" class="lo-empty">
+    No hay obras disponibles.
+  </p>
+
+  <div class="lo-grid">
+    <div class="lo-card" *ngFor="let obra of obrasFiltradas; let i = index" (click)="verDetalles(obra.id)">
+      <div class="lo-card-number">{{ (i + 1).toString().padStart(2, '0') }} —</div>
+      <div class="lo-card-icon">🏗️</div>
+      <div class="lo-card-info">
+        <h3 class="lo-card-nombre">{{ obra.nombreObra }}</h3>
+        <p class="lo-card-meta" *ngIf="obra.responsableNombre">{{ obra.responsableNombre }}</p>
+        <p class="lo-card-meta" *ngIf="obra.clienteObra && obra.clienteObra !== 'Sin cliente'">{{ obra.clienteObra }}</p>
+      </div>
+      <div class="lo-card-arrow">↗</div>
+    </div>
+  </div>
+</div>

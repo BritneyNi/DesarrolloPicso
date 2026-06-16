@@ -1,0 +1,61 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="mod-container">
+  <div class="mod-header">
+    <h1 class="mod-titulo">Seguridad y Salud en el Trabajo</h1>
+    <p class="mod-subtitulo">Gestiona permisos y documentos SST</p>
+  </div>
+
+  <div class="mod-grid">
+
+    <div class="mod-card" (click)="irAAts()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">01 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">📋</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">ATS</h3>
+        <p class="mod-card-desc">Registros ATS del personal</p>
+      </div>
+    </div>
+
+    <div class="mod-card" (click)="irAPlantillas()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">02 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">📄</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Plantillas</h3>
+        <p class="mod-card-desc">Permisos de Alturas y Caliente</p>
+      </div>
+    </div>
+
+    <div class="mod-card" (click)="irAPermisoAlturas()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">03 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🧗</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Permiso de Alturas</h3>
+        <p class="mod-card-desc">Gestiona permisos de alturas</p>
+      </div>
+    </div>
+
+    <div class="mod-card" (click)="irAPermisoCaliente()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">04 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🔥</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Permiso en Caliente</h3>
+        <p class="mod-card-desc">Trabajo en altas y bajas temperaturas</p>
+      </div>
+    </div>
+
+  </div>
+</div>

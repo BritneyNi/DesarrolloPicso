@@ -1,0 +1,94 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+<div class="page">
+
+  <h2>{{ titulo }}</h2>
+
+  <div class="search-container">
+  <input 
+    type="text"
+    placeholder="Buscar por nombre, cédula, cargo u obra..."
+    [(ngModel)]="filtro"
+    (input)="filtrar()"
+  />
+</div>
+
+
+  <div class="header-actions" *ngIf="modoSinDotacion">
+  <button class="btn-primary" (click)="irAEntregas()">
+    ➕ Registrar entrega
+    </button>
+    </div>
+
+
+  <div *ngIf="loading">Cargando...</div>
+
+  <table *ngIf="!loading && empleados.length > 0">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Cédula</th>
+        <th>Cargo</th>
+        <th>Obra</th>
+        <th *ngIf="!modoSinDotacion">Fecha Entrega</th>
+        <th *ngIf="!modoSinDotacion">Vencimiento</th>
+        <th *ngIf="!modoSinDotacion">Detalle</th>
+      </tr>
+    </thead>
+    <tbody>
+  <ng-container *ngFor="let e of empleadosFiltrados">
+
+    <!-- FILA PRINCIPAL -->
+    <tr>
+      <td>{{ e.nombreCompleto }}</td>
+      <td>{{ e.cedula }}</td>
+      <td>{{ e.cargo }}</td>
+      <td>{{ e.obra }}</td>
+      
+<td *ngIf="!modoSinDotacion">
+  {{ e.fechaEntrega | date:'dd/MM/yyyy' }}
+</td>
+
+<td *ngIf="!modoSinDotacion"
+    [class.vencida]="estaVencida(e.fechaEntrega)">
+  {{ calcularVencimiento(e.fechaEntrega) | date:'dd/MM/yyyy' }}
+</td>
+      <td *ngIf="!modoSinDotacion">
+  <button class="btn-detalle"
+          (click)="toggleDetalle(e.empleadoId)">
+    {{ expandedEmpleadoId === e.empleadoId ? 'Ocultar' : 'Ver entrega' }}
+  </button>
+</td>
+
+
+    </tr>
+
+    <!-- FILA EXPANDIDA -->
+    <tr *ngIf="expandedEmpleadoId === e.empleadoId">
+      <td [attr.colspan]="modoSinDotacion ? 4 : 7">
+        <div class="detalle-box">
+          <div *ngFor="let item of e.elementos" class="detalle-item">
+            <strong>{{ item.elemento }}</strong>
+            | Talla: {{ item.talla }}
+            | Cant: {{ item.cantidad }}
+            | Estado: 
+            <span [class.estado-vencido]="item.estado === 'Vencido'">
+              {{ item.estado }}
+            </span>
+          </div>
+
+        </div>
+      </td>
+    </tr>
+
+  </ng-container>
+</tbody>
+
+  </table>
+
+ <div *ngIf="!loading && empleados.length === 0">
+  {{ mensajeVacio }}
+</div>
+
+
+</div>

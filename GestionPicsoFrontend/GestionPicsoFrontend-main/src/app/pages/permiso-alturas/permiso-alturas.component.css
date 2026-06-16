@@ -1,0 +1,398 @@
+/* ===============================
+   CONTENEDOR GENERAL
+================================ */
+.form-section {
+  grid-column: 1 / -1;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 18px;
+
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 10px 16px;
+  background: #fafafa;
+}
+
+.form-section h3 {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+/* Inputs alineados */
+.form-section label {
+  text-align: right;
+  font-weight: bold;
+}
+
+/* Checkbox en fila */
+.checkbox-row {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 24px;
+}
+
+/* Checkbox tipo grid */
+.checkbox-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px 16px;
+}
+
+
+.form-container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 12px 16px;
+  align-items: center;
+}
+
+/* ===============================
+   TITULOS
+================================ */
+h1 {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+h3 {
+  grid-column: 1 / -1;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+/* ===============================
+   LABELS
+================================ */
+.form-container > label {
+  font-weight: bold;
+  text-align: right;
+}
+
+/* Labels que contienen checkbox */
+label input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+/* ===============================
+   INPUTS / SELECT / TEXTAREA
+================================ */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+   width: 320px;           /* 👈 tamaño controlado */
+  max-width: 100%;
+  padding: 4px 6px;
+  font-size: 13px;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* ===============================
+   CHECKBOXES SUELTOS (OCUPAN FILA COMPLETA)
+================================ */
+.form-container > label:has(input[type="checkbox"]) {
+  grid-column: 1 / -1;
+  text-align: left;
+  font-weight: normal;
+}
+
+/* ===============================
+   BLOQUES QUE OCUPAN TODO EL ANCHO
+================================ */
+.form-container > div,
+.form-container > canvas,
+.form-container > button {
+  grid-column: 1 / -1;
+}
+
+/* ===============================
+   BLOQUES FORM ARRAY
+================================ */
+div[formArrayName] > div {
+  border: 1px solid #ccc;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 10px 14px;
+  align-items: center;
+}
+
+/* Títulos dentro de arrays */
+div[formArrayName] h3 {
+  grid-column: 1 / -1;
+}
+
+/* ===============================
+   ASISTENCIAS SEMANA
+================================ */
+div[formGroupName="asistenciasSemana"] {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+div[formGroupName="asistenciasSemana"] label {
+  font-weight: normal;
+}
+
+/* ===============================
+   CANVAS FIRMA
+================================ */
+canvas {
+  grid-column: 2 / 3;
+  border: 1px solid #000;
+}
+
+/* ===============================
+   BOTONES
+================================ */
+button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  margin-top: 12px;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+button[type="button"] {
+  background-color: #28a745;
+  color: white;
+}
+
+button[type="button"]:hover {
+  background-color: #218838;
+}
+
+/* Botones seguidos */
+button + button {
+  margin-left: 6px;
+}
+.form-container input:not([type="checkbox"]),
+.form-container select,
+.form-container textarea {
+  width: 220px !important;
+  max-width: 220px;
+}
+div[formArrayName] button {
+  width: auto;
+  justify-self: start;   /* evita que se estire */
+  padding: 4px 8px;
+  font-size: 12px;
+}
+/* Alineación de checkbox con su label */
+.form-container label input[type="checkbox"] {
+  vertical-align: middle; /* Alinea el checkbox verticalmente con el texto */
+  margin-right: 8px; /* Da un poco de espacio entre el checkbox y el texto */
+}
+
+/* Alineación de checkbox contiguos */
+.form-container label {
+  display: inline-flex; /* Esto hace que el label y el checkbox estén en la misma línea */
+  align-items: center;  /* Alinea el checkbox y el texto verticalmente */
+}
+div[formArrayName] > div > label:has(input[type="checkbox"]) {
+  margin-top: 6px;
+}
+/* ===============================
+   CHECKBOXES HORIZONTALES (Prevención y Protección)
+================================ */
+
+/* Contenedor virtual para los checkbox */
+.form-container h3 + label,
+.form-container h3 + label ~ label {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 18px;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+/* Que ocupen toda la fila del grid */
+.form-container h3 + label,
+.form-container h3 + label ~ label {
+  grid-column: 1 / -1;
+}
+
+/* Ajuste visual del checkbox */
+.form-container h3 + label input[type="checkbox"] {
+  margin-right: 6px;
+}
+.detalle-permiso {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
+canvas {
+  background-color: #ffffff; /* 🔥 evita fondo negro */
+  touch-action: none;        /* 🔥 evita scroll en móvil */
+}
+
+/* ===============================
+   TABLA PRINCIPAL DE PERMISOS
+================================ */
+.tabla-permisos {
+  width: 100%;
+  border-collapse: collapse; /* 🔥 obligatorio */
+  margin-top: 16px;
+  font-family: Arial, sans-serif;
+}
+
+/* Bordes de celdas */
+.tabla-permisos th,
+.tabla-permisos td {
+  border: 1px solid #ccc;    /* 👈 líneas visibles */
+  padding: 8px;
+  text-align: left;
+  font-size: 13px;
+}
+
+/* Encabezado */
+.tabla-permisos thead th {
+  background-color: #36383a;
+  color: rgb(243, 241, 241);
+  font-weight: bold;
+}
+
+/* Filas alternas */
+.tabla-permisos tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+/* Hover */
+.tabla-permisos tbody tr:hover {
+  background-color: #e3f2fd;
+}
+
+/* Botones dentro de la tabla */
+.tabla-permisos button {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+.tabla-permisos table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.tabla-permisos table th,
+.tabla-permisos table td {
+  border: 1px solid #bbb;
+  padding: 6px;
+  font-size: 12px;
+}
+
+.tabla-permisos table thead th {
+  background: #444343;
+  font-weight: bold;
+}
+/* ===============================
+   ESPACIO SUPERIOR POR NAV
+================================ */
+
+.btn-toggle {
+  display: block;
+  margin: 20px auto 12px auto; /* centrado horizontal */
+}
+input.form-control {
+  display: block;
+  margin: 0 auto 20px auto; /* centrado horizontal */
+  max-width: 420px;
+}
+/* ===============================
+   ESPACIO SUPERIOR POR NAV
+================================ */
+body {
+  padding-top: 80px; /* ajusta si tu navbar es más alto */
+}
+body {
+  padding-top: 80px;
+}
+
+h1 {
+  margin-top: 65px;
+}
+.firma-canvas {
+  border: 2px dashed #1976d2;
+  border-radius: 6px;
+  background: #fff;
+  touch-action: none;
+}
+
+/* ===============================
+   FIRMA RESPONSABLE – AJUSTE BOTÓN
+================================ */
+.firma-wrapper {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.btn-limpiar-firma {
+  background-color: #e0e0e0;
+  color: #333;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+}
+
+.btn-limpiar-firma:hover {
+  background-color: #d5d5d5;
+}
+.btn-cerrar-flotante {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 3000;
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,.35);
+}
+
+.btn-cerrar-flotante:hover {
+  background: #b71c1c;
+}

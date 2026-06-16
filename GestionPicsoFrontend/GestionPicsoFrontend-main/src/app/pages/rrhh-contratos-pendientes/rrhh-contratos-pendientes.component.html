@@ -1,0 +1,92 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="detalle-container">
+
+ <h3 *ngIf="vista === 'pendientes'">
+  Empleados pendientes de firma
+</h3>
+
+<h3 *ngIf="vista === 'firmados'">
+  Empleados con contrato firmado
+</h3>
+<div class="contador">
+    Total: <strong>{{ total }}</strong>
+  </div>
+
+<div class="toggle-container">
+  <button 
+    [class.active]="vista === 'pendientes'" 
+    (click)="cambiarVista('pendientes')">
+    ⏳ Pendientes
+  </button>
+    <button 
+    [class.active]="vista === 'firmados'" 
+    (click)="cambiarVista('firmados')">
+    ✅ Firmados
+  </button>
+</div>
+
+<div class="buscador">
+  <input 
+    type="text"
+    placeholder="🔎 Buscar por nombre, cédula, cargo u obra..."
+    [(ngModel)]="terminoBusqueda"
+    (input)="filtrarEmpleados()">
+</div>
+
+
+  <div *ngIf="loading">
+    Cargando empleados...
+  </div>
+
+  <div *ngIf="error">
+    Error cargando información.
+  </div>
+
+  <table *ngIf="!loading && empleados.length > 0">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Cédula</th>
+        <th>Cargo</th>
+        <th>Obra</th>
+       <th *ngIf="vista === 'pendientes' || vista === 'firmados'">Acción</th>
+        <th *ngIf="vista === 'pendientes' || vista === 'firmados'">Contrato</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let emp of empleadosFiltrados">
+        <td>{{ emp.nombreCompleto }}</td>
+        <td>{{ emp.cedula }}</td>
+        <td>{{ emp.cargo }}</td>
+        <td>{{ emp.obra }}</td>
+       <td *ngIf="vista === 'pendientes'">
+  <button (click)="marcarFirmado(emp.id)">
+    ✔ Marcar como firmado
+  </button>
+</td>
+
+<td *ngIf="vista === 'firmados'">
+  <button (click)="devolverPendiente(emp.id)">
+    ↩ Devolver a pendiente
+  </button>
+</td>
+
+<td>
+  <button (click)="descargarContrato(emp.id)">
+    📄 Descargar
+  </button>
+</td>
+
+
+
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && empleados.length === 0">
+    Todos los empleados han firmado 🎉
+  </div>
+
+</div>

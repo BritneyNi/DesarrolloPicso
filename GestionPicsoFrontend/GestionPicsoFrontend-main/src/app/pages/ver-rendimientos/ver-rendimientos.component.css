@@ -1,0 +1,143 @@
+/* Encabezado del componente */
+#title {
+  padding-top: 5%;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Contenedor principal */
+.inventario-admin {
+  max-width: 1300px;
+  margin: 20px auto;
+  padding-bottom: 7%;
+  text-align: center;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Buscador */
+.search-container {
+  padding-bottom: 2%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 70%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Tabla principal */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 8px 15px;
+  text-align: left;
+}
+
+.table thead {
+  background-color: #333;
+  color: #fff;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Subtabla de actividades */
+.table-sm {
+  font-size: 0.9rem; /* Corregido de 0.09rem, ya que era ilegible */
+}
+
+.table-sm th,
+.table-sm td {
+  padding: 8px 10px;
+}
+
+/* Tabla con bordes */
+.table-bordered {
+  border: 1px solid #ccc;
+}
+
+.table-light {
+  background-color: #f5f5f5;
+}
+
+/* Botones */
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin: 2px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  color: #fff;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
+
+/* Mensaje si no hay datos */
+.mensaje-info {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #888;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventario-admin {
+    padding: 10px;
+  }
+
+  .search-input {
+    max-width: 100%;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+}

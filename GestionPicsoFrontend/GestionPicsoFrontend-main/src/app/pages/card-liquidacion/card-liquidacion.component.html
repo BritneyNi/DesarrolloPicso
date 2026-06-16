@@ -1,0 +1,38 @@
+<div class="card">
+  <ng-container *ngIf="!loading && !error">
+    <div class="card-header">
+      <h3>💰 Liquidación</h3>
+      <span class="semaforo" [ngClass]="getSemaforo()"></span>
+    </div>
+    <p class="subtitle">Pagos al finalizar contrato</p>
+    <div class="metric success clickable" (click)="irPagadas()">
+      <span>Pagadas</span>
+      <strong>{{ data.pagadas }}</strong>
+    </div>
+    <div class="metric warning clickable" *ngIf="data.pendientes > 0" (click)="irPendientes()">
+      <span>Pendientes</span>
+      <strong>{{ data.pendientes }}</strong>
+    </div>
+    <div class="metric total clickable" *ngIf="data.sinRegistro > 0" (click)="irSinRegistro()">
+      <span>Sin registro</span>
+      <strong>{{ data.sinRegistro }}</strong>
+    </div>
+    <div class="gauge-container" *ngIf="data">
+      <div class="gauge">
+        <svg viewBox="0 0 36 36">
+          <path class="gauge-bg"
+            d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32"/>
+          <path class="gauge-fill"
+            [attr.stroke-dasharray]="getPorcentajePagadas() + ', 100'"
+            d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32"/>
+          <text x="18" y="20.35" class="gauge-text">
+            {{ getPorcentajePagadas() | number:'1.0-0' }}%
+          </text>
+        </svg>
+      </div>
+      <div class="gauge-label">Cumplimiento liquidaciones</div>
+    </div>
+  </ng-container>
+  <div *ngIf="loading" style="padding: 1rem; color: #aaa;">Cargando liquidación...</div>
+  <div *ngIf="error" style="padding: 1rem; color: red;">Error cargando información</div>
+</div>

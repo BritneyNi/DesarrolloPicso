@@ -1,0 +1,32 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="rrhh-dashboard">
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div>
+        <h2>Dashboard RRHH</h2>
+        <p class="subtitle">Indicadores generales del estado del personal</p>
+      </div>
+      <button class="btn-exportar" (click)="exportarPDF()" [disabled]="exportando">
+        <span *ngIf="!exportando">📄 Exportar PDF</span>
+        <span *ngIf="exportando">⏳ Generando...</span>
+      </button>
+    </div>
+  </header>
+
+  <div id="dashboard-contenido" #dashboardContenido>
+    <section class="dashboard-grid">
+      <app-card-contratos></app-card-contratos>
+      <app-card-afiliaciones></app-card-afiliaciones>
+      <app-card-examen-ingreso></app-card-examen-ingreso>
+      <app-card-dotacion></app-card-dotacion>
+      <app-card-alturas></app-card-alturas>
+      <app-card-liquidacion></app-card-liquidacion>
+    </section>
+
+    <div class="tendencias-wrap">
+      <app-card-tendencias></app-card-tendencias>
+    </div>
+  </div>
+</div>

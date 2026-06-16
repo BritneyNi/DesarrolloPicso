@@ -1,0 +1,156 @@
+<app-boton-regresar></app-boton-regresar>
+<div class="container" *ngIf="prueba">
+
+  <h2>
+  🧪 Detalle de Prueba
+
+  <span *ngIf="modoEdicion">✏️ (Editando)</span>
+
+  <div style="display:flex; gap:10px; align-items:center;">
+
+  <button *ngIf="!modoEdicion" (click)="modoEdicion = true">
+    ✏️ Editar
+  </button>
+
+  <button (click)="descargarPdf()">
+    📄 PDF
+  </button>
+
+</div>
+</h2>
+
+  <!-- 🔹 INFO GENERAL -->
+  <div class="card">
+
+    <div class="row">
+        <div class="form-group">
+            <label>Proyecto</label>
+            <input [(ngModel)]="prueba.proyecto" [disabled]="!modoEdicion">
+        </div>
+
+        <div class="form-group">
+            <label>Cliente</label>
+            <input [(ngModel)]="prueba.cliente" [disabled]="!modoEdicion">
+        </div>
+        </div>
+
+        <div class="row">
+        <div class="form-group">
+            <label>Tipo</label>
+            <input [(ngModel)]="prueba.tipoPrueba" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Estado</label>
+            <span 
+            class="estado"
+            [ngClass]="{
+                'iniciada': prueba.estado === 'Iniciada',
+                'finalizada': prueba.estado === 'Finalizada'
+            }">
+            {{ prueba.estado }}
+            </span>
+        </div>
+    </div>
+
+    <div class="full form-group">
+    <label>Descripción</label>
+    <textarea [(ngModel)]="prueba.descripcion" [disabled]="!modoEdicion"></textarea>
+    </div>
+
+  </div>
+
+  <!-- 🔹 FECHAS Y PRESIONES -->
+  <div class="card">
+
+    <div class="row">
+  <div class="form-group">
+    <label>Inicio</label>
+    <input [value]="prueba.inicioPrueba | date:'short'" disabled>
+  </div>
+
+  <div class="form-group">
+    <label>Fin</label>
+    <input [value]="prueba.finPrueba ? (prueba.finPrueba | date:'short') : '-'" disabled>
+  </div>
+</div>
+
+<div class="row">
+  <div class="form-group">
+    <label>Presión inicial</label>
+    <input [(ngModel)]="prueba.presionInicial" [disabled]="!modoEdicion">
+  </div>
+
+  <div class="form-group">
+    <label>Presión final</label>
+    <input [(ngModel)]="prueba.presionFinal" [disabled]="!modoEdicion || prueba.estado !== 'Finalizada'">
+  </div>
+</div>
+
+<div class="full form-group">
+  <label>Cumple</label>
+  <select [(ngModel)]="prueba.cumple" [disabled]="!modoEdicion || prueba.estado !== 'Finalizada'">
+    <option value="">Seleccione</option>
+    <option value="Si">Si</option>
+    <option value="No">No</option>
+  </select>
+</div>
+
+  </div>
+
+  <!-- 🔹 IMÁGENES -->
+  <div class="card">
+
+    <h3>📸 Evidencia</h3>
+
+    <div class="imagenes">
+      <div>
+        <p>Inicio</p>
+        <img *ngIf="prueba.imagenInicioUrl" [src]="prueba.imagenInicioUrl">
+      </div>
+
+      <div>
+        <p>Final</p>
+        <img *ngIf="prueba.imagenFinalUrl" [src]="prueba.imagenFinalUrl">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 🔹 FIRMAS -->
+   <div class="card" *ngIf="prueba.estado === 'Finalizada'">
+
+        <h3>✍️ Firmas</h3>
+
+        <div class="imagenes">
+
+        <div>
+            <p>Contratista</p>
+            <img *ngIf="prueba.firmaContratista" [src]="prueba.firmaContratista">
+        </div>
+
+        <div>
+            <p>Constructor</p>
+            <img *ngIf="prueba.firmaConstructor" [src]="prueba.firmaConstructor">
+        </div>
+        </div>
+  </div>
+
+  <!-- 🔹 NOTA -->
+  <div class="card" *ngIf="prueba.estado === 'Finalizada'">
+
+    <label>Nota</label>
+    <textarea [(ngModel)]="prueba.nota" [disabled]="!modoEdicion"></textarea>
+
+  </div>
+
+  <!-- 🔹 BOTONES -->
+  <div class="acciones" *ngIf="modoEdicion">
+    <div class="full form-group">
+
+    <button (click)="guardarCambios()">💾 Guardar</button>
+    <button (click)="modoEdicion = false">Cancelar</button>
+    </div>
+  </div>
+
+</div>

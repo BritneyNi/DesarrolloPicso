@@ -1,0 +1,70 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="usuarios-admin">
+  <h2 id="title">Administración de Contratistas</h2>
+
+  <div class="search-container">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchQuery" (ngModelChange)="filtrarContratistas()" class="search-input">
+  </div>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Cédula</th>
+          <th>Teléfono</th>
+          <th>Obra</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of contratistasFiltrados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.cedula }}</td>
+          <td>{{ c.telefono }}</td>
+          <td>{{ obtenerNombreObra(c.obraId) }}</td>
+          <td class="container-row">
+            <button (click)="mostrarFormularioContratista(c)" class="btn-editar"><i class='bx bxs-edit'></i></button>
+            <button (click)="eliminarContratista(c.id)" class="btn-eliminar"><i class='bx bx-trash'></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button (click)="mostrarFormularioContratista()" class="btn-agregar">
+    <i class='bx bx-user-plus'></i> Agregar Contratista
+  </button>
+
+  <div *ngIf="mostrarFormulario" class="modal">
+    <div class="modal-content">
+      <h3>{{ esEdicion ? 'Editar Contratista' : 'Agregar Contratista' }}</h3>
+
+      <label>Nombre:</label>
+      <input [(ngModel)]="contratistaActual.nombre" type="text" required>
+
+      <label>Cédula:</label>
+      <input [(ngModel)]="contratistaActual.cedula" type="text" required>
+
+      <label>Teléfono:</label>
+      <input [(ngModel)]="contratistaActual.telefono" type="text" required>
+
+      <label>Obra:</label>
+      <select [(ngModel)]="contratistaActual.obraId" required>
+        <option [ngValue]="0" disabled selected>Seleccione una obra</option>
+        <option *ngFor="let obra of obras" [ngValue]="obra.id">{{ obra.nombreObra }}</option>
+      </select>
+
+      <button (click)="guardarContratista()" class="btn-guardar">
+        <i class='bx bx-save'></i>
+      </button>
+      <button (click)="cerrarFormulario()" class="btn-cancelar">
+        <i class='bx bx-x-circle'></i>
+      </button>
+    </div>
+  </div>
+</div>

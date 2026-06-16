@@ -1,0 +1,75 @@
+<app-navbar></app-navbar>
+
+<div class="pc-container">
+
+  <div class="pc-header">
+    <div>
+      <p class="pc-fecha">{{ today }}</p>
+      <h1 class="pc-titulo">Buen día. <span class="pc-titulo-verde">Empieza aquí.</span></h1>
+    </div>
+    <span class="pc-modulos">{{ totalModulos }} módulos activos</span>
+  </div>
+
+  <div class="pc-grid">
+
+    <div class="pc-card" *ngIf="rol === 'admin' || rol === 'almacenista'" (click)="irAProyectos()">
+      <div class="pc-card-top">
+        <span class="pc-card-num">01 —</span>
+        <span class="pc-card-arrow">↗</span>
+      </div>
+      <div class="pc-card-icon">🏗️</div>
+      <div class="pc-card-info">
+        <h3 class="pc-card-titulo">Operaciones</h3>
+        <p class="pc-card-desc">Gestión de proyectos y obras</p>
+      </div>
+    </div>
+
+    <div class="pc-card" *ngIf="rol === 'admin' || rol === 'sst'" (click)="irAPersonal()">
+      <div class="pc-card-top">
+        <span class="pc-card-num">02 —</span>
+        <span class="pc-card-arrow">↗</span>
+      </div>
+      <div class="pc-card-icon">👥</div>
+      <div class="pc-card-info">
+        <h3 class="pc-card-titulo">Talento Humano</h3>
+        <p class="pc-card-desc">Gestión del personal</p>
+      </div>
+    </div>
+
+    <div class="pc-card" *ngIf="rol === 'admin' || rol === 'sst'" (click)="irASst()">
+      <div class="pc-card-top">
+        <span class="pc-card-num">03 —</span>
+        <span class="pc-card-arrow">↗</span>
+      </div>
+      <div class="pc-card-icon">🦺</div>
+      <div class="pc-card-info">
+        <h3 class="pc-card-titulo">SST</h3>
+        <p class="pc-card-desc">Seguridad y salud en el trabajo</p>
+      </div>
+    </div>
+
+    <div class="pc-card" *ngIf="rol === 'admin'" (click)="irAProductividad()">
+      <div class="pc-card-top">
+        <span class="pc-card-num">04 —</span>
+        <span class="pc-card-arrow">↗</span>
+      </div>
+      <div class="pc-card-icon">📈</div>
+      <div class="pc-card-info">
+        <h3 class="pc-card-titulo">Productividad</h3>
+        <p class="pc-card-desc">Métricas y rendimiento</p>
+      </div>
+    </div>
+    <div class="pc-card" *ngIf="rol === 'admin'" (click)="irAProgramacionGeneral()">
+  <div class="pc-card-top">
+    <span class="pc-card-num">05 —</span>
+    <span class="pc-card-arrow">↗</span>
+  </div>
+  <div class="pc-card-icon">📋</div>
+  <div class="pc-card-info">
+    <h3 class="pc-card-titulo">Programación Semanal</h3>
+    <p class="pc-card-desc">Personal programado por obra</p>
+  </div>
+</div>
+
+  </div>
+</div>

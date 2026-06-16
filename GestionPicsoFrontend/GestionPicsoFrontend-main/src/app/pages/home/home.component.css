@@ -1,0 +1,32 @@
+#title {
+  text-align: center;
+  padding-top: 5%;
+}
+
+#title h2 {
+  font-size: 2.5rem;
+}
+
+p {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+@media (max-width: 480px) {
+  #title {
+    padding-top: 13%;
+  }
+}
+
+.card {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.home-obras-wrap {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+}

@@ -1,0 +1,79 @@
+.contenedor {
+  padding: 30px 40px;
+  margin-top: 80px;
+}
+
+h2 {
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 30px;
+}
+
+.botones {
+  margin-bottom: 15px;
+  text-align: right;
+}
+
+.botones button {
+  margin-right: 10px;
+  padding: 8px 15px;
+  border: none;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.botones button.activo {
+  background-color: #007bff;
+  color: white;
+}
+
+input {
+  margin-bottom: 15px;
+  padding: 8px;
+  width: 300px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+thead {
+  background-color: #f4f6f9;
+}
+
+th {
+  text-align: left;
+  padding: 14px;
+  font-weight: 600;
+}
+
+td {
+  padding: 12px 14px;
+}
+
+tr:hover {
+  background-color: #f9fafc;
+}
+
+select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}

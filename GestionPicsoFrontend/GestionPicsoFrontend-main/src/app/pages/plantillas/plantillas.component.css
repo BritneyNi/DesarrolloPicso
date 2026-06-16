@@ -1,0 +1,70 @@
+/* Animación de pulso */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Aplicar al título */
+.landing-tipo h3 {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Contenedor tipo landing con degradado */
+.landing-tipo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* ocupa toda la altura de la pantalla */
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ /* degradado morado a azul */
+  color: white;
+}
+
+/* Título centrado */
+.landing-tipo h3 {
+  font-size: 2.2rem;
+  color: black;
+  margin-bottom: 50px;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.3); /* sombra suave para resaltar */
+}
+
+/* Contenedor de botones */
+.botones-tipo {
+  display: flex;
+  gap: 30px; /* espacio entre los botones */
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Botones grandes con sombra y borde suave */
+.botones-tipo button.btn {
+  width: 220px;
+  height: 70px;
+  font-size: 1.3rem;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Colores de los botones */
+.botones-tipo button.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.botones-tipo button.btn-warning {
+  background-color: #ffc107;
+  color: white;
+}
+
+/* Hover: levitar y sombra más intensa */
+.botones-tipo button.btn:hover {
+  opacity: 0.95;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}

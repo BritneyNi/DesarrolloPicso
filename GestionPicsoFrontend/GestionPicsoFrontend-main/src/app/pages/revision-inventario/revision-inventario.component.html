@@ -1,0 +1,155 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="inventario-admin">
+  <h2 id="title">Revision de Inventario</h2>
+
+  <div class="search-and-add-container mb-3">
+    <div class="search-container">
+      <input
+        type="text"
+        placeholder="Buscar por herramienta, código, marca..."
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="filtrarMateriales()"
+        class="search-input"
+      />
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Código</th>
+          <th>Herramienta</th>
+          <th>Marca</th>
+          <th>Serie</th>
+          <th>Ubicación</th>
+          <th>Responsable</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let material of materialesFiltrados | slice:(currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ material.codigo }}</td>
+            <td>{{ material.herramienta }}</td>
+            <td>{{ material.marca }}</td>
+            <td>{{ material.numeroSerie }}</td>
+            <td>{{ material.ubicacion }}</td>
+            <td>{{ material.responsable }}</td>
+            <td>
+              <button class="btn btn-sm btn-info me-1" (click)="toggleRevisiones(material.id)">
+                <i class="bx bx-history"></i> Revisiones
+              </button>
+              <button class="btn btn-sm btn-success" (click)="abrirModalRevision(material)">
+                <i class="bx bx-plus"></i> Revisar
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="revisionesVisibles[material.id]">
+            <td colspan="8">
+              <table class="table table-sm table-bordered mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Estado Físico</th>
+                    <th>Observaciones</th>
+                    <th>Responsable</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let rev of revisionesPorItem[material.id]">
+                    <td>{{ rev.fechaRevision | date: 'yyyy-MM-dd' }}</td>
+                    <td>{{ rev.estadoFisico }}</td>
+                    <td>{{ rev.observaciones }}</td>
+                    <td>{{ rev.responsable }}</td>
+                    <td *ngIf="puedeRevisar()">
+                    <button
+                      class="btn btn-sm btn-danger"
+                      title="Eliminar revisión"
+                      (click)="eliminarRevision(rev, material.id)">
+                      <i class="bx bx-trash"></i>
+                    </button>
+                  </td>
+                  </tr>
+                  <tr *ngIf="!revisionesPorItem[material.id] || revisionesPorItem[material.id].length === 0">
+                    <td colspan="5" class="text-center">Sin revisiones registradas.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <nav *ngIf="pages.length > 1" class="pagination-container mt-3">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="setPage(currentPage - 1)">«</a>
+      </li>
+      <li
+        class="page-item"
+        *ngFor="let p of pages"
+        [class.active]="currentPage === p"
+        (click)="setPage(p)"
+      >
+        <a class="page-link">{{ p }}</a>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === pages.length">
+        <a class="page-link" (click)="setPage(currentPage + 1)">»</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="modal" *ngIf="mostrarModalRevision">
+    <div class="modal-content">
+      <div class="modal-header-custom" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h5 style="margin: 0;">Agregar Revisión</h5>
+        <button class="btn-cerrar" (click)="cerrarModalRevision()" style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form (ngSubmit)="guardarRevision()">
+        <div class="form-grid">
+         <div>
+          <label for="estadoFisico">Estado físico:</label>
+          <select
+            [(ngModel)]="revisionActual.estadoFisico"
+            name="estadoFisico"
+            id="estadoFisico"
+            required
+          >
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="Bueno">Bueno</option>
+            <option value="Regular">Regular</option>
+            <option value="Malo">Malo</option>
+            <option value="Dado de baja">Dado de baja</option>
+            <option value="Extraviado">Extraviado</option>
+          </select>
+        </div>
+      </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label for="observaciones">Observaciones:</label>
+          <textarea
+            [(ngModel)]="revisionActual.observaciones"
+            name="observaciones"
+            id="observaciones"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="modal-buttons">
+          <button type="button" class="btn-cancelar" (click)="cerrarModalRevision()">Cancelar</button>
+          <button type="submit" class="btn-guardar">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

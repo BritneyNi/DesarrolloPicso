@@ -1,0 +1,38 @@
+.footer {
+  width: 100%;
+  text-align: center;
+  padding: 6px 0;
+  background: transparent; /* ❌ sin manto negro */
+  color: #444; /* gris suave */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.75rem; /* pequeño */
+  border-top: 1px solid #ddd; /* línea sutil */
+  position: relative; /* ya no fixed */
+}
+
+.footer__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer__logo {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+.footer__texto {
+  margin: 0;
+  padding: 0;
+  color: #555;
+}
+
+.footer__version {
+  margin-top: 2px;
+  font-size: 0.65rem;
+  color: #999;
+}

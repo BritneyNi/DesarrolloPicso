@@ -1,0 +1,98 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="per-container">
+
+  <div class="per-header">
+    <h1 class="per-titulo">Gestión del Personal</h1>
+    <p class="per-subtitulo">Administra el equipo de trabajo</p>
+  </div>
+
+  <div class="per-grid">
+
+    <div class="per-card" *ngIf="rol === 'admin'" (click)="irAUsuariosAdmin()">
+      <div class="per-card-top">
+        <span class="per-card-num">01 —</span>
+        <span class="per-card-arrow">↗</span>
+      </div>
+      <div class="per-card-icon">👤</div>
+      <div class="per-card-info">
+        <h3 class="per-card-titulo">Usuarios</h3>
+        <p class="per-card-desc">Gestiona los usuarios del sistema</p>
+      </div>
+    </div>
+
+    <div class="per-card" *ngIf="rol === 'admin' || rol === 'sst'" (click)="irAEmpleadosAdmin()">
+      <div class="per-card-top">
+        <span class="per-card-num">02 —</span>
+        <span class="per-card-arrow">↗</span>
+      </div>
+      <div class="per-card-icon">👷</div>
+      <div class="per-card-info">
+        <h3 class="per-card-titulo">Empleados</h3>
+        <p class="per-card-desc">Gestiona todos los empleados</p>
+      </div>
+    </div>
+
+    <div class="per-card" *ngIf="rol === 'admin' || rol === 'sst'" (click)="irAPermisosAdmin()">
+      <div class="per-card-top">
+        <span class="per-card-num">03 —</span>
+        <span class="per-card-arrow">↗</span>
+      </div>
+      <div class="per-card-icon">📄</div>
+      <div class="per-card-info">
+        <h3 class="per-card-titulo">Incapacidades</h3>
+        <p class="per-card-desc">Permisos y excusas del personal</p>
+      </div>
+    </div>
+
+    <div class="per-card" *ngIf="rol === 'admin' || rol === 'sst'" (click)="irAIngresos()">
+      <div class="per-card-top">
+        <span class="per-card-num">04 —</span>
+        <span class="per-card-arrow">↗</span>
+      </div>
+      <div class="per-card-icon">🚪</div>
+      <div class="per-card-info">
+        <h3 class="per-card-titulo">Ingresos</h3>
+        <p class="per-card-desc">Ingresos y salidas del personal</p>
+      </div>
+    </div>
+
+    <div class="per-card" *ngIf="rol === 'admin' || rol === 'sst'" (click)="irATiemposAdmin()">
+      <div class="per-card-top">
+        <span class="per-card-num">05 —</span>
+        <span class="per-card-arrow">↗</span>
+      </div>
+      <div class="per-card-icon">⏱️</div>
+      <div class="per-card-info">
+        <h3 class="per-card-titulo">Tiempos</h3>
+        <p class="per-card-desc">Control de tiempos del personal</p>
+      </div>
+    </div>
+
+    <div class="per-card" *ngIf="rol === 'admin' || rol === 'sst'" (click)="irADashboardRRHH()">
+      <div class="per-card-top">
+        <span class="per-card-num">07 —</span>
+        <span class="per-card-arrow">↗</span>
+      </div>
+      <div class="per-card-icon">📊</div>
+      <div class="per-card-info">
+        <h3 class="per-card-titulo">Dashboard RRHH</h3>
+        <p class="per-card-desc">Métricas y estadísticas del personal</p>
+      </div>
+    </div>
+
+    <div class="per-card" *ngIf="rol === 'admin' || rol === 'sst'" (click)="irADotacion()">
+      <div class="per-card-top">
+        <span class="per-card-num">06 —</span>
+        <span class="per-card-arrow">↗</span>
+      </div>
+      <div class="per-card-icon">👕</div>
+      <div class="per-card-info">
+        <h3 class="per-card-titulo">Dotación</h3>
+        <p class="per-card-desc">Entrega y control de dotación</p>
+      </div>
+    </div>
+
+  </div>
+</div>

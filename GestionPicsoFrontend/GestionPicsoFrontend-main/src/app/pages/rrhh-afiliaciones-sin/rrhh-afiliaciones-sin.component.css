@@ -1,0 +1,208 @@
+/* ================================
+   CONTENEDOR GENERAL
+================================ */
+:host {
+  display: block;
+  padding: 110px 40px 40px 40px; /* espacio navbar */
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+/* ================================
+   TÍTULO
+================================ */
+h2 {
+  margin-bottom: 25px;
+  font-size: 30px;
+  font-weight: 600;
+  color: #1f2937;
+  text-align: center;
+}
+
+/* ================================
+   CARD CONTENEDORA
+================================ */
+.table-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ================================
+   TABLA
+================================ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: #eef2ff;
+}
+
+th {
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 12px;
+  border-top: 1px solid #f0f0f0;
+  color: #4b5563;
+}
+
+/* Hover fila */
+tbody tr {
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+  transform: scale(1.01);
+}
+
+/* ================================
+   MENSAJE VACÍO
+================================ */
+.empty-state {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #ecfdf5;
+  color: #065f46;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* ================================
+   LOADING
+================================ */
+.loading {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 10px;
+}
+
+/* ================================
+   ANIMACIÓN
+================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================
+   MODO OSCURO
+================================ */
+@media (prefers-color-scheme: dark) {
+  :host {
+    background: #0f172a;
+  }
+
+  h2 {
+    color: #f1f5f9;
+  }
+
+  .table-card {
+    background: #1e293b;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  thead {
+    background: #334155;
+  }
+
+  th {
+    color: #e2e8f0;
+  }
+
+  td {
+    color: #cbd5e1;
+    border-top: 1px solid #334155;
+  }
+
+  tbody tr:hover {
+    background: #273449;
+  }
+
+  .empty-state {
+    background: #064e3b;
+    color: #d1fae5;
+  }
+
+  .loading {
+    color: #94a3b8;
+  }
+}
+
+
+
+
+
+
+.tabs-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.tabs button {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #e0e7ff;
+  color: #1e3a8a;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabs button.active {
+  background: #4338ca;
+  color: #ffffff;
+}
+
+.tabs button:hover {
+  background: #a5b4fc;
+  color: #1e3a8a;
+}
+
+.buscador {
+  flex: 1;
+}
+
+.buscador input {
+  width: 100%;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: border 0.2s ease;
+}
+
+.buscador input:focus {
+  outline: none;
+  border-color: #4338ca;
+}

@@ -1,0 +1,133 @@
+/* Espacio para que navbar no tape */
+.page-container {
+  padding: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Header */
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header h2 {
+  margin: 0;
+  padding: 40px;
+  text-align: center;
+  font-size: 30px;
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* Card contenedora */
+.table-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.03);
+
+  overflow-x: auto;
+}
+
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: #f9fafb;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Hover elegante */
+tbody tr:hover {
+  background: #f3f4f6;
+  transition: background 0.2s ease;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 20px;
+  font-weight: 500;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 25px;
+  font-size: 15px;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #f3f4f6;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.tabs button:hover {
+  background: #e5e7eb;
+}
+
+.tabs button.active {
+  background: #2563eb;
+  color: white;
+  font-weight: 500;
+}
+.search-box {
+  margin: 20px 0;
+}
+
+.search-box input {
+  width: 97%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 5px rgba(25, 118, 210, 0.3);
+}
+.highlight {
+  background-color: #fff176;
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 4px;
+}

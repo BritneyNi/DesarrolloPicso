@@ -1,0 +1,57 @@
+<app-boton-regresar></app-boton-regresar>
+<div *ngIf="cargando">Cargando permiso...</div>
+
+<div *ngIf="permiso" class="detalle-container">
+
+ <div class="detalle-header">
+  <h1>Detalle Permiso en Caliente</h1>
+
+  <button class="btn-editar" (click)="editar()">
+    ✏ Editar
+  </button>
+</div>
+
+
+  <section>
+    <h3>Información General</h3>
+    <p><b>Empresa:</b> {{ permiso.nombreEmpresa }}</p>
+    <p><b>NIT:</b> {{permiso.nit}} </p>
+    <p><b>Proyecto:</b> {{ permiso.proyecto }}</p>
+    <p><b>Fecha inicio:</b> {{ permiso.fechaInicio | date }}</p>
+    <p><b>Fecha cierre:</b> {{ permiso.fechaCierre | date }}</p>
+    <p><b>Tipo de trabajo:</b> {{ permiso.tipoTrabajo }}</p>
+    <p><b>Descripción:</b> {{ permiso.descripcionTarea }}</p>
+  </section>
+
+  <section>
+    <h3>Elementos de Protección</h3>
+    <ul>
+      <li *ngFor="let e of permiso.elementosProteccion">
+        {{ e }}
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>Peligros</h3>
+    <ul>
+      <li *ngFor="let p of permiso.peligros">
+        {{ p }}
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>Autorizantes</h3>
+
+    <div *ngFor="let a of permiso.autorizantes" class="autorizante-card">
+      <p><b>Autoriza:</b> {{ a.empleado?.nombreCompleto }}</p>
+
+      <img *ngIf="a.firmaBase64"
+           [src]="a.firmaBase64"
+           alt="Firma"
+           class="firma-img">
+    </div>
+  </section>
+
+</div>

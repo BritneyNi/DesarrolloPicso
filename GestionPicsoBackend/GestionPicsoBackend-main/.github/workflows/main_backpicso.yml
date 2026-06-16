@@ -1,0 +1,41 @@
+name: Build and deploy ASP.Net Core app to Azure Web App - backpicso
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp" --no-self-contained
+
+      - name: Zip publish folder
+        run: Compress-Archive -Path "${{env.DOTNET_ROOT}}/myapp/*" -DestinationPath "${{env.DOTNET_ROOT}}/myapp.zip"
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_294B1D7D077C45B1AB9F948EC795F5D3 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D895248C653C4EB88EE2525E49A05F7D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DE2853356E6D42468DD321B02A3CD709 }}
+
+      - name: Deploy via Azure CLI
+        run: az webapp deploy --resource-group backendPICSO --name backpicso --src-path "${{env.DOTNET_ROOT}}/myapp.zip" --type zip

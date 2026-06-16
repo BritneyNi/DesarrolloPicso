@@ -1,0 +1,11 @@
+.icon {
+padding: 100%;
+border-radius: 100%;
+}
+
+html {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

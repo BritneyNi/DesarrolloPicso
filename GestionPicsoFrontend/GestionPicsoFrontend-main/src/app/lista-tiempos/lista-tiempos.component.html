@@ -1,0 +1,364 @@
+<mat-accordion>
+
+  <!-- PANEL 1 — CARGAR TIEMPOS -->
+  <mat-expansion-panel (opened)="cambiarModo('tiempos')">
+    <mat-expansion-panel-header>
+      <mat-panel-title>⏱️ Cargar Tiempos</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <!-- Aviso restricción responsable -->
+    <div *ngIf="!esEspecial" class="lt-aviso-semana">
+      📅 Solo puedes registrar fechas de la semana actual
+      <strong>({{ fechaMinSemana | date:'dd/MM' }} – {{ fechaMaxSemana | date:'dd/MM/yyyy' }})</strong>
+    </div>
+
+    <!-- Banner empleados sin programación -->
+    <div *ngIf="!esEspecial && hayEmpleadosSinProgramacion" class="lt-banner-bloqueo">
+      🔒 Algunos empleados no tienen programación esta semana y no podrán registrar horario:
+      <strong>{{ nombresSinProgramacion }}</strong>
+    </div>
+
+    <!-- Panel global fecha + hora -->
+    <div class="lt-panel-global">
+      <h3 class="lt-panel-titulo">⚡ Aplicar a todos</h3>
+      <div class="lt-panel-controles">
+
+        <div class="lt-control-grupo">
+          <label class="lt-label">🟢 Hora ingreso global</label>
+          <input type="time" [(ngModel)]="horaIngresoGlobal" class="lt-input" />
+          <button class="lt-btn lt-btn-ingreso" (click)="aplicarHoraIngresoGlobal()">
+            Aplicar ingreso
+          </button>
+        </div>
+
+        <div class="lt-control-grupo">
+          <label class="lt-label">🔴 Hora salida global</label>
+          <input type="time" [(ngModel)]="horaSalidaGlobal" class="lt-input" />
+          <button class="lt-btn lt-btn-salida" (click)="aplicarHoraSalidaGlobal()">
+            Aplicar salida
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Estadísticas rápidas -->
+      <div class="lt-stats">
+        <span class="lt-stat">👥 {{ totalEmpleados }}</span>
+        <span class="lt-stat verde">🟢 {{ totalConIngreso }} con ingreso</span>
+        <span class="lt-stat rojo">🔴 {{ totalConSalida }} con salida</span>
+        <span class="lt-stat gris" *ngIf="!esEspecial && totalBloqueados > 0">
+          🔒 {{ totalBloqueados }} bloqueados
+        </span>
+      </div>
+    </div>
+
+    <!-- TABLA ESCRITORIO -->
+    <div class="lt-table-wrap">
+      <table class="lt-table">
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th class="th-ing">🟢 Fecha</th>
+            <th class="th-ing">Hora entrada</th>
+            <th class="th-ing">Acción</th>
+            <th class="th-sal">🔴 Fecha</th>
+            <th class="th-sal">Hora salida</th>
+            <th class="th-sal">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let reg of listaTiempos">
+
+            <!-- Fila bloqueada -->
+            <tr *ngIf="!esEspecial && reg.sinProgramacion" class="lt-fila-bloqueada">
+              <td>
+                <span class="lt-nombre">{{ reg.nombreEmpleado }}</span>
+                <span class="lt-badge-bloqueo">🔒 Sin programación</span>
+              </td>
+              <td colspan="6" class="lt-bloqueado-msg">
+                Este empleado no tiene programación para la semana actual.
+                Solo ADMIN o SST pueden registrarle horario.
+              </td>
+            </tr>
+
+            <!-- Fila normal -->
+            <tr *ngIf="esEspecial || !reg.sinProgramacion" class="lt-fila">
+              <td class="lt-nombre-cell">
+                <span class="lt-nombre">{{ reg.nombreEmpleado }}</span>
+                <span *ngIf="reg.fechaHoraEntrada" class="lt-ultimo-reg">
+                  Última entrada: {{ reg.fechaHoraEntrada | date:'dd/MM HH:mm' }}
+                </span>
+              </td>
+
+              <!-- INGRESO -->
+              <td class="td-ing">
+                <input
+                  type="date"
+                  [(ngModel)]="reg.fechaIngreso"
+                  class="lt-input lt-input-sm"
+                  [min]="esEspecial ? '' : fechaMinSemana"
+                  [max]="esEspecial ? '' : fechaMaxSemana"
+                />
+              </td>
+              <td class="td-ing">
+                <input type="time" [(ngModel)]="reg.horaIngreso" class="lt-input lt-input-sm" />
+              </td>
+              <td class="td-ing td-accion">
+                <button
+                  class="lt-btn lt-btn-ingreso lt-btn-sm"
+                  (click)="guardarIngreso(reg)"
+                  [disabled]="reg.guardandoIngreso">
+                  {{ reg.guardandoIngreso ? '...' : 'Guardar' }}
+                </button>
+                <span class="lt-feedback ok" *ngIf="reg.mensajeIngreso">{{ reg.mensajeIngreso }}</span>
+                <span class="lt-feedback err" *ngIf="reg.errorIngreso">{{ reg.errorIngreso }}</span>
+              </td>
+
+              <!-- SALIDA -->
+              <td class="td-sal">
+                <input
+                  type="date"
+                  [(ngModel)]="reg.fechaSalida"
+                  class="lt-input lt-input-sm"
+                  [min]="esEspecial ? '' : fechaMinSemana"
+                  [max]="esEspecial ? '' : fechaMaxSemana"
+                />
+              </td>
+              <td class="td-sal">
+                <input type="time" [(ngModel)]="reg.horaSalida" class="lt-input lt-input-sm" />
+              </td>
+              <td class="td-sal td-accion">
+                <button
+                  class="lt-btn lt-btn-salida lt-btn-sm"
+                  (click)="guardarSalida(reg)"
+                  [disabled]="reg.guardandoSalida">
+                  {{ reg.guardandoSalida ? '...' : 'Guardar' }}
+                </button>
+                <span class="lt-feedback ok" *ngIf="reg.mensajeSalida">{{ reg.mensajeSalida }}</span>
+                <span class="lt-feedback err" *ngIf="reg.errorSalida">{{ reg.errorSalida }}</span>
+              </td>
+            </tr>
+
+          </ng-container>
+
+          <tr *ngIf="listaTiempos.length === 0">
+            <td colspan="7" class="lt-empty">No hay empleados asignados a esta obra.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CARDS MÓVIL -->
+    <div class="lt-cards-wrap">
+      <ng-container *ngFor="let reg of listaTiempos">
+
+        <!-- Card bloqueada -->
+        <div *ngIf="!esEspecial && reg.sinProgramacion" class="lt-card lt-card-bloqueada">
+          <div class="lt-card-header">
+            <span class="lt-nombre">{{ reg.nombreEmpleado }}</span>
+            <span class="lt-badge-bloqueo">🔒 Sin programación</span>
+          </div>
+          <p class="lt-bloqueado-msg">No puede registrar horario esta semana.</p>
+        </div>
+
+        <!-- Card normal -->
+        <div *ngIf="esEspecial || !reg.sinProgramacion" class="lt-card">
+          <div class="lt-card-header" (click)="toggleExpandido(reg)">
+            <div>
+              <p class="lt-nombre">{{ reg.nombreEmpleado }}</p>
+              <p class="lt-card-sub" *ngIf="reg.fechaHoraEntrada">
+                Última entrada: {{ reg.fechaHoraEntrada | date:'dd/MM HH:mm' }}
+              </p>
+            </div>
+            <span class="lt-toggle">{{ reg.expandido ? '▲' : '▼' }}</span>
+          </div>
+
+          <div class="lt-card-body" *ngIf="reg.expandido">
+
+            <div class="lt-card-seccion ingreso">
+              <p class="lt-card-label">🟢 Ingreso</p>
+              <div class="lt-card-inputs">
+                <input
+                  type="date"
+                  [(ngModel)]="reg.fechaIngreso"
+                  class="lt-input"
+                  [min]="esEspecial ? '' : fechaMinSemana"
+                  [max]="esEspecial ? '' : fechaMaxSemana"
+                />
+                <input type="time" [(ngModel)]="reg.horaIngreso" class="lt-input" />
+              </div>
+              <button
+                class="lt-btn lt-btn-ingreso"
+                (click)="guardarIngreso(reg)"
+                [disabled]="reg.guardandoIngreso">
+                {{ reg.guardandoIngreso ? 'Guardando...' : 'Guardar ingreso' }}
+              </button>
+              <span class="lt-feedback ok" *ngIf="reg.mensajeIngreso">{{ reg.mensajeIngreso }}</span>
+              <span class="lt-feedback err" *ngIf="reg.errorIngreso">{{ reg.errorIngreso }}</span>
+            </div>
+
+            <div class="lt-card-seccion salida">
+              <p class="lt-card-label">🔴 Salida</p>
+              <div class="lt-card-inputs">
+                <input
+                  type="date"
+                  [(ngModel)]="reg.fechaSalida"
+                  class="lt-input"
+                  [min]="esEspecial ? '' : fechaMinSemana"
+                  [max]="esEspecial ? '' : fechaMaxSemana"
+                />
+                <input type="time" [(ngModel)]="reg.horaSalida" class="lt-input" />
+              </div>
+              <button
+                class="lt-btn lt-btn-salida"
+                (click)="guardarSalida(reg)"
+                [disabled]="reg.guardandoSalida">
+                {{ reg.guardandoSalida ? 'Guardando...' : 'Guardar salida' }}
+              </button>
+              <span class="lt-feedback ok" *ngIf="reg.mensajeSalida">{{ reg.mensajeSalida }}</span>
+              <span class="lt-feedback err" *ngIf="reg.errorSalida">{{ reg.errorSalida }}</span>
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+  </mat-expansion-panel>
+
+  <div style="margin-top: 16px;"></div>
+
+  <!-- PANEL 2 — AUSENTISMO -->
+  <mat-expansion-panel (opened)="cambiarModo('ausentismo')">
+    <mat-expansion-panel-header>
+      <mat-panel-title>📋 Cargar Ausentismo</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <form (ngSubmit)="guardarAusentismo()" class="formulario-ausentismo">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Fecha Inicio Permiso</label>
+          <input type="date" [(ngModel)]="fechaInicioPermiso" name="fechaInicioPermiso" class="form-control" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Fecha Fin Permiso</label>
+          <input type="date" [(ngModel)]="fechaFinPermiso" name="fechaFinPermiso" class="form-control" required>
+        </div>
+      </div>
+
+      <div *ngIf="fechaInicioPermiso > fechaFinPermiso" class="alert alert-danger mt-2">
+        La fecha de inicio no puede ser posterior a la fecha de fin.
+      </div>
+
+      <table class="table table-bordered mt-3">
+        <thead class="thead-dark">
+          <tr>
+            <th>Empleado</th>
+            <th>Comentarios</th>
+            <th>Permisos Especiales</th>
+            <th>Documento Soporte</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tiempo of listaTiempos; let i = index">
+            <td>{{ tiempo.nombreEmpleado }}</td>
+            <td>
+              <input type="text" [(ngModel)]="tiempo.comentarios" [name]="'comentariosAus'+i" class="form-control">
+            </td>
+            <td>
+              <select [(ngModel)]="tiempo.permisosEspeciales" [name]="'permisos'+i" class="form-control">
+                <option value="">(Ninguno)</option>
+                <option value="incapacidad">Incapacidad</option>
+                <option value="enfermedad_general">Enfermedad General</option>
+                <option value="calamidad_familiar">Calamidad Domestica</option>
+                <option value="sin_justificacion">Sin Justificación</option>
+              </select>
+            </td>
+            <td>
+              <input type="file" (change)="manejarArchivo($event, i)" class="form-control">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button type="submit" class="btn btn-primary mt-2" [disabled]="!esValidoParaGuardarAusentismo()">
+        Guardar Ausentismo
+      </button>
+    </form>
+  </mat-expansion-panel>
+
+  <div style="margin-top: 16px;"></div>
+
+  <!-- PANEL 3 — EDITAR TIEMPOS -->
+  <mat-expansion-panel (opened)="cambiarModo('editar')">
+    <mat-expansion-panel-header>
+      <mat-panel-title>✏️ Editar Tiempos</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <form (submit)="$event.preventDefault()" class="formulario-actualizar">
+
+      <div class="form-group">
+        <label>Seleccionar empleado:</label>
+        <select class="form-control" (change)="seleccionarEmpleado(listaTiempos[$any($event.target).selectedIndex])">
+          <option *ngFor="let t of listaTiempos; let i = index" [value]="i">{{ t.nombreEmpleado }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="empleadoSeleccionadoHistorial.length > 0" class="mt-4">
+        <h5>Historial del Empleado</h5>
+        <table class="table table-bordered table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Fecha Entrada</th>
+              <th>Fecha Salida</th>
+              <th>Comentarios</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of empleadoSeleccionadoHistorial">
+              <td>{{ h.fechaHoraEntrada | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ h.fechaHoraSalida  | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ h.comentarios }}</td>
+              <td>
+                <button class="btn btn-sm btn-info mr-1" (click)="empleadoSeleccionado = h">Editar</button>
+                <button class="btn btn-sm btn-danger"    (click)="eliminarRegistroCompleto(h)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="empleadoSeleccionado">
+        <div class="form-group mt-3">
+          <label>Entrada:</label>
+          <input type="datetime-local"
+                 [(ngModel)]="empleadoSeleccionado.fechaHoraEntrada"
+                 name="fechaEntradaEdit"
+                 class="form-control"
+                 (change)="validarFechaEntrada(empleadoSeleccionado)" />
+        </div>
+        <div class="form-group mt-2">
+          <label>Salida:</label>
+          <input type="datetime-local"
+                 [(ngModel)]="empleadoSeleccionado.fechaHoraSalida"
+                 name="fechaSalidaEdit"
+                 class="form-control"
+                 (change)="validarFechaSalida(empleadoSeleccionado)" />
+        </div>
+        <div class="form-group mt-2">
+          <label>Comentarios:</label>
+          <input type="text" [(ngModel)]="empleadoSeleccionado.comentarios" name="comentariosEdit" class="form-control" />
+        </div>
+        <div class="mt-3">
+          <button type="button" class="btn btn-warning mr-2" (click)="guardarEdicion()">Guardar</button>
+          <button type="button" class="btn btn-secondary"    (click)="cancelarEdicion()">Cancelar</button>
+        </div>
+      </div>
+
+    </form>
+  </mat-expansion-panel>
+
+  <div style="margin-top: 16px;"></div>
+
+</mat-accordion>

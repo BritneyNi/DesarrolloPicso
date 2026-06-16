@@ -1,0 +1,51 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+<div class="contenedor">
+
+  <h2>Gestión de Liquidaciones</h2>
+
+  <div class="botones">
+    <button (click)="cambiarEstado('pagadas')" [class.activo]="estadoActivo==='pagadas'">Pagadas</button>
+    <button (click)="cambiarEstado('pendientes')" [class.activo]="estadoActivo==='pendientes'">Pendientes</button>
+    <button (click)="cambiarEstado('sinregistro')" [class.activo]="estadoActivo==='sinregistro'">Sin registro</button>
+  </div>
+
+  <input
+    type="text"
+    placeholder="Buscar empleado..."
+    [(ngModel)]="buscador"
+    (input)="aplicarFiltro()"
+  />
+
+  <table>
+   <thead>
+  <tr>
+    <th>Empleado</th>
+    <th>Inicio contrato</th>
+    <th>Fin contrato</th>
+    <th>Liquidación</th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr *ngFor="let e of empleadosFiltrados">
+    <td>{{ e.nombreCompleto }}</td>
+    <td>{{ e.fechaInicio | date:'dd/MM/yyyy' }}</td>
+    <td>{{ e.fechaFin | date:'dd/MM/yyyy' }}</td>
+
+    <td>
+      <select
+        [(ngModel)]="e.pagoLiquidacion"
+        (change)="actualizarLiquidacion(e, e.pagoLiquidacion)"
+      >
+        <option value="Si">Sí</option>
+        <option value="No">No</option>
+      </select>
+    </td>
+  </tr>
+</tbody>
+
+
+  </table>
+
+</div>

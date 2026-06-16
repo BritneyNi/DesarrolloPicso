@@ -1,0 +1,274 @@
+<div class="main-content">
+  <app-navbar></app-navbar>
+  <app-boton-regresar></app-boton-regresar>
+
+  <!-- 🔥 HEADER PRO -->
+  <div class="dashboard-header">
+
+    <div class="header-left">
+      <h1>{{ tituloPrincipal }}</h1>
+      <p class="subtitulo">Seguimiento y control de actividades</p>
+
+       <div *ngIf="alertaProyecto"
+        class="alerta"
+        [ngClass]="alertaProyecto.tipo">
+        🚨 {{ alertaProyecto.mensaje }}:
+        <small class="spi-info">
+      SPI {{ (spiProyecto * 100) | number:'1.0-0' }}%
+      </small>
+      </div>
+
+    </div>
+  
+    <app-informe-gantt
+      [obraId]="obraIdSeleccionada"
+      [proyectoId]="proyectoIdSeleccionado"
+      [curvaSImage]="curvaSImage">
+    </app-informe-gantt>
+
+    <div class="header-right" >
+      <div class="header-right" *ngIf="!modoRestringido">
+    <label>Filtrar por obra</label>
+    <select 
+      [(ngModel)]="obraIdSeleccionada" 
+      (change)="setObraSeleccionada(obraIdSeleccionada)">
+      
+      <option [ngValue]="null">🌍 Todas las obras</option>
+      <option *ngFor="let obra of obras" [ngValue]="obra.id">
+        {{ obra.nombreObra }}
+      </option>
+
+      </select>
+    </div>
+
+  <!-- 🔥 MODO RESTRINGIDO -->
+      <div *ngIf="modoRestringido" class="header-right">
+        <label>Obra actual</label>
+        <div class="obra-fija">
+          🏗 {{ obraSeleccionada?.nombreObra }}
+        </div>
+      </div>
+
+      <label *ngIf="obraIdSeleccionada">Actividades</label>
+
+      <select
+        *ngIf="obraIdSeleccionada"
+        [(ngModel)]="proyectoIdSeleccionado"
+        (ngModelChange)="onProyectoCambio()">
+
+        <option [ngValue]="null">📂 Todas las actividades</option>
+
+        <option *ngFor="let p of proyectos" [ngValue]="p.id">
+          {{ p.nombre }}
+        </option>
+
+      </select>
+      
+      <button class="btn-crear" (click)="abrirModalProyecto()">
+        📂 Crear Actividad
+      </button>
+      <button 
+      *ngIf="proyectoIdSeleccionado"
+      class="btn btn-danger"
+      (click)="eliminarProyecto()">
+      🗑 Eliminar Actividad
+    </button>
+
+<button 
+  *ngIf="proyectoIdSeleccionado"
+  class="btn btn-warning"
+  (click)="editarProyectoSeleccionado()">
+  ✏️ Editar Actividad
+</button>
+
+       <button class="btn-crear" (click)="abrirModal()">
+        ➕ Añadir Tarea
+      </button>
+    </div>
+  </div>
+
+  <div class="dashboard">
+
+    <h2 class="section-title">Cronograma (Gantt)</h2>
+
+    <div class="gantt-container">
+      <canvas #ganttChart baseChart
+        [data]="ganttChartData"
+        [options]="ganttChartOptions"
+        [type]="'bar'"
+        (chartClick)="onChartClick($event)">
+      </canvas>
+    </div>
+
+<div class="bottom-section">
+
+     <!-- 📈 CURVA DE AVANCE -->
+    <div class="chart-card">
+      <canvas baseChart
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+        [type]="'line'">
+      </canvas>
+    </div>
+
+    <div class="chart-card">
+      <canvas baseChart
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+        chartType="line">
+      </canvas>
+    </div>
+  </div>
+
+    <div class="curva-s-container">
+    <canvas baseChart
+      #curvaSCanvas
+      [data]="curvaSChartData"
+      [type]="'line'"
+      [options]="curvaSChartOptions">
+    </canvas>
+
+  <div *ngIf="obraSeleccionada" class="timeline-obra">
+
+  <div class="fechas-obra">
+    <span *ngFor="let f of timelineObra">
+      {{ f | date:'dd/MM' }}
+    </span>
+  </div>
+
+</div>
+</div>
+</div>
+</div>
+
+<!-- 🔥 MODAL -->
+
+<!-- 🔥 MODAL PROYECTO -->
+<div class="modal-backdrop"
+     *ngIf="mostrarModalProyecto"
+     (click)="mostrarModalProyecto=false">
+
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <h3>Crear Actividad</h3>
+
+    <!-- 🔓 MODO NORMAL -->
+<div *ngIf="!modoRestringido">
+  <label>Obra</label>
+  <select [(ngModel)]="(proyectoEditando || nuevoProyecto).obraId">
+    <option *ngFor="let o of obras" [value]="o.id">
+      {{ o.nombreObra }}
+    </option>
+  </select>
+</div>
+
+<!-- 🔒 MODO RESTRINGIDO -->
+<div *ngIf="modoRestringido">
+  <label>Obra</label>
+  <div class="obra-fija">
+    🏗 {{ obraSeleccionada?.nombreObra }}
+  </div>
+</div>
+
+    <label>Nombre de la actividad</label>
+    <input [(ngModel)]="(proyectoEditando || nuevoProyecto).nombre">
+
+    <label>Fecha inicio</label>
+    <input type="date" [(ngModel)]="(proyectoEditando || nuevoProyecto).fechaInicio">
+
+    <label>Fecha fin</label>
+    <input type="date" [(ngModel)]="(proyectoEditando || nuevoProyecto).fechaFin">
+
+    <div class="modal-actions">
+      <button (click)="guardarProyecto()">💾 Guardar</button>
+      <button (click)="mostrarModalProyecto=false">Cancelar</button>
+    </div>
+
+  </div>
+</div>
+<div class="modal-backdrop" *ngIf="mostrarModal" (click)="cerrarModal()">
+
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <h3>Crear Tarea</h3>
+
+    <label>Actividad</label>
+    <select [(ngModel)]="(actividadEditando || nuevaActividad).proyectoGanttId">
+      <option *ngFor="let p of proyectos" [ngValue]="p.id">
+        {{ p.nombre }}
+      </option>
+    </select>
+
+    <label>Tarea</label>
+    <input [(ngModel)]="(actividadEditando || nuevaActividad).nombre" placeholder="Nombre de la actividad">
+
+    <label>Tarea precedente (opcional)</label>
+    <select [(ngModel)]="(actividadEditando || nuevaActividad).precedenteId">
+        <option [ngValue]="null">Ninguna</option>
+      <option *ngFor="let act of actividadesDelProyecto" 
+              [ngValue]="act.id">
+        {{ act.nombre }}
+      </option>
+    </select>
+
+    <div class="rango-proyecto">
+    <strong>📅 Rango de la actividad:</strong>
+      <span>
+        {{ fechaInicioProyecto }} → {{ fechaFinProyecto }}
+      </span>
+    </div>
+
+    <label>Fecha inicio</label>
+    <input type="date" [(ngModel)]="(actividadEditando || nuevaActividad).fechaInicio" [min]="fechaInicioProyecto"
+    [max]="fechaFinProyecto">
+
+    <label>Fecha fin</label>
+    <input type="date" [(ngModel)]="(actividadEditando || nuevaActividad).fechaFin" [min]="fechaInicioProyecto"
+    [max]="fechaFinProyecto">
+
+    <label>Unidad</label>
+    <select [(ngModel)]="(actividadEditando || nuevaActividad).tipoUnidad">
+      <option value="MTS">M</option>
+      <option value="UND">Unidades</option>
+      <option value="M2">M2</option>
+      <option value ="VIAJES">Viajes</option>
+      <option value="GLOBAL">Global</option>
+    </select>
+
+    <input type="number" [(ngModel)]="(actividadEditando || nuevaActividad).cantidadTotal">
+
+    <div *ngIf="actividadEditando?.id" class="avance-box">
+
+  <h4>Registrar avance semanal</h4>
+
+  <label>Semana</label>
+  <select [(ngModel)]="actividadEditando.semanaSeleccionada">
+    <option *ngFor="let s of actividadEditando.semanasDisponibles" [value]="s">
+      {{ s }}
+    </option>
+  </select>
+
+  <label>Cantidad ejecutada</label>
+  <input type="number" [(ngModel)]="actividadEditando.nuevoAvance">
+
+  <button type="button" (click)="registrarAvanceAdmin(); $event.stopPropagation()">
+      📊 Registrar avance
+  </button>
+
+    <app-evidencias-gantt
+    *ngIf="actividadEditando?.id"
+    [actividadId]="actividadEditando.id"
+    [semana]="actividadEditando.semanaSeleccionada">
+  </app-evidencias-gantt>
+  </div>
+  <div class="modal-actions">
+  <button (click)="guardarActividad()">💾 Guardar</button>
+  <button class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+
+  <button *ngIf="actividadEditando?.id"
+          class="btn btn-danger"
+          (click)="eliminarActividad()">
+    Eliminar
+  </button>
+</div>
+</div>

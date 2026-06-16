@@ -1,0 +1,22 @@
+.detalle-container {
+  max-width: 900px;
+  margin: auto;
+}
+
+section {
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.autorizante-card {
+  margin-bottom: 10px;
+}
+
+.firma-img {
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}

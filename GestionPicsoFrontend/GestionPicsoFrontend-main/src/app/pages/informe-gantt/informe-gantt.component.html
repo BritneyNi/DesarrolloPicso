@@ -1,0 +1,49 @@
+<div class="informe-container">
+
+  <button
+    type="button"
+    class="btn-evidencias"
+    *ngIf="evidencias.length"
+    (click)="toggleSelectorEvidencias()">
+    📸 Seleccionar evidencias ({{ evidenciasSeleccionadas.length }}/3)
+  </button>
+
+  <div class="evidencias-modal-backdrop"
+       *ngIf="mostrarSelectorEvidencias"
+       (click)="mostrarSelectorEvidencias = false">
+
+    <div class="evidencias-modal" (click)="$event.stopPropagation()">
+      <h4>📸 Selecciona hasta 3 evidencias</h4>
+
+      <div class="evidencias-grid">
+        <div
+          class="evidencia-card"
+          *ngFor="let e of evidencias"
+          [class.selected]="evidenciasSeleccionadas.includes(e.id)"
+          (click)="toggleEvidencia(e.id)">
+
+          <input
+            type="checkbox"
+            [checked]="evidenciasSeleccionadas.includes(e.id)"
+            (click)="$event.stopPropagation()" />
+
+          <img [src]="e.url" [alt]="e.nombreArchivo" />
+
+          <small>{{ e.nombreArchivo }}</small>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn-cerrar-evidencias"
+        (click)="mostrarSelectorEvidencias = false">
+        Listo
+      </button>
+    </div>
+  </div>
+
+  <button (click)="generarInforme()" [disabled]="cargando">
+    📄 {{ cargando ? 'Generando...' : 'Generar informe PDF' }}
+  </button>
+
+</div>

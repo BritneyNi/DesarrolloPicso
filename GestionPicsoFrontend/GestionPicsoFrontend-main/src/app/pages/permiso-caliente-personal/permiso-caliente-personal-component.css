@@ -1,0 +1,353 @@
+/* =========================
+   GENERAL
+========================= */
+.page-content {
+  padding-top: 90px; /* ajusta según el alto real del navbar */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h2 {
+  margin-bottom: 12px;
+  color: #1976d2;
+  text-align: center;
+  font-size: 30px;
+}
+
+hr {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+/* =========================
+   FORM ROW
+========================= */
+.form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.form-row button {
+  height: 38px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 4px;
+  background: #1976d2;
+  color: #fff;
+  cursor: pointer;
+}
+
+.form-row button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+/* =========================
+   AUTOCOMPLETE
+========================= */
+.autocomplete-container {
+  position: relative;
+  width: 300px;
+  max-width: 100%;
+}
+
+.autocomplete-list {
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.autocomplete-list li {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.autocomplete-list li:hover {
+  background: #f0f0f0;
+}
+
+/* =========================
+   TABLE BASE
+========================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 6px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* =========================
+   ENCABEZADOS OSCUROS (TABLAS NORMALES)
+========================= */
+table:not(.table-evaluacion) thead th {
+  background-color: #333; /* fondo oscuro */
+  color: #fff;            /* letra blanca */
+  border: 1px solid #222;
+  padding: 6px;
+}
+
+/* =========================
+   TABLA DE EVALUACIÓN (ENCABEZADO CLARO)
+========================= */
+.table-evaluacion thead th {
+  background-color: #fff; /* fondo claro */
+  color: #000;            /* letra negra */
+  border: 1px solid #ddd;
+  padding: 6px;
+}
+
+/* Filas normales para todas las tablas */
+tbody tr {
+  background: #fff;
+  color: #000;
+}
+
+/* Quitar efecto hover */
+tbody tr:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* =========================
+   BOTONES
+========================= */
+button {
+  font-size: 14px;
+}
+
+td button {
+  margin: 2px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+td button:hover {
+  opacity: 0.9;
+}
+
+/* =========================
+   FIRMA
+========================= */
+.firma-canvas {
+  border: 2px dashed #1976d2;
+  border-radius: 6px;
+  background: #fff;
+  touch-action: none;
+  max-width: 100%;
+}
+
+.firma-box {
+  margin-top: 8px;
+  background: #f7faff;
+  padding: 8px;
+  border: 1px solid #cce0ff;
+  border-radius: 6px;
+}
+
+.firma-botones {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   MODAL BASE
+========================= */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 15, 15, 0.45);
+  z-index: 999;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.modal-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.modal-xl {
+  max-width: 1200px;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* =========================
+   MODAL HEADER / BODY / FOOTER
+========================= */
+.modal-header {
+  flex-shrink: 0;
+}
+
+.modal-header h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.modal-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-footer {
+  flex-shrink: 0;
+}
+
+.modal-footer button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-footer button:nth-child(1) {
+  background: #ccc;
+}
+
+.modal-footer button:nth-child(2) {
+  background: #1976d2;
+  color: white;
+}
+
+/* =========================
+   TABLA EVALUACIÓN GENERAL
+========================= */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 4px;
+  font-size: 13px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+input[type="text"] {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+/* =========================
+   RESPONSIVE 📱
+========================= */
+@media (max-width: 768px) {
+
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .autocomplete-container {
+    width: 100%;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  thead {
+    display: none; /* encabezado oculto en móvil */
+  }
+
+  table, tbody, tr, td {
+    display: block;
+    width: 100%;
+  }
+
+  tbody tr {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px;
+    background: #fff;
+  }
+
+  td {
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    text-align: left;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #555;
+  }
+
+  .modal-dialog {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .modal-header h4 {
+    font-size: 14px;
+  }
+
+  .firma-canvas {
+    width: 100%;
+    height: auto;
+  }
+
+  .modal-body {
+    padding-bottom: 80px; /* espacio para botón Guardar */
+  }
+}

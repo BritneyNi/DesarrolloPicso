@@ -1,0 +1,124 @@
+<app-boton-regresar></app-boton-regresar>
+<h2>Detalle Permiso Trabajo en Alturas</h2>
+
+<div *ngIf="permiso" class="detalle-container">
+   <div style="margin-bottom: 15px;">
+    <button type="button" (click)="editarPermiso()">
+      ✏️ Editar permiso
+    </button>
+
+  <!-- ================= DATOS GENERALES ================= -->
+  <h3>Datos Generales</h3>
+  <p><b>Fecha registro:</b> {{ permiso.fecha }}</p>
+  <p><b>Fecha inicio:</b> {{ permiso.fechaInicio }}</p>
+  <p><b>Fecha finalización:</b> {{ permiso.fechaFinalizacion }}</p>
+  <p><b>Lugar de ejecución:</b> {{ permiso.lugarEjecucion }}</p>
+  <p><b>Tipo de trabajo:</b> {{ permiso.tipoTrabajoRealizar }}</p>
+  <p><b>Altura aproximada:</b> {{ permiso.alturaAproximada }} m</p>
+<p>
+  <b>Responsable del permiso:</b>
+  {{ permiso.responsablePermisoEmpleado?.nombreCompleto }}
+  <span *ngIf="permiso.responsablePermisoEmpleado">
+    – {{ permiso.responsablePermisoEmpleado.cargo }}
+    – CC {{ permiso.responsablePermisoEmpleado.cedula }}
+  </span>
+</p>
+  <p>
+  <b>Ayudante de seguridad:</b>
+  {{ permiso.ayudanteSeguridadEmpleado?.nombreCompleto }}
+  <span *ngIf="permiso.ayudanteSeguridadEmpleado">
+    – {{ permiso.ayudanteSeguridadEmpleado.cargo }}
+    – CC {{ permiso.ayudanteSeguridadEmpleado.cedula }}
+  </span>
+</p>
+<p>
+  <b>Autoriza el trabajo:</b>
+  {{ permiso.personaAutorizaEmpleado?.nombreCompleto }}
+  <span *ngIf="permiso.personaAutorizaEmpleado">
+    – {{ permiso.personaAutorizaEmpleado.cargo }}
+    – CC {{ permiso.personaAutorizaEmpleado.cedula }}
+  </span>
+</p>
+<p>
+  <b>Coordinador trabajo en alturas:</b>
+  {{ permiso.coordinadorTrabajoAlturasEmpleado?.nombreCompleto }}
+  <span *ngIf="permiso.coordinadorTrabajoAlturasEmpleado">
+    – {{ permiso.coordinadorTrabajoAlturasEmpleado.cargo }}
+    – CC {{ permiso.coordinadorTrabajoAlturasEmpleado.cedula }}
+  </span>
+</p>
+  <p><b>Descripción de la tarea:</b></p>
+  <p>{{ permiso.descripcionTarea }}</p>
+  <p><b>Herramientas a utilizar:</b></p>
+  <p>{{ permiso.herramientaUtilizar }}</p>
+  <p><b>Trabajo eléctrico:</b> {{ permiso.trabajoElectrico ? 'Sí' : 'No' }}</p>
+  <p *ngIf="permiso.observaciones"><b>Observaciones:</b> {{ permiso.observaciones }}</p>
+
+  <!-- ================= PERSONAL AUTORIZADO ================= -->
+  <h3>Personal Autorizado</h3>
+
+  <table border="1" width="100%" cellpadding="6" *ngIf="permiso.personalAutorizado?.length">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Certificación</th>
+        <th>Seguridad Social</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of permiso.personalAutorizado">
+        <td>
+  {{ p.empleado?.nombreCompleto }}
+  <br>
+  <small>
+    {{ p.empleado?.cargo }} – CC {{ p.empleado?.cedula }}
+  </small>
+</td>
+
+        <td>{{ p.certificacion }}</td>
+        <td>{{ p.activoSeguridadSocial ? 'Sí' : 'No' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!permiso.personalAutorizado?.length">
+    No hay personal autorizado registrado.
+  </p>
+
+  <!-- ================= RESPONSABLE PLAN EMERGENCIA ================= -->
+  <h3>Responsables Plan de Emergencia</h3>
+  <ul *ngIf="permiso.responsablesPlanEmergencia?.length">
+  <li *ngFor="let r of permiso.responsablesPlanEmergencia">
+    {{ r.empleado?.nombreCompleto }}
+  <span *ngIf="r.empleado">
+    – {{ r.empleado.cargo }}
+    – CC {{ r.empleado.cedula }}
+  </span>
+  </li>
+</ul>
+
+  <!-- ================= MEDIDAS PREVENCIÓN ================= -->
+  <h3>Medidas de Prevención y Protección</h3>
+  <ul *ngIf="permiso.medidaPrevencionProteccion">
+    <li *ngFor="let m of permiso.medidaPrevencionProteccion | jsonParse">
+      {{ m }}
+    </li>
+
+  </ul>
+  <p *ngIf="permiso.otroAcceso">
+    <b>Otro:</b> {{ permiso.otroAcceso }}
+  </p>
+
+  <!-- ================= PROTECCIÓN PERSONAL ================= -->
+  <h3>Elementos de Protección Personal</h3>
+  <ul *ngIf="permiso.proteccionPersonal">
+    <li *ngFor="let p of permiso.proteccionPersonal | jsonParse">
+      {{ p }}
+    </li>
+  </ul>
+
+  <p *ngIf="permiso.otrosElementos">
+    <b>Otros elementos:</b> {{ permiso.otrosElementos }}
+  </p>
+
+</div>

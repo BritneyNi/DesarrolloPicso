@@ -1,0 +1,55 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+<div class="bandeja-container">
+<h2 class="titulo-bandeja">🔔 Bandeja de notificaciones</h2>
+
+<div *ngIf="notificaciones.length === 0" class="empty">
+  No hay notificaciones 🎉
+</div>
+
+<div *ngFor="let grupo of notificacionesAgrupadas | keyvalue" class="grupo">
+
+  <!-- HEADER KPI -->
+  <div class="grupo-header clickable"
+       (click)="toggleGrupo(grupo.key)">
+
+    <div class="grupo-left">
+      <span class="grupo-icon">{{ obtenerIcono(grupo.key) }}</span>
+      <span class="grupo-title">{{ grupo.key }}</span>
+    </div>
+
+    <div class="grupo-right">
+
+      <div class="grupo-kpi">
+        {{ grupo.value.length }}
+      </div>
+
+      <span class="flecha"
+            [class.rotada]="!estaColapsado(grupo.key)">
+        ▼
+      </span>
+
+    </div>
+
+  </div>
+
+  <!-- CARDS -->
+  <div class="cards-container"
+       *ngIf="!estaColapsado(grupo.key)">
+
+    <!-- ⭐ ESTE ERA EL QUE FALTABA -->
+    <div class="card-noti"
+     *ngFor="let n of grupo.value"
+     [ngClass]="obtenerColorClase(grupo.key)"
+     (click)="irDesdeNotificacion(n)">
+
+      <div class="titulo">{{ n.titulo }}</div>
+      <div class="mensaje">{{ n.mensaje }}</div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</div>

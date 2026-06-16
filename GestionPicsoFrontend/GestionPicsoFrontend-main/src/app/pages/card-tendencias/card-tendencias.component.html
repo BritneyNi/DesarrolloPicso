@@ -1,0 +1,57 @@
+<div class="card-tendencias">
+  <div class="tendencias-header">
+    <div>
+      <h3>📈 Tendencias RRHH</h3>
+      <p class="subtitulo">Evolución de indicadores por mes</p>
+    </div>
+    <div class="selector-meses">
+      <label>Últimos</label>
+      <select [(ngModel)]="mesesSeleccionados" (change)="cambiarMeses()">
+        <option [value]="3">3 meses</option>
+        <option [value]="6">6 meses</option>
+        <option [value]="12">12 meses</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="tendencias-loading">Cargando tendencias...</div>
+
+  <div *ngIf="!loading">
+    <!-- Resumen de variaciones -->
+    <div class="variaciones-grid" *ngIf="datos.length >= 2">
+      <div class="variacion-item">
+        <span class="variacion-label">📄 Contratos</span>
+        <span class="variacion-valor" [ngClass]="getVariacion('contratos', datos.length - 1).clase">
+          {{ getVariacion('contratos', datos.length - 1).valor > 0 ? '↑ +' : getVariacion('contratos', datos.length - 1).valor < 0 ? '↓ ' : '= ' }}{{ getVariacion('contratos', datos.length - 1).valor }}
+        </span>
+        <span class="variacion-sub">vs mes anterior</span>
+      </div>
+      <div class="variacion-item">
+        <span class="variacion-label">🩺 Exámenes</span>
+        <span class="variacion-valor" [ngClass]="getVariacion('examenes', datos.length - 1).clase">
+          {{ getVariacion('examenes', datos.length - 1).valor > 0 ? '↑ +' : getVariacion('examenes', datos.length - 1).valor < 0 ? '↓ ' : '= ' }}{{ getVariacion('examenes', datos.length - 1).valor }}
+        </span>
+        <span class="variacion-sub">vs mes anterior</span>
+      </div>
+      <div class="variacion-item">
+        <span class="variacion-label">🧗 Alturas</span>
+        <span class="variacion-valor" [ngClass]="getVariacion('alturas', datos.length - 1).clase">
+          {{ getVariacion('alturas', datos.length - 1).valor > 0 ? '↑ +' : getVariacion('alturas', datos.length - 1).valor < 0 ? '↓ ' : '= ' }}{{ getVariacion('alturas', datos.length - 1).valor }}
+        </span>
+        <span class="variacion-sub">vs mes anterior</span>
+      </div>
+      <div class="variacion-item">
+        <span class="variacion-label">💰 Liquidaciones</span>
+        <span class="variacion-valor" [ngClass]="getVariacion('liquidaciones', datos.length - 1).clase">
+          {{ getVariacion('liquidaciones', datos.length - 1).valor > 0 ? '↑ +' : getVariacion('liquidaciones', datos.length - 1).valor < 0 ? '↓ ' : '= ' }}{{ getVariacion('liquidaciones', datos.length - 1).valor }}
+        </span>
+        <span class="variacion-sub">vs mes anterior</span>
+      </div>
+    </div>
+
+    <!-- Gráfica -->
+    <div class="grafica-wrap">
+      <canvas #tendenciasChart></canvas>
+    </div>
+  </div>
+</div>

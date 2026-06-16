@@ -1,0 +1,86 @@
+<app-navbar></app-navbar>
+<app-boton-regresar></app-boton-regresar>
+
+<div class="mod-container">
+
+  <div class="mod-header">
+    <h1 class="mod-titulo">Centro de Gestión de Inventarios</h1>
+    <p class="mod-subtitulo">Administra inventarios, solicitudes y movimientos</p>
+  </div>
+
+  <!-- Cards fijas -->
+  <div class="mod-grid">
+
+    <div class="mod-card" (click)="irAInventarioPadre()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">01 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🔧</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Inventario Principal</h3>
+        <p class="mod-card-desc">Herramientas eléctricas y equipos</p>
+      </div>
+    </div>
+
+    <div class="mod-card" (click)="revision()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">02 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🔍</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Revisión de Inventario</h3>
+        <p class="mod-card-desc">Revisa el estado del inventario</p>
+      </div>
+    </div>
+
+    <div class="mod-card" (click)="irASolicitudes()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">03 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">📝</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Solicitudes</h3>
+        <p class="mod-card-desc">Solicitudes de herramientas</p>
+      </div>
+    </div>
+
+    <div class="mod-card" (click)="irAMovimientos()">
+      <div class="mod-card-top">
+        <span class="mod-card-num">04 —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🔄</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">Movimientos</h3>
+        <p class="mod-card-desc">Gestión de movimientos del inventario</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Cards dinámicas por obra -->
+  <div class="inv-obras-header" *ngIf="obrasFiltradas.length > 0">
+    <h2 class="inv-obras-titulo">Inventarios por Obra</h2>
+    <span class="inv-obras-count">{{ obrasFiltradas.length }} obra(s)</span>
+  </div>
+
+  <div class="mod-grid" *ngIf="obrasFiltradas.length > 0">
+    <div class="mod-card" *ngFor="let obra of obrasFiltradas; let i = index" (click)="irAInventarioInterno(obra.nombreObra)">
+      <div class="mod-card-top">
+        <span class="mod-card-num">{{ (i + 1).toString().padStart(2, '0') }} —</span>
+        <span class="mod-card-arrow">↗</span>
+      </div>
+      <div class="mod-card-icon">🏗️</div>
+      <div class="mod-card-info">
+        <h3 class="mod-card-titulo">{{ obra.nombreObra }}</h3>
+        <p class="mod-card-desc">{{ obra.responsableNombre || 'Sin responsable' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <p *ngIf="obrasFiltradas.length === 0" class="mod-empty">No hay obras disponibles.</p>
+
+</div>

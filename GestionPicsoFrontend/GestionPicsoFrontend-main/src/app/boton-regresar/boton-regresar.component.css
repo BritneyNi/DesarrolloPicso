@@ -1,0 +1,29 @@
+.btn {
+  position: fixed;
+  top: 100px;
+  left: 20px;
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+  z-index: 1000;
+}
+
+.btn:hover {
+  background-color: #075e04;
+}
+
+i {
+  font-size: 20px;
+}
+
+@media (max-width: 600px) {
+  .btn {
+    display: none;
+  }
+}

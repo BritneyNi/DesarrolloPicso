@@ -1,0 +1,101 @@
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card h3 {
+  margin-bottom: 12px;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.metric strong {
+  font-size: 18px;
+}
+
+.metric.success strong {
+  color: #2e7d32;
+}
+
+.metric.warning strong {
+  color: #f57c00;
+}
+
+.metric.total strong {
+  color: #1565c0;
+}
+
+
+
+.chart-container {
+  margin-top: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 14px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  transition: width 0.5s ease;
+}
+
+.progress-label {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+/* CLICKABLE */
+.metric.clickable {
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  padding-left: 8px;
+}
+
+.metric.clickable:hover {
+  transform: translateX(4px);
+}
+
+/* CON EXAMEN */
+.metric.success.clickable:hover {
+  background: #e8f5e9;
+  border-left: 4px solid #2e7d32;
+}
+
+/* SIN EXAMEN */
+.metric.warning.clickable:hover {
+  background: #fff3e0;
+  border-left: 4px solid #f57c00;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.card-header h3 { margin: 0; }
+.semaforo { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.semaforo-verde   { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.5); }
+.semaforo-amarillo{ background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,0.5); }
+.semaforo-rojo    { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+.semaforo-gris    { background: #9ca3af; }
